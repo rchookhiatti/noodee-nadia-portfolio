@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nudee & Nadia — Academic & Co-Curricular Portfolio | Anglo Singapore International School</title>
+  <meta name="description" content="Official student portfolio of sisters Nudee (Secondary 3) and Nadia (Secondary 1) at Anglo Singapore International School, showcasing Singapore curriculum academic excellence, Olympiad awards, music, sports, and community leadership." />
+
+  <!-- Google Fonts: Fraunces (Editorial Academic Serif) & Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=JetBrains+Mono:wght@500;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="index.css" />
+</head>
+<body data-sister="both">
+
+  <!-- Edit Mode Top Notification Banner -->
+  <div class="edit-banner" id="edit-mode-banner">
+    ✨ <strong>Interactive Edit Mode Active:</strong> Click any highlighted text to edit directly, or click on Nudee / Nadia's portrait to upload your own photos. All changes auto-save in your browser.
+    <button type="button" onclick="resetDefaultData()" style="margin-left: 1rem; text-decoration: underline; color: #ffd98e; font-weight: 700;">Reset to Template</button>
+  </div>
+
+  <!-- Sticky Navigation Bar with Sister Switcher -->
+  <header class="site-header" id="top-nav">
+    <div class="container header-inner">
+      <a href="#hero" class="brand-identity" id="brand-home-link">
+        <div class="school-crest" aria-hidden="true">AS</div>
+        <div class="brand-text">
+          <span class="brand-names">Nudee &amp; Nadia</span>
+          <span class="brand-school">Anglo Singapore International School</span>
+        </div>
+      </a>
+
+      <!-- Sister Portfolio Mode Switcher -->
+      <nav class="sister-switcher" role="tablist" aria-label="Select Sister Portfolio">
+        <button type="button" class="switch-btn active" id="tab-both" data-target="both" onclick="setSisterView('both')">
+          <span class="switch-dot dot-both"></span>
+          <span>Both Sisters</span>
+        </button>
+        <button type="button" class="switch-btn" id="tab-nudee" data-target="nudee" onclick="setSisterView('nudee')">
+          <span class="switch-dot dot-nudee"></span>
+          <span>Nudee (Sec 3)</span>
+        </button>
+        <button type="button" class="switch-btn" id="tab-nadia" data-target="nadia" onclick="setSisterView('nadia')">
+          <span class="switch-dot dot-nadia"></span>
+          <span>Nadia (Sec 1)</span>
+        </button>
+      </nav>
+
+      <!-- Quick Utility Actions -->
+      <div class="header-actions">
+        <button type="button" class="btn btn-outline" id="btn-toggle-edit" onclick="toggleEditMode()">
+          ✎ Customize Text &amp; Photos
+        </button>
+        <button type="button" class="btn btn-primary" id="btn-add-milestone" onclick="openAddModal()">
+          + Add Achievement
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- Hero Section & Sister Overview -->
+    <section class="hero-section" id="hero">
+      <div class="container">
+        <div class="hero-intro">
+          <div class="school-badge">
+            <span>🎓</span>
+            <span>Anglo Singapore International School • Secondary 3 &amp; Secondary 1</span>
+          </div>
+          <h1 class="hero-title">Two Sisters, One Shared Passion for Learning &amp; Discovery</h1>
+          <p class="hero-description">
+            Welcome to the academic and co-curricular portfolio of <strong>Nudee (Sec 3)</strong> and <strong>Nadia (Sec 1)</strong>—celebrating trilingual scholarship, Singapore Mathematics &amp; Science mastery, classical arts, and compassionate community leadership.
+          </p>
+        </div>
+
+        <!-- Dynamic Sister Profile Cards -->
+        <div class="sisters-grid" id="sisters-hero-grid"></div>
+      </div>
+    </section>
+
+    <!-- Section 1: Academic Excellence & Subjects -->
+    <section class="section" id="academics">
+      <div class="container">
+        <div class="section-header">
+          <div>
+            <div class="section-eyebrow">01 • Academic Excellence &amp; Subject Mastery</div>
+            <h2 class="section-title">Singapore-Cambridge Curriculum &amp; Trilingual Fluency</h2>
+          </div>
+          <p class="section-subtitle">
+            Rigorous academic grounding across Mathematics, Pure Sciences, Humanities, and trilingual proficiency in English, Mandarin Chinese, and Thai.
+          </p>
+        </div>
+
+        <div class="academics-grid" id="academics-grid"></div>
+      </div>
+    </section>
+
+    <!-- Section 2: Honours, Olympiads & Certificates -->
+    <section class="section" id="awards">
+      <div class="container">
+        <div class="section-header">
+          <div>
+            <div class="section-eyebrow">02 • Awards, Competitions &amp; Certificates</div>
+            <h2 class="section-title">Academic Olympiads &amp; Distinctions</h2>
+          </div>
+
+          <div class="filter-controls" id="award-filters" role="group" aria-label="Filter awards by category">
+            <button type="button" class="filter-chip active" id="filter-aw-all" onclick="setAwardFilter('all', this)">All Awards</button>
+            <button type="button" class="filter-chip" id="filter-aw-stem" onclick="setAwardFilter('STEM', this)">STEM &amp; Math</button>
+            <button type="button" class="filter-chip" id="filter-aw-academic" onclick="setAwardFilter('Academic', this)">Academic Honours</button>
+            <button type="button" class="filter-chip" id="filter-aw-arts" onclick="setAwardFilter('Arts & Music', this)">Arts &amp; Music</button>
+            <button type="button" class="filter-chip" id="filter-aw-leadership" onclick="setAwardFilter('Leadership', this)">Leadership &amp; MUN</button>
+          </div>
+        </div>
+
+        <div class="cards-grid" id="awards-grid"></div>
+      </div>
+    </section>
+
+    <!-- Section 3: Co-Curricular Activities (CCA), Sports & Music -->
+    <section class="section" id="cca">
+      <div class="container">
+        <div class="section-header">
+          <div>
+            <div class="section-eyebrow">03 • Co-Curricular Activities (CCA), Sports &amp; Music</div>
+            <h2 class="section-title">Holistic Growth Beyond the Classroom</h2>
+          </div>
+          <p class="section-subtitle">
+            Active involvement in student governance, orchestral performance, varsity athletics, and environmental clubs at Anglo Singapore International School.
+          </p>
+        </div>
+
+        <div class="cca-grid" id="cca-grid"></div>
+      </div>
+    </section>
+
+    <!-- Section 4: Projects, Creative Works & Community Service -->
+    <section class="section" id="projects">
+      <div class="container">
+        <div class="section-header">
+          <div>
+            <div class="section-eyebrow">04 • Research Projects, Creative Portfolio &amp; Service</div>
+            <h2 class="section-title">Innovation, Artistry &amp; Community Impact</h2>
+          </div>
+
+          <div class="filter-controls" id="project-filters" role="group" aria-label="Filter projects by category">
+            <button type="button" class="filter-chip active" id="filter-proj-all" onclick="setProjectFilter('all', this)">All Projects</button>
+            <button type="button" class="filter-chip" id="filter-proj-stem" onclick="setProjectFilter('STEM & Research', this)">STEM &amp; Research</button>
+            <button type="button" class="filter-chip" id="filter-proj-service" onclick="setProjectFilter('Community Service', this)">Community Service</button>
+            <button type="button" class="filter-chip" id="filter-proj-arts" onclick="setProjectFilter('Creative Arts', this)">Creative Arts</button>
+          </div>
+        </div>
+
+        <div class="cards-grid" id="projects-grid"></div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Certificate / Project Detail Modal -->
+  <div class="modal-backdrop" id="detail-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-panel" id="detail-modal-body"></div>
+  </div>
+
+  <!-- Add New Achievement / Project Modal -->
+  <div class="modal-backdrop" id="add-modal" role="dialog" aria-modal="true" aria-labelledby="add-modal-title">
+    <div class="modal-panel">
+      <div class="modal-header">
+        <div>
+          <span class="section-eyebrow">Portfolio Builder</span>
+          <h3 id="add-modal-title" style="font-family: var(--font-serif); font-size: 1.45rem;">Add New Award or Project</h3>
+        </div>
+        <button type="button" class="modal-close" id="btn-close-add-modal" onclick="closeAddModal()" aria-label="Close">✕</button>
+      </div>
+
+      <form id="add-achievement-form" onsubmit="handleAddAchievement(event)">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="field-sister">Student</label>
+            <select class="form-select" id="field-sister" name="sister" required>
+              <option value="nudee">Nudee (Secondary 3)</option>
+              <option value="nadia">Nadia (Secondary 1)</option>
+              <option value="both">Both Sisters (Collaboration)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="field-section">Portfolio Section</label>
+            <select class="form-select" id="field-section" name="sectionType" required>
+              <option value="awards">Awards &amp; Competitions</option>
+              <option value="projects">Projects &amp; Community Service</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="field-category">Category</label>
+            <select class="form-select" id="field-category" name="category" required>
+              <option value="STEM">STEM &amp; Math</option>
+              <option value="Academic">Academic Honours</option>
+              <option value="Arts & Music">Arts &amp; Music</option>
+              <option value="Leadership">Leadership &amp; MUN</option>
+              <option value="STEM & Research">STEM &amp; Research</option>
+              <option value="Community Service">Community Service</option>
+              <option value="Creative Arts">Creative Arts</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="field-year">Year</label>
+            <input type="text" class="form-input" id="field-year" name="year" value="2026" required />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="field-title">Title of Award, Competition, or Project</label>
+          <input type="text" class="form-input" id="field-title" name="title" placeholder="e.g., Singapore Math Olympiad / Science Inquiry Project" required />
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="field-result">Result / Distinction Achieved</label>
+            <input type="text" class="form-input" id="field-result" name="result" placeholder="e.g., Gold Award / 1st Place" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="field-issuer">Issuing Body / Department</label>
+            <input type="text" class="form-input" id="field-issuer" name="issuer" placeholder="e.g., Anglo Singapore / SIMCC" />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="field-description">Summary &amp; Impact</label>
+          <textarea class="form-textarea" id="field-description" name="description" rows="3" placeholder="Describe what was accomplished and learned..." required></textarea>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="field-skills">Key Skills Demonstrated</label>
+          <input type="text" class="form-input" id="field-skills" name="skills" placeholder="e.g., Problem Solving, Public Speaking, Violin" />
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1.25rem;">
+          <button type="button" class="btn btn-outline" onclick="closeAddModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="btn-submit-achievement">Save to Portfolio</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div>
+        <div class="brand-names">Nudee (Sec 3) &amp; Nadia (Sec 1) — Student Portfolio</div>
+        <p class="footer-note">Anglo Singapore International School • Academic &amp; Co-Curricular Dossier</p>
+      </div>
+      <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+        <button type="button" class="btn btn-outline" id="btn-print-portfolio" onclick="window.print()">
+          🖨️ Print / Save PDF Dossier
+        </button>
+        <a href="#top-nav" class="btn btn-outline" id="btn-back-to-top">↑ Back to Top</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
