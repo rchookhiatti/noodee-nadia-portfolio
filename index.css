@@ -1,5 +1,5 @@
 /* ==========================================================================
-   Nudee & Nadia — Student Portfolio Design System
+   Noodee & Nadia — Student Portfolio Design System
    Anglo Singapore International School (Sec 3 & Sec 1)
    Theme: Modern Academic & Warm Pastel
    ========================================================================== */
@@ -23,12 +23,12 @@
   --brand-gold: hsl(38, 72%, 52%);
   --brand-gold-soft: hsl(40, 75%, 92%);
 
-  /* Nudee (Sec 3) — Warm Coral & Sage Academic Palette */
-  --nudee-primary: hsl(14, 72%, 56%);
-  --nudee-soft: hsl(16, 80%, 94%);
-  --nudee-border: hsl(15, 60%, 84%);
-  --nudee-secondary: hsl(152, 32%, 40%);
-  --nudee-secondary-soft: hsl(150, 38%, 92%);
+  /* Noodee (Sec 3) — Warm Coral & Sage Academic Palette */
+  --noodee-primary: hsl(14, 72%, 56%);
+  --noodee-soft: hsl(16, 80%, 94%);
+  --noodee-border: hsl(15, 60%, 84%);
+  --noodee-secondary: hsl(152, 32%, 40%);
+  --noodee-secondary-soft: hsl(150, 38%, 92%);
 
   /* Nadia (Sec 1) — Cornflower Sky & Peach Creative Palette */
   --nadia-primary: hsl(212, 68%, 52%);
@@ -64,10 +64,10 @@
 }
 
 /* Sister Active Theme Modifiers */
-body[data-sister="nudee"] {
-  --active-accent: var(--nudee-primary);
-  --active-accent-soft: var(--nudee-soft);
-  --active-border: var(--nudee-border);
+body[data-sister="noodee"] {
+  --active-accent: var(--noodee-primary);
+  --active-accent-soft: var(--noodee-soft);
+  --active-border: var(--noodee-border);
 }
 
 body[data-sister="nadia"] {
@@ -232,7 +232,7 @@ a {
   left: 0;
   right: 0;
   height: 4px;
-  background: linear-gradient(90deg, var(--nudee-primary), var(--brand-gold), var(--nadia-primary));
+  background: linear-gradient(90deg, var(--noodee-primary), var(--brand-gold), var(--nadia-primary));
 }
 
 .brand-text {
@@ -297,8 +297,8 @@ a {
   background: var(--brand-gold);
 }
 
-.dot-nudee {
-  background: var(--nudee-primary);
+.dot-noodee {
+  background: var(--noodee-primary);
 }
 
 .dot-nadia {
@@ -348,9 +348,9 @@ a {
 }
 
 .btn-edit-active {
-  background: var(--nudee-primary) !important;
+  background: var(--noodee-primary) !important;
   color: #fff !important;
-  border-color: var(--nudee-primary) !important;
+  border-color: var(--noodee-primary) !important;
 }
 
 /* ==========================================================================
@@ -431,8 +431,8 @@ a {
   box-shadow: var(--shadow-lg);
 }
 
-.sister-card.card-nudee {
-  border-top: 4px solid var(--nudee-primary);
+.sister-card.card-noodee {
+  border-top: 4px solid var(--noodee-primary);
 }
 
 .sister-card.card-nadia {
@@ -504,9 +504,9 @@ body.edit-mode .avatar-upload-btn {
   margin-bottom: 0.5rem;
 }
 
-.pill-nudee {
-  background: var(--nudee-soft);
-  color: var(--nudee-primary);
+.pill-noodee {
+  background: var(--noodee-soft);
+  color: var(--noodee-primary);
 }
 
 .pill-nadia {
@@ -601,13 +601,13 @@ body.edit-mode .avatar-upload-btn {
   transition: var(--transition-smooth);
 }
 
-.focus-btn-nudee {
-  background: var(--nudee-soft);
-  color: var(--nudee-primary);
+.focus-btn-noodee {
+  background: var(--noodee-soft);
+  color: var(--noodee-primary);
 }
 
-.focus-btn-nudee:hover {
-  background: var(--nudee-primary);
+.focus-btn-noodee:hover {
+  background: var(--noodee-primary);
   color: #fff;
 }
 
@@ -733,8 +733,8 @@ body.edit-mode .avatar-upload-btn {
   transition: width 0.6s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.fill-nudee {
-  background: linear-gradient(90deg, var(--nudee-primary), var(--nudee-secondary));
+.fill-noodee {
+  background: linear-gradient(90deg, var(--noodee-primary), var(--noodee-secondary));
 }
 
 .fill-nadia {
@@ -864,9 +864,9 @@ body.edit-mode .avatar-upload-btn {
   gap: 0.35rem;
 }
 
-.owner-nudee {
-  background: var(--nudee-soft);
-  color: var(--nudee-primary);
+.owner-noodee {
+  background: var(--noodee-soft);
+  color: var(--noodee-primary);
 }
 
 .owner-nadia {

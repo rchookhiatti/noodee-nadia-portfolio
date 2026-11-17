@@ -1,24 +1,24 @@
 /**
- * Nudee & Nadia — Student Portfolio Application Logic
+ * Noodee & Nadia — Student Portfolio Application Logic
  * Anglo Singapore International School (Secondary 3 & Secondary 1)
  */
 
 const DEFAULT_DATA = {
   state: {
-    activeSister: 'both', // 'both' | 'nudee' | 'nadia'
+    activeSister: 'both', // 'both' | 'noodee' | 'nadia'
     awardFilter: 'all',   // 'all' | 'Academic' | 'STEM' | 'Arts & Music' | 'Leadership'
     projectFilter: 'all', // 'all' | 'STEM & Research' | 'Community Service' | 'Creative Arts'
     editMode: false
   },
   sisters: {
-    nudee: {
-      id: 'nudee',
-      name: 'Nudee',
+    noodee: {
+      id: 'noodee',
+      name: 'Noodee',
       level: 'Secondary 3 (Grade 9)',
       curriculum: 'Singapore-Cambridge IGCSE Track',
       tagline: 'STEM Scholar, Analytical Thinker & Student Leader',
-      bio: 'A dedicated Secondary 3 student at Anglo Singapore International School with a deep passion for Additional Mathematics, Biomedical Sciences, and trilingual communication. Nudee thrives on collaborative research, debate, and mentoring younger peers.',
-      avatar: 'assets/nudee.jpg',
+      bio: 'A dedicated Secondary 3 student at Anglo Singapore International School with a deep passion for Additional Mathematics, Biomedical Sciences, and trilingual communication. Noodee thrives on collaborative research, debate, and mentoring younger peers.',
+      avatar: 'assets/noodee.jpg',
       stats: [
         { value: '4.0 / A*', label: 'Academic GPA' },
         { value: 'HSK 5', label: 'Mandarin Level' },
@@ -119,8 +119,8 @@ const DEFAULT_DATA = {
   awards: [
     {
       id: 'aw-1',
-      sister: 'nudee',
-      sisterName: 'Nudee (Sec 3)',
+      sister: 'noodee',
+      sisterName: 'Noodee (Sec 3)',
       year: '2026',
       category: 'STEM',
       title: 'SASMO (Singapore & Asian Schools Math Olympiad)',
@@ -143,8 +143,8 @@ const DEFAULT_DATA = {
     },
     {
       id: 'aw-3',
-      sister: 'nudee',
-      sisterName: 'Nudee (Sec 3)',
+      sister: 'noodee',
+      sisterName: 'Noodee (Sec 3)',
       year: '2026',
       category: 'Academic',
       title: 'VANDA International Science Competition',
@@ -167,8 +167,8 @@ const DEFAULT_DATA = {
     },
     {
       id: 'aw-5',
-      sister: 'nudee',
-      sisterName: 'Nudee (Sec 3)',
+      sister: 'noodee',
+      sisterName: 'Noodee (Sec 3)',
       year: '2025',
       category: 'Leadership',
       title: 'Bangkok International Schools Model United Nations (BISMUN)',
@@ -193,8 +193,8 @@ const DEFAULT_DATA = {
   ccas: [
     {
       id: 'cca-1',
-      sister: 'nudee',
-      sisterName: 'Nudee (Sec 3)',
+      sister: 'noodee',
+      sisterName: 'Noodee (Sec 3)',
       icon: '🏛️',
       role: 'Vice President & Senior Mentor',
       title: 'Student Council & Peer Tutoring Society',
@@ -213,8 +213,8 @@ const DEFAULT_DATA = {
     },
     {
       id: 'cca-3',
-      sister: 'nudee',
-      sisterName: 'Nudee (Sec 3)',
+      sister: 'noodee',
+      sisterName: 'Noodee (Sec 3)',
       icon: '🏸',
       role: 'U-15 Girls Doubles Squad',
       title: 'Varsity Badminton Team',
@@ -236,19 +236,19 @@ const DEFAULT_DATA = {
     {
       id: 'proj-1',
       sister: 'both',
-      sisterName: 'Nudee & Nadia (Sister Collaboration)',
+      sisterName: 'Noodee & Nadia (Sister Collaboration)',
       year: '2026',
       category: 'Community Service',
       title: '“Read & Spark” Bilingual STEM Picture Books for Rural Schools',
       result: '350+ Books Donated across 4 Provinces',
       issuer: 'Community Service & Literacy Initiative',
-      description: 'A joint sister initiative where Nudee wrote accessible science stories in English and Thai while Nadia illustrated every chapter. Together they raised funds to print and donate 350 copies to rural primary libraries.',
+      description: 'A joint sister initiative where Noodee wrote accessible science stories in English and Thai while Nadia illustrated every chapter. Together they raised funds to print and donate 350 copies to rural primary libraries.',
       skills: 'Bilingual Storytelling, Book Illustration, Community Fundraising'
     },
     {
       id: 'proj-2',
-      sister: 'nudee',
-      sisterName: 'Nudee (Sec 3)',
+      sister: 'noodee',
+      sisterName: 'Noodee (Sec 3)',
       year: '2026',
       category: 'STEM & Research',
       title: 'Biodegradable Packaging Film from Mango Peel Pectin',
@@ -271,8 +271,8 @@ const DEFAULT_DATA = {
     },
     {
       id: 'proj-4',
-      sister: 'nudee',
-      sisterName: 'Nudee (Sec 3)',
+      sister: 'noodee',
+      sisterName: 'Noodee (Sec 3)',
       year: '2025',
       category: 'STEM & Research',
       title: 'Smart Classroom Air Quality & CO2 Alert Dashboard',
@@ -289,7 +289,7 @@ let appData = loadPortfolioData();
 
 function loadPortfolioData() {
   try {
-    const saved = localStorage.getItem('nudee_nadia_portfolio_v1');
+    const saved = localStorage.getItem('noodee_nadia_portfolio_v1');
     if (saved) {
       const parsed = JSON.parse(saved);
       return {
@@ -306,7 +306,7 @@ function loadPortfolioData() {
 
 function savePortfolioData() {
   try {
-    localStorage.setItem('nudee_nadia_portfolio_v1', JSON.stringify({
+    localStorage.setItem('noodee_nadia_portfolio_v1', JSON.stringify({
       sisters: appData.sisters,
       awards: appData.awards,
       ccas: appData.ccas,
@@ -339,13 +339,13 @@ function renderHeroCards() {
   const editable = appData.state.editMode ? 'contenteditable="true"' : '';
 
   const list = active === 'both'
-    ? [appData.sisters.nudee, appData.sisters.nadia]
+    ? [appData.sisters.noodee, appData.sisters.nadia]
     : [appData.sisters[active]];
 
   container.className = `sisters-grid ${list.length === 1 ? 'single-focus' : ''}`;
 
   container.innerHTML = list.map(s => {
-    const isNudee = s.id === 'nudee';
+    const isNoodee = s.id === 'noodee';
     const otherSisterLabel = active === s.id
       ? 'Show Both Sisters'
       : `Explore ${s.name}'s Full Portfolio →`;
@@ -407,7 +407,7 @@ function renderAcademics() {
   const editable = appData.state.editMode ? 'contenteditable="true"' : '';
 
   const list = active === 'both'
-    ? [appData.sisters.nudee, appData.sisters.nadia]
+    ? [appData.sisters.noodee, appData.sisters.nadia]
     : [appData.sisters[active]];
 
   container.className = `academics-grid ${list.length === 1 ? 'single-focus' : ''}`;
@@ -643,9 +643,9 @@ function handleAddAchievement(event) {
   const sectionType = form.sectionType.value; // 'awards' or 'projects'
   const sister = form.sister.value;
   const sisterMap = {
-    nudee: 'Nudee (Sec 3)',
+    noodee: 'Noodee (Sec 3)',
     nadia: 'Nadia (Sec 1)',
-    both: 'Nudee & Nadia (Sister Collaboration)'
+    both: 'Noodee & Nadia (Sister Collaboration)'
   };
 
   const newEntry = {
@@ -723,7 +723,7 @@ function handleAvatarUpload(sisterId, event) {
 
 function resetDefaultData() {
   if (confirm('Reset all portfolio text and custom items back to the original Anglo Singapore template?')) {
-    localStorage.removeItem('nudee_nadia_portfolio_v1');
+    localStorage.removeItem('noodee_nadia_portfolio_v1');
     appData = JSON.parse(JSON.stringify(DEFAULT_DATA));
     document.body.classList.remove('edit-mode');
     setSisterView('both');
