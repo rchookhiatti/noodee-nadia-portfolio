@@ -136,7 +136,7 @@ a {
 }
 
 .section {
-  padding: 4.5rem 0;
+  padding: 4rem 0;
 }
 
 .section-header {
@@ -145,7 +145,7 @@ a {
   justify-content: space-between;
   align-items: flex-end;
   gap: 1.5rem;
-  margin-bottom: 2.5rem;
+  margin-bottom: 2.25rem;
   padding-bottom: 1.25rem;
   border-bottom: 1px solid var(--border-subtle);
 }
@@ -184,7 +184,7 @@ a {
   position: sticky;
   top: 0;
   z-index: 100;
-  background: hsla(38, 45%, 97%, 0.86);
+  background: hsla(38, 45%, 97%, 0.88);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border-bottom: 1px solid var(--border-subtle);
@@ -354,16 +354,99 @@ a {
 }
 
 /* ==========================================================================
+   Global Year Sourcing & Timeline Filter Bar
+   ========================================================================== */
+.year-sourcing-bar {
+  background: var(--surface-card);
+  border-bottom: 1px solid var(--border-subtle);
+  padding: 0.9rem 0;
+  box-shadow: var(--shadow-sm);
+}
+
+.year-bar-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.year-bar-label {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.year-bar-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  align-items: center;
+}
+
+.year-chip {
+  padding: 0.38rem 0.9rem;
+  border-radius: var(--radius-pill);
+  font-size: 0.8rem;
+  font-weight: 600;
+  background: var(--surface-subtle);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+  transition: var(--transition-smooth);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.year-chip:hover {
+  border-color: var(--text-primary);
+  color: var(--text-primary);
+}
+
+.year-chip.active {
+  background: var(--brand-navy);
+  color: var(--text-inverse);
+  border-color: var(--brand-navy);
+}
+
+.year-count {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  padding: 0.08rem 0.4rem;
+  border-radius: var(--radius-pill);
+  background: hsla(0, 0%, 100%, 0.18);
+}
+
+.year-chip:not(.active) .year-count {
+  background: var(--border-subtle);
+  color: var(--text-primary);
+}
+
+.year-sort-select {
+  padding: 0.38rem 0.8rem;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--border-strong);
+  background: var(--bg-primary);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  cursor: pointer;
+}
+
+/* ==========================================================================
    Hero Section & Dual Sister Showcase
    ========================================================================== */
 .hero-section {
-  padding: 3.5rem 0 2.5rem;
+  padding: 3rem 0 2.25rem;
 }
 
 .hero-intro {
   text-align: center;
   max-width: 780px;
-  margin: 0 auto 3rem;
+  margin: 0 auto 2.75rem;
 }
 
 .school-badge {
@@ -377,22 +460,22 @@ a {
   font-size: 0.8rem;
   font-weight: 600;
   color: var(--text-secondary);
-  margin-bottom: 1.25rem;
+  margin-bottom: 1.15rem;
   box-shadow: var(--shadow-sm);
 }
 
 .hero-title {
   font-family: var(--font-serif);
-  font-size: clamp(2.2rem, 4.5vw, 3.35rem);
+  font-size: clamp(2.1rem, 4.2vw, 3.2rem);
   font-weight: 600;
   letter-spacing: -0.025em;
   line-height: 1.15;
   color: var(--text-primary);
-  margin-bottom: 1rem;
+  margin-bottom: 0.9rem;
 }
 
 .hero-description {
-  font-size: 1.08rem;
+  font-size: 1.05rem;
   color: var(--text-secondary);
   max-width: 640px;
   margin: 0 auto;
@@ -882,8 +965,12 @@ body.edit-mode .avatar-upload-btn {
 .year-badge {
   font-family: var(--font-mono);
   font-size: 0.76rem;
-  color: var(--text-muted);
-  font-weight: 600;
+  color: var(--brand-navy);
+  background: var(--surface-subtle);
+  padding: 0.18rem 0.55rem;
+  border-radius: 6px;
+  font-weight: 700;
+  border: 1px solid var(--border-subtle);
 }
 
 .card-category {
@@ -907,8 +994,38 @@ body.edit-mode .avatar-upload-btn {
 .card-desc {
   font-size: 0.9rem;
   color: var(--text-secondary);
-  margin-bottom: 1.25rem;
+  margin-bottom: 1rem;
   line-height: 1.6;
+}
+
+/* Card Attachment Preview Thumbnails */
+.card-attachment-preview {
+  margin-bottom: 1rem;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  border: 1px solid var(--border-subtle);
+  background: var(--surface-subtle);
+  position: relative;
+}
+
+.card-attachment-preview img {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+}
+
+.card-pdf-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.65rem 0.9rem;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--brand-navy);
+  margin-bottom: 1rem;
 }
 
 .card-bottom {
@@ -1032,13 +1149,13 @@ body.edit-mode .avatar-upload-btn {
   background: var(--surface-card);
   border-radius: var(--radius-lg);
   border: 1px solid var(--border-subtle);
-  max-width: 600px;
+  max-width: 660px;
   width: 100%;
   padding: 2.25rem;
   box-shadow: var(--shadow-lg);
   transform: translateY(12px) scale(0.98);
   transition: var(--transition-smooth);
-  max-height: 90vh;
+  max-height: 92vh;
   overflow-y: auto;
 }
 
@@ -1104,6 +1221,27 @@ body.edit-mode .avatar-upload-btn {
   margin-bottom: 0.75rem;
 }
 
+.cert-attachment-viewer {
+  margin: 1.25rem 0;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  border: 1px solid var(--border-strong);
+  background: #fff;
+}
+
+.cert-attachment-viewer img {
+  width: 100%;
+  max-height: 440px;
+  object-fit: contain;
+  margin: 0 auto;
+}
+
+.cert-attachment-viewer iframe {
+  width: 100%;
+  height: 420px;
+  border: none;
+}
+
 .cert-meta-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -1125,6 +1263,13 @@ body.edit-mode .avatar-upload-btn {
   font-size: 0.82rem;
   font-weight: 700;
   color: var(--text-primary);
+  margin-bottom: 0.35rem;
+}
+
+.form-hint {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--text-muted);
   margin-bottom: 0.4rem;
 }
 
@@ -1149,6 +1294,35 @@ body.edit-mode .avatar-upload-btn {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 1rem;
+}
+
+.file-dropzone {
+  border: 2px dashed var(--border-strong);
+  border-radius: var(--radius-md);
+  padding: 1.15rem;
+  text-align: center;
+  background: var(--bg-primary);
+  cursor: pointer;
+  transition: var(--transition-smooth);
+  display: block;
+}
+
+.file-dropzone:hover {
+  border-color: var(--brand-navy);
+  background: var(--surface-subtle);
+}
+
+.file-preview-pill {
+  margin-top: 0.6rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.8rem;
+  border-radius: var(--radius-pill);
+  background: var(--brand-gold-soft);
+  color: var(--brand-navy);
+  font-size: 0.78rem;
+  font-weight: 700;
 }
 
 /* Edit Mode Indicators */
@@ -1201,7 +1375,7 @@ body.edit-mode .edit-banner {
    Print Stylesheet (Clean Academic Dossier)
    ========================================================================== */
 @media print {
-  .site-header, .filter-controls, .header-actions, .sister-card-footer, .edit-banner {
+  .site-header, .filter-controls, .header-actions, .sister-card-footer, .edit-banner, .year-sourcing-bar {
     display: none !important;
   }
   body {
