@@ -17,8 +17,8 @@
 
   <!-- Edit Mode Top Notification Banner -->
   <div class="edit-banner" id="edit-mode-banner">
-    ✨ <strong>Interactive Edit Mode Active:</strong> Click any highlighted text to edit directly, or click on Noodee / Nadia's portrait to upload your own photos. All changes auto-save in your browser.
-    <button type="button" onclick="resetDefaultData()" style="margin-left: 1rem; text-decoration: underline; color: #ffd98e; font-weight: 700;">Reset to Template</button>
+    ✨ <strong>Interactive Edit Mode Active:</strong> Click any highlighted text to edit directly, or click on Noodee / Nadia's portrait to upload your own photos. Changes auto-save in your browser's IndexedDB. Click <strong>"☁️ Save to GitHub"</strong> to publish permanently across all devices!
+    <button type="button" onclick="resetDefaultData()" style="margin-left: 1rem; text-decoration: underline; color: #ffd98e; font-weight: 700;">Reset Local Edits</button>
   </div>
 
   <!-- Sticky Navigation Bar with Sister Switcher -->
@@ -52,6 +52,9 @@
       <div class="header-actions">
         <button type="button" class="btn btn-outline" id="btn-toggle-edit" onclick="toggleEditMode()">
           ✎ Customize Text &amp; Photos
+        </button>
+        <button type="button" class="btn btn-outline" id="btn-github-sync" onclick="openGitHubSyncModal()" title="Publish photos, PDFs, and text directly to GitHub so every computer sees your updates">
+          ☁️ Save to GitHub
         </button>
         <button type="button" class="btn btn-primary" id="btn-add-milestone" onclick="openAddModal()">
           + Add Achievement
@@ -171,6 +174,57 @@
     <div class="modal-panel" id="detail-modal-body"></div>
   </div>
 
+  <!-- Cloud Sync to GitHub Modal -->
+  <div class="modal-backdrop" id="github-sync-modal" role="dialog" aria-modal="true" aria-labelledby="github-sync-title">
+    <div class="modal-panel">
+      <div class="modal-header">
+        <div>
+          <span class="section-eyebrow">Permanent Cloud Storage</span>
+          <h3 id="github-sync-title" style="font-family: var(--font-serif); font-size: 1.45rem;">☁️ Publish Changes Directly to GitHub</h3>
+        </div>
+        <button type="button" class="modal-close" onclick="closeGitHubSyncModal()" aria-label="Close">✕</button>
+      </div>
+
+      <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 1.15rem;">
+        Your edits, profile photos, and PDF certificates are already saved in this computer's high-capacity <strong>IndexedDB</strong>. To publish them permanently to <strong><code>rchookhiatti/noodee-nadia-portfolio</code></strong> so that any computer or phone sees the exact same photos and documents:
+      </p>
+
+      <div style="background: var(--surface-subtle); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); padding: 1rem; margin-bottom: 1.25rem; font-size: 0.82rem; color: var(--text-secondary);">
+        <strong style="color: var(--text-primary); display: block; margin-bottom: 0.35rem;">How to get your 1-time GitHub Token (takes 30 seconds):</strong>
+        1. Open <a href="https://github.com/settings/tokens/new?scopes=repo&description=Noodee+Nadia+Portfolio+Web+Upload" target="_blank" rel="noopener noreferrer" style="color: var(--active-accent); text-decoration: underline; font-weight: 700;">GitHub Token Generator ↗</a> (logged in as <code>rchookhiatti</code>)<br/>
+        2. Ensure the <strong><code>repo</code></strong> checkbox is ticked, scroll down, and click <strong>Generate token</strong>.<br/>
+        3. Copy the <code>ghp_...</code> token and paste it below.
+      </div>
+
+      <form onsubmit="handlePublishToGitHub(event)">
+        <div class="form-group">
+          <label class="form-label" for="field-github-token">GitHub Personal Access Token</label>
+          <input
+            type="password"
+            class="form-input"
+            id="field-github-token"
+            placeholder="ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+            required
+          />
+        </div>
+
+        <div class="form-group" style="display: flex; align-items: center; gap: 0.5rem;">
+          <input type="checkbox" id="field-remember-token" checked style="width: 16px; height: 16px; accent-color: var(--brand-navy);" />
+          <label for="field-remember-token" style="font-size: 0.84rem; color: var(--text-secondary); cursor: pointer;">
+            Remember token on this browser for 1-click publishing next time
+          </label>
+        </div>
+
+        <div id="github-sync-status" style="margin-bottom: 1rem;"></div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 0.75rem;">
+          <button type="button" class="btn btn-outline" onclick="closeGitHubSyncModal()">Close</button>
+          <button type="submit" class="btn btn-primary" id="btn-confirm-github-sync">☁️ Publish All Changes to GitHub Now</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <!-- Add New Achievement / Project Modal -->
   <div class="modal-backdrop" id="add-modal" role="dialog" aria-modal="true" aria-labelledby="add-modal-title">
     <div class="modal-panel">
@@ -264,7 +318,7 @@
               Click to Choose Certificate Photo or .PDF File
             </div>
             <div style="font-size: 0.76rem; color: var(--text-muted);">
-              Images are automatically optimized; PDFs up to 3.5 MB render directly inside the Certificate Viewer
+              Stored in high-capacity IndexedDB (supports PDFs up to 25 MB) &amp; syncs directly to GitHub
             </div>
             <input
               type="file"
@@ -309,6 +363,9 @@
         <p class="footer-note">Anglo Singapore International School • Academic &amp; Co-Curricular Dossier</p>
       </div>
       <div style="display: flex; gap: 0.65rem; flex-wrap: wrap;">
+        <button type="button" class="btn btn-outline" id="btn-footer-github-sync" onclick="openGitHubSyncModal()">
+          ☁️ Save to GitHub
+        </button>
         <button type="button" class="btn btn-outline" id="btn-export-backup" onclick="exportPortfolioBackup()" title="Download all portfolio data and certificates as a backup file">
           💾 Export Backup (.json)
         </button>

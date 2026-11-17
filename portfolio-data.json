@@ -1,0 +1,334 @@
+{
+  "sisters": {
+    "noodee": {
+      "id": "noodee",
+      "name": "Noodee",
+      "level": "Secondary 3 (Grade 9)",
+      "curriculum": "Singapore-Cambridge IGCSE Track",
+      "tagline": "STEM Scholar, Analytical Thinker & Student Leader",
+      "bio": "A dedicated Secondary 3 student at Anglo Singapore International School with a deep passion for Additional Mathematics, Biomedical Sciences, and trilingual communication. Noodee thrives on collaborative research, debate, and mentoring younger peers.",
+      "avatar": "assets/noodee.jpg",
+      "stats": [
+        { "value": "4.0 / A*", "label": "Academic GPA" },
+        { "value": "HSK 5", "label": "Mandarin Level" },
+        { "value": "14+", "label": "Honors & Awards" }
+      ],
+      "interests": [
+        "Additional Mathematics",
+        "Biomedical Chemistry",
+        "Model United Nations",
+        "Robotics & Python",
+        "Badminton Varsity"
+      ],
+      "subjects": [
+        {
+          "name": "Additional & Extended Mathematics",
+          "grade": "A* (96%)",
+          "percent": 96,
+          "note": "Top 5% of cohort; Singapore Math Olympiad Senior Division representative."
+        },
+        {
+          "name": "Pure Sciences (Physics, Chemistry & Biology)",
+          "grade": "A* (94%)",
+          "percent": 94,
+          "note": "Lead student researcher in Sustainable Bioplastics & Water Filtration lab."
+        },
+        {
+          "name": "First Language English & World Literature",
+          "grade": "A (91%)",
+          "percent": 91,
+          "note": "Varsity Debater and Editor for the Secondary School Chronicle."
+        },
+        {
+          "name": "Computer Science & Algorithmic Thinking",
+          "grade": "A* (95%)",
+          "percent": 95,
+          "note": "Proficient in Python data analysis and autonomous sensor programming."
+        }
+      ],
+      "languages": [
+        { "name": "English", "level": "C1/C2 Fluent (First Language)" },
+        { "name": "Mandarin Chinese", "level": "HSK 5 (Advanced Distinction)" },
+        { "name": "Thai", "level": "Native Proficiency" }
+      ]
+    },
+    "nadia": {
+      "id": "nadia",
+      "name": "Nadia",
+      "level": "Secondary 1 (Grade 7)",
+      "curriculum": "Lower Secondary Singapore Honours Track",
+      "tagline": "Young Violinist, Creative Problem Solver & Eco Innovator",
+      "bio": "An enthusiastic and curious Secondary 1 student at Anglo Singapore International School who blends strong foundations in Singapore Mathematics with classical violin performance, digital illustration, and environmental stewardship.",
+      "avatar": "assets/nadia.jpg",
+      "stats": [
+        { "value": "Distinction", "label": "Honour Roll" },
+        { "value": "ABRSM G6", "label": "Violin & Theory" },
+        { "value": "10+", "label": "Medals & Awards" }
+      ],
+      "interests": [
+        "Classical Violin",
+        "Singapore Math Olympiad",
+        "Digital Illustration",
+        "Environmental Club",
+        "Competitive Swimming"
+      ],
+      "subjects": [
+        {
+          "name": "Lower Secondary Singapore Mathematics",
+          "grade": "A* (95%)",
+          "percent": 95,
+          "note": "SASMO Gold Medalist; excels in heuristic problem solving and number theory."
+        },
+        {
+          "name": "Integrated Inquiry Science",
+          "grade": "A (92%)",
+          "percent": 92,
+          "note": "Designed a solar-powered classroom micro-garden for the Annual Science Fair."
+        },
+        {
+          "name": "English Language & Creative Writing",
+          "grade": "A* (93%)",
+          "percent": 93,
+          "note": "1st Runner-Up in Lower Secondary Storytelling & Poetry Anthology."
+        },
+        {
+          "name": "Visual Arts & Music Performance",
+          "grade": "A* (97%)",
+          "percent": 97,
+          "note": "First Violin section in the Anglo Singapore String Ensemble."
+        }
+      ],
+      "languages": [
+        { "name": "English", "level": "Fluent Academic Proficiency" },
+        { "name": "Mandarin Chinese", "level": "HSK 4 (Merit Scholar)" },
+        { "name": "Thai", "level": "Native Proficiency" }
+      ]
+    }
+  },
+  "awards": [
+    {
+      "id": "aw-1",
+      "sister": "noodee",
+      "sisterName": "Noodee (Sec 3)",
+      "year": "2026",
+      "category": "STEM & Math",
+      "title": "SASMO (Singapore & Asian Schools Math Olympiad)",
+      "result": "Gold Award — Top 8% Globally",
+      "issuer": "Singapore International Mastery Contests Centre (SIMCC)",
+      "description": "Achieved Gold standing in the Secondary 3 division, demonstrating advanced algebraic reasoning, combinatorics, and non-routine problem-solving skills.",
+      "skills": "Combinatorics, Number Theory, Deductive Proof",
+      "attachmentData": null,
+      "attachmentType": null,
+      "attachmentName": null,
+      "externalLink": ""
+    },
+    {
+      "id": "aw-2",
+      "sister": "nadia",
+      "sisterName": "Nadia (Sec 1)",
+      "year": "2026",
+      "category": "STEM & Math",
+      "title": "SASMO Lower Secondary Mathematics Olympiad",
+      "result": "Silver Award — Distinction",
+      "issuer": "Singapore International Mastery Contests Centre (SIMCC)",
+      "description": "Recognized among top Secondary 1 performers in her first year transitioning from Primary to Lower Secondary competitive mathematics.",
+      "skills": "Heuristic Modeling, Spatial Geometry, Logic Puzzles",
+      "attachmentData": null,
+      "attachmentType": null,
+      "attachmentName": null,
+      "externalLink": ""
+    },
+    {
+      "id": "aw-3",
+      "sister": "noodee",
+      "sisterName": "Noodee (Sec 3)",
+      "year": "2026",
+      "category": "Academic Honours",
+      "title": "VANDA International Science Competition",
+      "result": "Gold Medal — National Honor Roll",
+      "issuer": "VANDA Global Science Committee",
+      "description": "Awarded Gold for analytical application of Chemistry and Cellular Biology concepts to real-world environmental challenges.",
+      "skills": "Experimental Design, Organic Chemistry, Data Interpretation",
+      "attachmentData": null,
+      "attachmentType": null,
+      "attachmentName": null,
+      "externalLink": ""
+    },
+    {
+      "id": "aw-4",
+      "sister": "nadia",
+      "sisterName": "Nadia (Sec 1)",
+      "year": "2026",
+      "category": "Arts & Music",
+      "title": "ABRSM Grade 6 Violin Practical Assessment",
+      "result": "Passed with Distinction (136/150)",
+      "issuer": "Associated Board of the Royal Schools of Music (ABRSM)",
+      "description": "Performed Baroque, Classical, and 20th-century repertoire with commendation from examiners for tonal warmth and expressive phrasing.",
+      "skills": "Solo Performance, Sight-Reading, Musicality",
+      "attachmentData": null,
+      "attachmentType": null,
+      "attachmentName": null,
+      "externalLink": ""
+    },
+    {
+      "id": "aw-5",
+      "sister": "noodee",
+      "sisterName": "Noodee (Sec 3)",
+      "year": "2025",
+      "category": "Leadership & MUN",
+      "title": "Bangkok International Schools Model United Nations (BISMUN)",
+      "result": "Best Delegate Commendation — UNEP Committee",
+      "issuer": "Anglo Singapore & Partner International Schools",
+      "description": "Authored the primary resolution on transboundary plastic waste reduction in ASEAN waterways and led coalition consensus building.",
+      "skills": "Public Speaking, Policy Drafting, Diplomacy",
+      "attachmentData": null,
+      "attachmentType": null,
+      "attachmentName": null,
+      "externalLink": ""
+    },
+    {
+      "id": "aw-6",
+      "sister": "nadia",
+      "sisterName": "Nadia (Sec 1)",
+      "year": "2025",
+      "category": "Academic Honours",
+      "title": "Anglo Singapore Principal’s Academic Honour Roll",
+      "result": "Overall Academic Excellence — Term 1 & 2",
+      "issuer": "Anglo Singapore International School",
+      "description": "Maintained above 90% average across Mathematics, Science, English, and Mandarin during her transition into Secondary 1.",
+      "skills": "Bilingual Mastery, Consistent Academic Rigor",
+      "attachmentData": null,
+      "attachmentType": null,
+      "attachmentName": null,
+      "externalLink": ""
+    },
+    {
+      "id": "aw-7",
+      "sister": "noodee",
+      "sisterName": "Noodee (Sec 3)",
+      "year": "2024",
+      "category": "Languages & HSK",
+      "title": "HSK Level 5 Chinese Proficiency Test",
+      "result": "Distinction (278 / 300 Points)",
+      "issuer": "Chinese Testing International (CTI)",
+      "description": "Passed HSK Level 5 with high distinction, demonstrating advanced reading comprehension, essay writing, and oral fluency in Mandarin.",
+      "skills": "Mandarin Chinese, Translation, Cross-Cultural Communication",
+      "attachmentData": null,
+      "attachmentType": null,
+      "attachmentName": null,
+      "externalLink": ""
+    }
+  ],
+  "ccas": [
+    {
+      "id": "cca-1",
+      "sister": "noodee",
+      "sisterName": "Noodee (Sec 3)",
+      "year": "2026",
+      "icon": "🏛️",
+      "role": "Vice President & Senior Mentor",
+      "title": "Student Council & Peer Tutoring Society",
+      "detail": "Organizes school-wide cultural days, leads orientation for incoming Secondary 1 students, and coordinates weekly Math & Science peer study clinics.",
+      "schedule": "2024 – 2026 • 4 hrs/week"
+    },
+    {
+      "id": "cca-2",
+      "sister": "nadia",
+      "sisterName": "Nadia (Sec 1)",
+      "year": "2026",
+      "icon": "🎻",
+      "role": "First Violin Section",
+      "title": "Anglo Singapore Chamber String Ensemble",
+      "detail": "Performs at annual Speech Day concerts, festive showcases, and charity music recitals across Bangkok campuses.",
+      "schedule": "2025 – 2026 • 3.5 hrs/week"
+    },
+    {
+      "id": "cca-3",
+      "sister": "noodee",
+      "sisterName": "Noodee (Sec 3)",
+      "year": "2025",
+      "icon": "🏸",
+      "role": "U-15 Girls Doubles Squad",
+      "title": "Varsity Badminton Team",
+      "detail": "Competes in inter-international school friendly tournaments, fostering discipline, agility, and court strategy.",
+      "schedule": "2024 – 2026 • 3 hrs/week"
+    },
+    {
+      "id": "cca-4",
+      "sister": "nadia",
+      "sisterName": "Nadia (Sec 1)",
+      "year": "2025",
+      "icon": "🌱",
+      "role": "Junior Eco-Ambassador",
+      "title": "Green Campus & Sustainability Club",
+      "detail": "Designs bilingual visual campaigns for zero-waste lunches and tracks paper recycling metrics across Lower Secondary homerooms.",
+      "schedule": "2025 – 2026 • 2.5 hrs/week"
+    }
+  ],
+  "projects": [
+    {
+      "id": "proj-1",
+      "sister": "both",
+      "sisterName": "Noodee & Nadia (Sister Collaboration)",
+      "year": "2026",
+      "category": "Community Service",
+      "title": "“Read & Spark” Bilingual STEM Picture Books for Rural Schools",
+      "result": "350+ Books Donated across 4 Provinces",
+      "issuer": "Community Service & Literacy Initiative",
+      "description": "A joint sister initiative where Noodee wrote accessible science stories in English and Thai while Nadia illustrated every chapter. Together they raised funds to print and donate 350 copies to rural primary libraries.",
+      "skills": "Bilingual Storytelling, Book Illustration, Community Fundraising",
+      "attachmentData": null,
+      "attachmentType": null,
+      "attachmentName": null,
+      "externalLink": ""
+    },
+    {
+      "id": "proj-2",
+      "sister": "noodee",
+      "sisterName": "Noodee (Sec 3)",
+      "year": "2026",
+      "category": "STEM & Research",
+      "title": "Biodegradable Packaging Film from Mango Peel Pectin",
+      "result": "1st Place — Upper Secondary Science Symposium",
+      "issuer": "Anglo Singapore Science Department",
+      "description": "Investigated tensile strength and soil decomposition rates of pectin-based bioplastics extracted from agricultural fruit waste as an eco-friendly alternative to single-use LDPE wraps.",
+      "skills": "Polymer Chemistry, Statistical Analysis, Lab Protocol",
+      "attachmentData": null,
+      "attachmentType": null,
+      "attachmentName": null,
+      "externalLink": ""
+    },
+    {
+      "id": "proj-3",
+      "sister": "nadia",
+      "sisterName": "Nadia (Sec 1)",
+      "year": "2026",
+      "category": "Creative Arts",
+      "title": "“Voices of the Chao Phraya” Digital Art & Acoustic Series",
+      "result": "Featured in Annual School Arts Exhibition",
+      "issuer": "Visual & Performing Arts Showcase",
+      "description": "A multimedia portfolio combining 6 digital watercolor illustrations of Bangkok river heritage paired with an original solo violin arrangement recorded in the school auditorium.",
+      "skills": "Procreate Digital Painting, Audio Recording, Cultural Research",
+      "attachmentData": null,
+      "attachmentType": null,
+      "attachmentName": null,
+      "externalLink": ""
+    },
+    {
+      "id": "proj-4",
+      "sister": "noodee",
+      "sisterName": "Noodee (Sec 3)",
+      "year": "2025",
+      "category": "STEM & Research",
+      "title": "Smart Classroom Air Quality & CO2 Alert Dashboard",
+      "result": "Distinction — STEM Maker Fair",
+      "issuer": "Computer Science & Robotics Club",
+      "description": "Built an IoT sensor node using Python and microcontrollers to monitor PM2.5 and CO2 levels in classrooms, alerting teachers when ventilation is needed to keep students alert.",
+      "skills": "Python, IoT Sensors, Data Visualization",
+      "attachmentData": null,
+      "attachmentType": null,
+      "attachmentName": null,
+      "externalLink": ""
+    }
+  ]
+}

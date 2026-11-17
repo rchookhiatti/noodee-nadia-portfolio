@@ -1,12 +1,21 @@
 /**
  * Noodee & Nadia — Student Portfolio Application Logic
  * Anglo Singapore International School (Secondary 3 & Secondary 1)
- * Supports:
- * - Image & PDF Certificate Uploads (with client-side compression & preview)
- * - Open-ended Custom Categories (Dynamic category filter tabs)
- * - Global Year Sourcing & Chronological Sorting
- * - JSON Backup Export / Import
+ *
+ * Persistence Architecture:
+ * 1. IndexedDB ('NoodeeNadiaPortfolioDB') — High-capacity browser storage (hundreds of MBs for photos & PDFs)
+ * 2. Cloud Sync ('portfolio-data.json' + 'assets/uploads/' on GitHub) — Direct browser-to-GitHub publishing
+ *    so changes made on any computer are permanently saved to GitHub Pages for all visitors worldwide.
  */
+
+const GITHUB_REPO_OWNER = 'rchookhiatti';
+const GITHUB_REPO_NAME = 'noodee-nadia-portfolio';
+const GITHUB_BRANCH = 'main';
+
+const IDB_NAME = 'NoodeeNadiaPortfolioDB';
+const IDB_VERSION = 1;
+const IDB_STORE = 'portfolioStore';
+const IDB_KEY = 'mainData';
 
 const DEFAULT_DATA = {
   state: {
@@ -351,44 +360,332 @@ const DEFAULT_DATA = {
   ]
 };
 
-// Pending attachment state during modal form creation
 let pendingAttachment = {
   data: null,
-  type: null, // 'image' | 'pdf'
+  type: null,
   name: null
 };
 
-// Load state from localStorage or fall back to DEFAULT_DATA
-let appData = loadPortfolioData();
+let appData = JSON.parse(JSON.stringify(DEFAULT_DATA));
+let hasUnsyncedChanges = false;
 
-function loadPortfolioData() {
-  try {
-    const saved = localStorage.getItem('noodee_nadia_portfolio_v2');
-    if (saved) {
-      const parsed = JSON.parse(saved);
-      return {
-        ...DEFAULT_DATA,
-        ...parsed,
-        state: { ...DEFAULT_DATA.state }
-      };
+/* ==========================================================================
+   IndexedDB High-Capacity Storage Engine (Supports large PDFs & Photos)
+   ========================================================================== */
+
+function openIDB() {
+  return new Promise((resolve, reject) => {
+    if (!window.indexedDB) {
+      reject(new Error('IndexedDB not supported'));
+      return;
     }
-  } catch (e) {
-    console.warn('Could not read localStorage, using defaults.', e);
-  }
-  return JSON.parse(JSON.stringify(DEFAULT_DATA));
+    const request = indexedDB.open(IDB_NAME, IDB_VERSION);
+    request.onupgradeneeded = (e) => {
+      const db = e.target.result;
+      if (!db.objectStoreNames.contains(IDB_STORE)) {
+        db.createObjectStore(IDB_STORE);
+      }
+    };
+    request.onsuccess = (e) => resolve(e.target.result);
+    request.onerror = (e) => reject(e.target.error);
+  });
 }
 
-function savePortfolioData() {
+async function readFromIDB() {
   try {
-    localStorage.setItem('noodee_nadia_portfolio_v2', JSON.stringify({
+    const db = await openIDB();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(IDB_STORE, 'readonly');
+      const store = tx.objectStore(IDB_STORE);
+      const req = store.get(IDB_KEY);
+      req.onsuccess = () => resolve(req.result || null);
+      req.onerror = () => reject(req.error);
+    });
+  } catch (e) {
+    console.warn('IDB read fallback to localStorage:', e);
+    return null;
+  }
+}
+
+async function writeToIDB(payload) {
+  try {
+    const db = await openIDB();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(IDB_STORE, 'readwrite');
+      const store = tx.objectStore(IDB_STORE);
+      const req = store.put(payload, IDB_KEY);
+      req.onsuccess = () => resolve(true);
+      req.onerror = () => reject(req.error);
+    });
+  } catch (e) {
+    console.warn('IDB write error:', e);
+    return false;
+  }
+}
+
+async function clearIDB() {
+  try {
+    const db = await openIDB();
+    return new Promise((resolve) => {
+      const tx = db.transaction(IDB_STORE, 'readwrite');
+      tx.objectStore(IDB_STORE).delete(IDB_KEY);
+      tx.oncomplete = () => resolve(true);
+    });
+  } catch (e) {
+    return false;
+  }
+}
+
+async function initializePortfolioData() {
+  // 1. Fetch latest published data from GitHub Pages (portfolio-data.json)
+  let remoteData = null;
+  try {
+    const res = await fetch(`portfolio-data.json?t=${Date.now()}`, { cache: 'no-store' });
+    if (res.ok) {
+      remoteData = await res.json();
+    }
+  } catch (e) {
+    console.info('Running offline or local file mode.');
+  }
+
+  // 2. Check IndexedDB (or legacy localStorage) for local edits on this computer
+  let localData = await readFromIDB();
+  if (!localData) {
+    try {
+      const legacy = localStorage.getItem('noodee_nadia_portfolio_v2');
+      if (legacy) {
+        localData = JSON.parse(legacy);
+        await writeToIDB(localData);
+      }
+    } catch (e) {}
+  }
+
+  // Choose the most recent version
+  if (localData && remoteData) {
+    const localTime = localData.updatedAt || 0;
+    const remoteTime = remoteData.updatedAt || 0;
+    const chosen = localTime >= remoteTime ? localData : remoteData;
+    appData = { ...DEFAULT_DATA, ...chosen, state: { ...DEFAULT_DATA.state } };
+  } else if (localData) {
+    appData = { ...DEFAULT_DATA, ...localData, state: { ...DEFAULT_DATA.state } };
+  } else if (remoteData) {
+    appData = { ...DEFAULT_DATA, ...remoteData, state: { ...DEFAULT_DATA.state } };
+  }
+
+  renderAll();
+}
+
+async function savePortfolioData() {
+  const payload = {
+    updatedAt: Date.now(),
+    sisters: appData.sisters,
+    awards: appData.awards,
+    ccas: appData.ccas,
+    projects: appData.projects
+  };
+
+  await writeToIDB(payload);
+
+  // Also keep a lightweight copy in localStorage if it fits
+  try {
+    localStorage.setItem('noodee_nadia_portfolio_v2', JSON.stringify(payload));
+  } catch (e) {
+    // Expected when large PDFs are stored in IndexedDB
+  }
+
+  hasUnsyncedChanges = true;
+  updateSyncButtonBadge();
+}
+
+function updateSyncButtonBadge() {
+  const btn = document.getElementById('btn-github-sync');
+  if (!btn) return;
+  if (hasUnsyncedChanges) {
+    btn.innerHTML = '☁️ Save to GitHub ●';
+    btn.style.borderColor = 'var(--noodee-primary)';
+  } else {
+    btn.innerHTML = '☁️ Save to GitHub';
+    btn.style.borderColor = '';
+  }
+}
+
+/* ==========================================================================
+   Direct Browser-to-GitHub Cloud Publishing (Works from ANY Computer)
+   ========================================================================== */
+
+function openGitHubSyncModal() {
+  const savedToken = localStorage.getItem('github_pat_noodee_nadia') || '';
+  const tokenInput = document.getElementById('field-github-token');
+  if (tokenInput && savedToken) {
+    tokenInput.value = savedToken;
+  }
+  const statusBox = document.getElementById('github-sync-status');
+  if (statusBox) {
+    statusBox.innerHTML = '';
+  }
+  document.getElementById('github-sync-modal').classList.add('open');
+}
+
+function closeGitHubSyncModal() {
+  document.getElementById('github-sync-modal').classList.remove('open');
+}
+
+function utf8ToBase64(str) {
+  return btoa(unescape(encodeURIComponent(str)));
+}
+
+function dataUrlToBase64Content(dataUrl) {
+  const commaIdx = dataUrl.indexOf(',');
+  return commaIdx !== -1 ? dataUrl.slice(commaIdx + 1) : dataUrl;
+}
+
+async function uploadFileToGitHubRepo(token, filePath, base64Content, commitMessage) {
+  const apiUrl = `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}/contents/${filePath}`;
+  let existingSha = null;
+
+  // Check if file already exists to get its SHA
+  const getRes = await fetch(`${apiUrl}?ref=${GITHUB_BRANCH}`, {
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Accept': 'application/vnd.github+json'
+    }
+  });
+
+  if (getRes.ok) {
+    const fileInfo = await getRes.json();
+    existingSha = fileInfo.sha;
+  }
+
+  const bodyObj = {
+    message: commitMessage,
+    content: base64Content,
+    branch: GITHUB_BRANCH
+  };
+  if (existingSha) {
+    bodyObj.sha = existingSha;
+  }
+
+  const putRes = await fetch(apiUrl, {
+    method: 'PUT',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Accept': 'application/vnd.github+json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(bodyObj)
+  });
+
+  if (!putRes.ok) {
+    const errData = await putRes.json().catch(() => ({}));
+    throw new Error(errData.message || `GitHub API Error (${putRes.status})`);
+  }
+
+  return await putRes.json();
+}
+
+async function handlePublishToGitHub(event) {
+  event.preventDefault();
+  const tokenInput = document.getElementById('field-github-token');
+  const rememberCheck = document.getElementById('field-remember-token');
+  const statusBox = document.getElementById('github-sync-status');
+  const submitBtn = document.getElementById('btn-confirm-github-sync');
+
+  const token = (tokenInput.value || '').trim();
+  if (!token) {
+    alert('Please enter your GitHub Personal Access Token.');
+    return;
+  }
+
+  if (rememberCheck && rememberCheck.checked) {
+    localStorage.setItem('github_pat_noodee_nadia', token);
+  } else {
+    localStorage.removeItem('github_pat_noodee_nadia');
+  }
+
+  submitBtn.disabled = true;
+  submitBtn.innerText = '⏳ Uploading to GitHub...';
+  statusBox.innerHTML = `<div style="padding:0.75rem; background:var(--surface-subtle); border-radius:8px; font-size:0.84rem; color:var(--text-primary);">Uploading profile photos, PDFs, and portfolio data directly to <strong>${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}</strong>...</div>`;
+
+  try {
+    // 1. If either sister's avatar is a newly uploaded data:image URL, upload it as a real file in assets/uploads/
+    for (const sisterKey of ['noodee', 'nadia']) {
+      const s = appData.sisters[sisterKey];
+      if (s && s.avatar && s.avatar.startsWith('data:image/')) {
+        const filePath = `assets/uploads/avatar-${sisterKey}.jpg`;
+        statusBox.innerHTML = `<div style="padding:0.75rem; background:var(--surface-subtle); border-radius:8px; font-size:0.84rem;">Uploading ${s.name}'s profile photo to GitHub (<code>${filePath}</code>)...</div>`;
+        await uploadFileToGitHubRepo(
+          token,
+          filePath,
+          dataUrlToBase64Content(s.avatar),
+          `Update ${s.name} profile photo via web portfolio`
+        );
+        s.avatar = `${filePath}?v=${Date.now()}`;
+      }
+    }
+
+    // 2. If any award or project has a data:image or data:application/pdf attachment, upload it as a real file in assets/uploads/
+    const collections = [
+      { key: 'awards', list: appData.awards },
+      { key: 'projects', list: appData.projects }
+    ];
+
+    for (const col of collections) {
+      for (const item of col.list) {
+        if (item.attachmentData && item.attachmentData.startsWith('data:')) {
+          const ext = item.attachmentType === 'pdf' ? 'pdf' : 'jpg';
+          const safeId = String(item.id).replace(/[^a-zA-Z0-9_-]/g, '');
+          const filePath = `assets/uploads/cert-${safeId}.${ext}`;
+          statusBox.innerHTML = `<div style="padding:0.75rem; background:var(--surface-subtle); border-radius:8px; font-size:0.84rem;">Uploading certificate for <strong>${item.title}</strong> to GitHub (<code>${filePath}</code>)...</div>`;
+          await uploadFileToGitHubRepo(
+            token,
+            filePath,
+            dataUrlToBase64Content(item.attachmentData),
+            `Upload certificate (${ext.toUpperCase()}) for ${item.title}`
+          );
+          // Point attachmentData to the permanent repository file URL
+          item.attachmentData = filePath;
+        }
+      }
+    }
+
+    // 3. Upload the complete portfolio-data.json file
+    const payload = {
+      updatedAt: Date.now(),
       sisters: appData.sisters,
       awards: appData.awards,
       ccas: appData.ccas,
       projects: appData.projects
-    }));
-  } catch (e) {
-    alert('Storage limit reached in browser! Consider using smaller PDF/Image files or linking via Google Drive URL.');
-    console.warn('Could not save to localStorage.', e);
+    };
+
+    statusBox.innerHTML = `<div style="padding:0.75rem; background:var(--surface-subtle); border-radius:8px; font-size:0.84rem;">Saving master <code>portfolio-data.json</code> to GitHub...</div>`;
+    await uploadFileToGitHubRepo(
+      token,
+      'portfolio-data.json',
+      utf8ToBase64(JSON.stringify(payload, null, 2)),
+      'Update portfolio data via web interface'
+    );
+
+    await writeToIDB(payload);
+    hasUnsyncedChanges = false;
+    updateSyncButtonBadge();
+    renderAll();
+
+    statusBox.innerHTML = `
+      <div style="padding:0.9rem; background:hsl(150, 45%, 93%); border:1px solid hsl(152, 40%, 72%); border-radius:8px; font-size:0.85rem; color:hsl(152, 55%, 22%);">
+        ✅ <strong>Successfully published to GitHub!</strong><br/>
+        All photos, PDF certificates, and text are now permanently stored in your GitHub repository. GitHub Pages will refresh worldwide within 30–60 seconds.
+      </div>
+    `;
+  } catch (err) {
+    statusBox.innerHTML = `
+      <div style="padding:0.9rem; background:hsl(0, 70%, 95%); border:1px solid hsl(0, 60%, 80%); border-radius:8px; font-size:0.85rem; color:hsl(0, 65%, 35%);">
+        ❌ <strong>Publish failed:</strong> ${err.message}<br/>
+        Please check that your GitHub Token has <code>repo</code> or <code>Contents: Read &amp; write</code> permission for <code>${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}</code>.
+      </div>
+    `;
+  } finally {
+    submitBtn.disabled = false;
+    submitBtn.innerText = '☁️ Publish All Changes to GitHub Now';
   }
 }
 
@@ -471,7 +768,6 @@ function renderDynamicCategoryChips(collectionKey, containerId, activeFilterKey,
   const categories = Array.from(new Set(items.map(i => (i.category || '').trim()).filter(Boolean)));
   const currentActive = appData.state[activeFilterKey];
 
-  // Reset to 'all' if the active category no longer exists
   if (currentActive !== 'all' && !categories.includes(currentActive)) {
     appData.state[activeFilterKey] = 'all';
   }
@@ -495,8 +791,6 @@ function renderDynamicCategoryChips(collectionKey, containerId, activeFilterKey,
   });
 
   container.innerHTML = html;
-
-  // Also update datalist in the Add Achievement modal so custom categories autocomplete
   updateCategoryDatalist();
 }
 
@@ -940,14 +1234,13 @@ function closeAddModal() {
   document.getElementById('add-modal').classList.remove('open');
 }
 
-/* Compress image client-side so multiple certificates fit cleanly in localStorage */
 function compressImageFile(file, callback) {
   const reader = new FileReader();
   reader.onload = function(e) {
     const img = new Image();
     img.onload = function() {
       const canvas = document.createElement('canvas');
-      const MAX_WIDTH = 1200;
+      const MAX_WIDTH = 1400;
       let width = img.width;
       let height = img.height;
       if (width > MAX_WIDTH) {
@@ -958,7 +1251,7 @@ function compressImageFile(file, callback) {
       canvas.height = height;
       const ctx = canvas.getContext('2d');
       ctx.drawImage(img, 0, 0, width, height);
-      const dataUrl = canvas.toDataURL('image/jpeg', 0.82);
+      const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
       callback(dataUrl);
     };
     img.src = e.target.result;
@@ -972,8 +1265,8 @@ function handleCertificateFileSelect(event) {
   if (!file) return;
 
   if (file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf')) {
-    if (file.size > 3.5 * 1024 * 1024) {
-      alert('PDF file is larger than 3.5 MB. For large PDFs, please paste a Google Drive link in the External Link field below, or choose a smaller PDF.');
+    if (file.size > 25 * 1024 * 1024) {
+      alert('PDF file is larger than 25 MB. Please choose a PDF under 25 MB or paste a Google Drive link.');
       event.target.value = '';
       return;
     }
@@ -985,7 +1278,7 @@ function handleCertificateFileSelect(event) {
         name: file.name
       };
       if (statusEl) {
-        statusEl.innerHTML = `<span class="file-preview-pill">📄 Ready to attach: ${file.name}</span>`;
+        statusEl.innerHTML = `<span class="file-preview-pill">📄 PDF Ready: ${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)</span>`;
       }
     };
     reader.readAsDataURL(file);
@@ -997,7 +1290,7 @@ function handleCertificateFileSelect(event) {
         name: file.name
       };
       if (statusEl) {
-        statusEl.innerHTML = `<span class="file-preview-pill">🖼️ Image ready: ${file.name}</span>`;
+        statusEl.innerHTML = `<span class="file-preview-pill">🖼️ Image Ready: ${file.name}</span>`;
       }
     });
   } else {
@@ -1013,44 +1306,44 @@ function attachFileToExistingItem(itemId, collectionKey, event) {
   if (!item) return;
 
   if (file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf')) {
-    if (file.size > 3.5 * 1024 * 1024) {
-      alert('PDF file is larger than 3.5 MB. Please use a compressed PDF or paste a Google Drive link.');
+    if (file.size > 25 * 1024 * 1024) {
+      alert('PDF file is larger than 25 MB.');
       return;
     }
     const reader = new FileReader();
-    reader.onload = function(e) {
+    reader.onload = async function(e) {
       item.attachmentData = e.target.result;
       item.attachmentType = 'pdf';
       item.attachmentName = file.name;
-      savePortfolioData();
+      await savePortfolioData();
       renderAll();
       openCertificateModal(itemId, collectionKey);
     };
     reader.readAsDataURL(file);
   } else if (file.type.startsWith('image/')) {
-    compressImageFile(file, (compressedDataUrl) => {
+    compressImageFile(file, async (compressedDataUrl) => {
       item.attachmentData = compressedDataUrl;
       item.attachmentType = 'image';
       item.attachmentName = file.name;
-      savePortfolioData();
+      await savePortfolioData();
       renderAll();
       openCertificateModal(itemId, collectionKey);
     });
   }
 }
 
-function deletePortfolioItem(itemId, collectionKey) {
+async function deletePortfolioItem(itemId, collectionKey) {
   if (!confirm('Remove this item from the portfolio?')) return;
   appData[collectionKey] = (appData[collectionKey] || []).filter(x => x.id !== itemId);
-  savePortfolioData();
+  await savePortfolioData();
   closeDetailModal();
   renderAll();
 }
 
-function handleAddAchievement(event) {
+async function handleAddAchievement(event) {
   event.preventDefault();
   const form = event.target;
-  const sectionType = form.sectionType.value; // 'awards' or 'projects'
+  const sectionType = form.sectionType.value;
   const sister = form.sister.value;
   const sisterMap = {
     noodee: 'Noodee (Sec 3)',
@@ -1083,7 +1376,7 @@ function handleAddAchievement(event) {
     appData.projects.unshift(newEntry);
   }
 
-  savePortfolioData();
+  await savePortfolioData();
   form.reset();
   pendingAttachment = { data: null, type: null, name: null };
   closeAddModal();
@@ -1091,7 +1384,7 @@ function handleAddAchievement(event) {
 }
 
 /* Inline Editing & Custom Avatar Upload */
-function toggleEditMode() {
+async function toggleEditMode() {
   appData.state.editMode = !appData.state.editMode;
   document.body.classList.toggle('edit-mode', appData.state.editMode);
 
@@ -1102,7 +1395,7 @@ function toggleEditMode() {
   } else {
     btn.classList.remove('btn-edit-active');
     btn.innerHTML = '✎ Customize Text & Photos';
-    savePortfolioData();
+    await savePortfolioData();
   }
   renderAll();
 }
@@ -1128,9 +1421,9 @@ function updateSubject(sisterId, idx, field, value) {
 function handleAvatarUpload(sisterId, event) {
   const file = event.target.files?.[0];
   if (!file) return;
-  compressImageFile(file, (compressedDataUrl) => {
+  compressImageFile(file, async (compressedDataUrl) => {
     appData.sisters[sisterId].avatar = compressedDataUrl;
-    savePortfolioData();
+    await savePortfolioData();
     renderHeroCards();
   });
 }
@@ -1138,6 +1431,7 @@ function handleAvatarUpload(sisterId, event) {
 /* Export / Import Portfolio Data Backup */
 function exportPortfolioBackup() {
   const dataStr = JSON.stringify({
+    updatedAt: Date.now(),
     sisters: appData.sisters,
     awards: appData.awards,
     ccas: appData.ccas,
@@ -1156,7 +1450,7 @@ function importPortfolioBackup(event) {
   const file = event.target.files?.[0];
   if (!file) return;
   const reader = new FileReader();
-  reader.onload = function(e) {
+  reader.onload = async function(e) {
     try {
       const imported = JSON.parse(e.target.result);
       if (imported.sisters && imported.awards) {
@@ -1164,9 +1458,9 @@ function importPortfolioBackup(event) {
         appData.awards = imported.awards;
         appData.ccas = imported.ccas || appData.ccas;
         appData.projects = imported.projects || appData.projects;
-        savePortfolioData();
+        await savePortfolioData();
         renderAll();
-        alert('Portfolio backup restored successfully!');
+        alert('Portfolio backup restored to this computer! Click "☁️ Save to GitHub" if you want to publish it to GitHub Pages.');
       } else {
         alert('Invalid backup file format.');
       }
@@ -1177,18 +1471,20 @@ function importPortfolioBackup(event) {
   reader.readAsText(file);
 }
 
-function resetDefaultData() {
-  if (confirm('Reset all portfolio text and custom items back to the original Anglo Singapore template?')) {
+async function resetDefaultData() {
+  if (confirm('Reset local changes on this browser back to the published template?')) {
+    await clearIDB();
     localStorage.removeItem('noodee_nadia_portfolio_v2');
     appData = JSON.parse(JSON.stringify(DEFAULT_DATA));
     document.body.classList.remove('edit-mode');
-    setSisterView('both');
+    hasUnsyncedChanges = false;
+    updateSyncButtonBadge();
+    await initializePortfolioData();
   }
 }
 
-// Initialize on DOM load
 document.addEventListener('DOMContentLoaded', () => {
-  renderAll();
+  initializePortfolioData();
 
   document.querySelectorAll('.modal-backdrop').forEach(backdrop => {
     backdrop.addEventListener('click', (e) => {
