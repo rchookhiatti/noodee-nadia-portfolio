@@ -539,12 +539,13 @@ function dataUrlToBase64Content(dataUrl) {
   return commaIdx !== -1 ? dataUrl.slice(commaIdx + 1) : dataUrl;
 }
 
-async function uploadFileToGitHubRepo(token, filePath, base64Content, commitMessage) {
+async function uploadFileToGitHubRepo(token, filePath, base64Content, commitMessage, retryCount = 0) {
   const apiUrl = `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}/contents/${filePath}`;
   let existingSha = null;
 
-  // Check if file already exists to get its SHA
-  const getRes = await fetch(`${apiUrl}?ref=${GITHUB_BRANCH}`, {
+  // Check if file already exists to get its latest SHA (with cache-busting so browser never uses a stale SHA)
+  const getRes = await fetch(`${apiUrl}?ref=${GITHUB_BRANCH}&_t=${Date.now()}`, {
+    cache: 'no-store',
     headers: {
       'Authorization': `Bearer ${token}`,
       'Accept': 'application/vnd.github+json'
@@ -567,6 +568,7 @@ async function uploadFileToGitHubRepo(token, filePath, base64Content, commitMess
 
   const putRes = await fetch(apiUrl, {
     method: 'PUT',
+    cache: 'no-store',
     headers: {
       'Authorization': `Bearer ${token}`,
       'Accept': 'application/vnd.github+json',
@@ -577,6 +579,11 @@ async function uploadFileToGitHubRepo(token, filePath, base64Content, commitMess
 
   if (!putRes.ok) {
     const errData = await putRes.json().catch(() => ({}));
+    // If GitHub returns 409 Conflict (stale SHA after previous commit), wait 800ms and retry automatically
+    if (putRes.status === 409 && retryCount < 3) {
+      await new Promise(r => setTimeout(r, 800));
+      return uploadFileToGitHubRepo(token, filePath, base64Content, commitMessage, retryCount + 1);
+    }
     throw new Error(errData.message || `GitHub API Error (${putRes.status})`);
   }
 
