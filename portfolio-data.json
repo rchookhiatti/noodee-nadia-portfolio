@@ -1,4 +1,5 @@
 {
+  "updatedAt": 1794906482469,
   "sisters": {
     "noodee": {
       "id": "noodee",
@@ -7,11 +8,20 @@
       "curriculum": "Singapore-Cambridge IGCSE Track",
       "tagline": "STEM Scholar, Analytical Thinker & Student Leader",
       "bio": "A dedicated Secondary 3 student at Anglo Singapore International School with a deep passion for Additional Mathematics, Biomedical Sciences, and trilingual communication. Noodee thrives on collaborative research, debate, and mentoring younger peers.",
-      "avatar": "assets/noodee.jpg",
+      "avatar": "assets/uploads/avatar-noodee.jpg?v=1794906479019",
       "stats": [
-        { "value": "4.0 / A*", "label": "Academic GPA" },
-        { "value": "HSK 5", "label": "Mandarin Level" },
-        { "value": "14+", "label": "Honors & Awards" }
+        {
+          "value": "4.0 / A*",
+          "label": "Academic GPA"
+        },
+        {
+          "value": "HSK 5",
+          "label": "Mandarin Level"
+        },
+        {
+          "value": "14+",
+          "label": "Honors & Awards"
+        }
       ],
       "interests": [
         "Additional Mathematics",
@@ -47,9 +57,18 @@
         }
       ],
       "languages": [
-        { "name": "English", "level": "C1/C2 Fluent (First Language)" },
-        { "name": "Mandarin Chinese", "level": "HSK 5 (Advanced Distinction)" },
-        { "name": "Thai", "level": "Native Proficiency" }
+        {
+          "name": "English",
+          "level": "C1/C2 Fluent (First Language)"
+        },
+        {
+          "name": "Mandarin Chinese",
+          "level": "HSK 5 (Advanced Distinction)"
+        },
+        {
+          "name": "Thai",
+          "level": "Native Proficiency"
+        }
       ]
     },
     "nadia": {
@@ -59,11 +78,20 @@
       "curriculum": "Lower Secondary Singapore Honours Track",
       "tagline": "Young Violinist, Creative Problem Solver & Eco Innovator",
       "bio": "An enthusiastic and curious Secondary 1 student at Anglo Singapore International School who blends strong foundations in Singapore Mathematics with classical violin performance, digital illustration, and environmental stewardship.",
-      "avatar": "assets/nadia.jpg",
+      "avatar": "assets/uploads/avatar-nadia.jpg?v=1794906482469",
       "stats": [
-        { "value": "Distinction", "label": "Honour Roll" },
-        { "value": "ABRSM G6", "label": "Violin & Theory" },
-        { "value": "10+", "label": "Medals & Awards" }
+        {
+          "value": "Distinction",
+          "label": "Honour Roll"
+        },
+        {
+          "value": "ABRSM G6",
+          "label": "Violin & Theory"
+        },
+        {
+          "value": "10+",
+          "label": "Medals & Awards"
+        }
       ],
       "interests": [
         "Classical Violin",
@@ -99,9 +127,18 @@
         }
       ],
       "languages": [
-        { "name": "English", "level": "Fluent Academic Proficiency" },
-        { "name": "Mandarin Chinese", "level": "HSK 4 (Merit Scholar)" },
-        { "name": "Thai", "level": "Native Proficiency" }
+        {
+          "name": "English",
+          "level": "Fluent Academic Proficiency"
+        },
+        {
+          "name": "Mandarin Chinese",
+          "level": "HSK 4 (Merit Scholar)"
+        },
+        {
+          "name": "Thai",
+          "level": "Native Proficiency"
+        }
       ]
     }
   },
