@@ -1,5 +1,5 @@
 {
-  "updatedAt": 1794906482469,
+  "updatedAt": 1794969996631,
   "sisters": {
     "noodee": {
       "id": "noodee",
@@ -8,7 +8,7 @@
       "curriculum": "Singapore-Cambridge IGCSE Track",
       "tagline": "STEM Scholar, Analytical Thinker & Student Leader",
       "bio": "A dedicated Secondary 3 student at Anglo Singapore International School with a deep passion for Additional Mathematics, Biomedical Sciences, and trilingual communication. Noodee thrives on collaborative research, debate, and mentoring younger peers.",
-      "avatar": "assets/uploads/avatar-noodee.jpg?v=1794906479019",
+      "avatar": "assets/uploads/avatar-noodee.jpg?v=1794969986555",
       "stats": [
         {
           "value": "4.0 / A*",
@@ -78,7 +78,7 @@
       "curriculum": "Lower Secondary Singapore Honours Track",
       "tagline": "Young Violinist, Creative Problem Solver & Eco Innovator",
       "bio": "An enthusiastic and curious Secondary 1 student at Anglo Singapore International School who blends strong foundations in Singapore Mathematics with classical violin performance, digital illustration, and environmental stewardship.",
-      "avatar": "assets/uploads/avatar-nadia.jpg?v=1794906482469",
+      "avatar": "assets/uploads/avatar-nadia.jpg?v=1794969990725",
       "stats": [
         {
           "value": "Distinction",
@@ -144,6 +144,38 @@
   },
   "awards": [
     {
+      "id": "custom-1794969978725",
+      "sister": "noodee",
+      "sisterName": "Noodee (Sec 3)",
+      "year": "2025",
+      "category": "Science",
+      "title": "Second Prize - Secondary 1 Science Group Project",
+      "result": "2nd Place",
+      "issuer": "Anglo Singapore",
+      "description": "for outstanding work and attaining, Second Prize - Secondary 1 Science Group Project.",
+      "skills": "Innovative",
+      "attachmentData": "assets/uploads/cert-custom-1794969978725.jpg",
+      "attachmentType": "image",
+      "attachmentName": "2025-Science Second Prize.jpg",
+      "externalLink": ""
+    },
+    {
+      "id": "custom-1794969784931",
+      "sister": "noodee",
+      "sisterName": "Noodee (Sec 3)",
+      "year": "2025",
+      "category": "Debate",
+      "title": "Certificate of Participation",
+      "result": "Volunteer Runner",
+      "issuer": "Asia World Schools Debating Chamionship",
+      "description": "for an outstanding performance in the 7th ASIA World Schools Debating Championship",
+      "skills": "Coordinator",
+      "attachmentData": "assets/uploads/cert-custom-1794969784931.jpg",
+      "attachmentType": "image",
+      "attachmentName": "2025-Debate.jpg",
+      "externalLink": ""
+    },
+    {
       "id": "aw-1",
       "sister": "noodee",
       "sisterName": "Noodee (Sec 3)",
@@ -170,22 +202,6 @@
       "issuer": "Singapore International Mastery Contests Centre (SIMCC)",
       "description": "Recognized among top Secondary 1 performers in her first year transitioning from Primary to Lower Secondary competitive mathematics.",
       "skills": "Heuristic Modeling, Spatial Geometry, Logic Puzzles",
-      "attachmentData": null,
-      "attachmentType": null,
-      "attachmentName": null,
-      "externalLink": ""
-    },
-    {
-      "id": "aw-3",
-      "sister": "noodee",
-      "sisterName": "Noodee (Sec 3)",
-      "year": "2026",
-      "category": "Academic Honours",
-      "title": "VANDA International Science Competition",
-      "result": "Gold Medal — National Honor Roll",
-      "issuer": "VANDA Global Science Committee",
-      "description": "Awarded Gold for analytical application of Chemistry and Cellular Biology concepts to real-world environmental challenges.",
-      "skills": "Experimental Design, Organic Chemistry, Data Interpretation",
       "attachmentData": null,
       "attachmentType": null,
       "attachmentName": null,
