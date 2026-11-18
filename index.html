@@ -17,7 +17,7 @@
 
   <!-- Edit Mode Top Notification Banner -->
   <div class="edit-banner" id="edit-mode-banner">
-    ✨ <strong>Interactive Edit Mode Active:</strong> Click any highlighted text to edit directly, or click on Noodee / Nadia's portrait to upload your own photos. Changes auto-save in your browser's IndexedDB. Click <strong>"☁️ Save to GitHub"</strong> to publish permanently across all devices!
+    ✨ <strong>Interactive Edit Mode Active:</strong> You can now click any section title (01–04) to rename it, click <strong>"👁️ Hide Section"</strong> to hide an entire section, add/remove subjects, or edit/delete any card. Click <strong>"☁️ Save to GitHub"</strong> when done!
     <button type="button" onclick="resetDefaultData()" style="margin-left: 1rem; text-decoration: underline; color: #ffd98e; font-weight: 700;">Reset Local Edits</button>
   </div>
 
@@ -56,7 +56,7 @@
         <button type="button" class="btn btn-outline" id="btn-github-sync" onclick="openGitHubSyncModal()" title="Publish photos, PDFs, and text directly to GitHub so every computer sees your updates">
           ☁️ Save to GitHub
         </button>
-        <button type="button" class="btn btn-primary" id="btn-add-milestone" onclick="openAddModal()">
+        <button type="button" class="btn btn-primary" id="btn-add-milestone" onclick="openAddModal('awards')">
           + Add Achievement
         </button>
       </div>
@@ -105,12 +105,15 @@
       <div class="container">
         <div class="section-header">
           <div>
-            <div class="section-eyebrow">01 • Academic Excellence &amp; Subject Mastery</div>
-            <h2 class="section-title">Singapore-Cambridge Curriculum &amp; Trilingual Fluency</h2>
+            <div class="section-eyebrow" id="sec-eyebrow-academics" onblur="updateSectionHeader('academics', 'eyebrow', this.innerText)">01 • Academic Excellence &amp; Subject Mastery</div>
+            <h2 class="section-title" id="sec-title-academics" onblur="updateSectionHeader('academics', 'title', this.innerText)">Singapore-Cambridge Curriculum &amp; Trilingual Fluency</h2>
           </div>
-          <p class="section-subtitle">
-            Rigorous academic grounding across Mathematics, Pure Sciences, Humanities, and trilingual proficiency in English, Mandarin Chinese, and Thai.
-          </p>
+          <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 0.65rem;">
+            <p class="section-subtitle" id="sec-sub-academics" onblur="updateSectionHeader('academics', 'subtitle', this.innerText)">
+              Rigorous academic grounding across Mathematics, Pure Sciences, Humanities, and trilingual proficiency in English, Mandarin Chinese, and Thai.
+            </p>
+            <button type="button" class="btn btn-outline" id="btn-vis-academics" style="display:none; font-size:0.78rem;" onclick="toggleSectionVisibility('academics')">👁️ Hide Section</button>
+          </div>
         </div>
 
         <div class="academics-grid" id="academics-grid"></div>
@@ -122,12 +125,18 @@
       <div class="container">
         <div class="section-header">
           <div>
-            <div class="section-eyebrow">02 • Awards, Competitions &amp; Certificates</div>
-            <h2 class="section-title">Academic Olympiads &amp; Distinctions</h2>
+            <div class="section-eyebrow" id="sec-eyebrow-awards" onblur="updateSectionHeader('awards', 'eyebrow', this.innerText)">02 • Awards, Competitions &amp; Certificates</div>
+            <h2 class="section-title" id="sec-title-awards" onblur="updateSectionHeader('awards', 'title', this.innerText)">Academic Olympiads &amp; Distinctions</h2>
           </div>
 
-          <!-- Dynamic Category Filter Chips (auto-populated including custom categories) -->
-          <div class="filter-controls" id="award-filters" role="group" aria-label="Filter awards by category"></div>
+          <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 0.75rem;">
+            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+              <button type="button" class="btn btn-outline" id="btn-vis-awards" style="display:none; font-size:0.78rem;" onclick="toggleSectionVisibility('awards')">👁️ Hide Section</button>
+              <button type="button" class="btn btn-primary" style="font-size: 0.8rem; padding: 0.45rem 0.95rem;" onclick="openAddModal('awards')">+ Add Award / Certificate</button>
+            </div>
+            <!-- Dynamic Category Filter Chips -->
+            <div class="filter-controls" id="award-filters" role="group" aria-label="Filter awards by category"></div>
+          </div>
         </div>
 
         <div class="cards-grid" id="awards-grid"></div>
@@ -139,12 +148,18 @@
       <div class="container">
         <div class="section-header">
           <div>
-            <div class="section-eyebrow">03 • Co-Curricular Activities (CCA), Sports &amp; Music</div>
-            <h2 class="section-title">Holistic Growth Beyond the Classroom</h2>
+            <div class="section-eyebrow" id="sec-eyebrow-cca" onblur="updateSectionHeader('cca', 'eyebrow', this.innerText)">03 • Co-Curricular Activities (CCA), Sports &amp; Music</div>
+            <h2 class="section-title" id="sec-title-cca" onblur="updateSectionHeader('cca', 'title', this.innerText)">Holistic Growth Beyond the Classroom</h2>
           </div>
-          <p class="section-subtitle">
-            Active involvement in student governance, orchestral performance, varsity athletics, and environmental clubs at Anglo Singapore International School.
-          </p>
+          <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 0.65rem;">
+            <p class="section-subtitle" id="sec-sub-cca" onblur="updateSectionHeader('cca', 'subtitle', this.innerText)">
+              Active involvement in student governance, orchestral performance, varsity athletics, and environmental clubs at Anglo Singapore International School.
+            </p>
+            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+              <button type="button" class="btn btn-outline" id="btn-vis-cca" style="display:none; font-size:0.78rem;" onclick="toggleSectionVisibility('cca')">👁️ Hide Section</button>
+              <button type="button" class="btn btn-primary" style="font-size: 0.8rem; padding: 0.45rem 0.95rem;" onclick="openAddModal('ccas')">+ Add CCA Activity</button>
+            </div>
+          </div>
         </div>
 
         <div class="cca-grid" id="cca-grid"></div>
@@ -156,12 +171,18 @@
       <div class="container">
         <div class="section-header">
           <div>
-            <div class="section-eyebrow">04 • Research Projects, Creative Portfolio &amp; Service</div>
-            <h2 class="section-title">Innovation, Artistry &amp; Community Impact</h2>
+            <div class="section-eyebrow" id="sec-eyebrow-projects" onblur="updateSectionHeader('projects', 'eyebrow', this.innerText)">04 • Research Projects, Creative Portfolio &amp; Service</div>
+            <h2 class="section-title" id="sec-title-projects" onblur="updateSectionHeader('projects', 'title', this.innerText)">Innovation, Artistry &amp; Community Impact</h2>
           </div>
 
-          <!-- Dynamic Project Category Filter Chips -->
-          <div class="filter-controls" id="project-filters" role="group" aria-label="Filter projects by category"></div>
+          <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 0.75rem;">
+            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+              <button type="button" class="btn btn-outline" id="btn-vis-projects" style="display:none; font-size:0.78rem;" onclick="toggleSectionVisibility('projects')">👁️ Hide Section</button>
+              <button type="button" class="btn btn-primary" style="font-size: 0.8rem; padding: 0.45rem 0.95rem;" onclick="openAddModal('projects')">+ Add Project / Service</button>
+            </div>
+            <!-- Dynamic Project Category Filter Chips -->
+            <div class="filter-controls" id="project-filters" role="group" aria-label="Filter projects by category"></div>
+          </div>
         </div>
 
         <div class="cards-grid" id="projects-grid"></div>
@@ -225,13 +246,13 @@
     </div>
   </div>
 
-  <!-- Add New Achievement / Project Modal -->
+  <!-- Add / Edit Achievement, CCA, or Project Modal -->
   <div class="modal-backdrop" id="add-modal" role="dialog" aria-modal="true" aria-labelledby="add-modal-title">
     <div class="modal-panel">
       <div class="modal-header">
         <div>
           <span class="section-eyebrow">Portfolio Builder</span>
-          <h3 id="add-modal-title" style="font-family: var(--font-serif); font-size: 1.45rem;">Add New Award, Certificate or Project</h3>
+          <h3 id="add-modal-title" style="font-family: var(--font-serif); font-size: 1.45rem;">Add New Award, CCA Activity, or Project</h3>
         </div>
         <button type="button" class="modal-close" id="btn-close-add-modal" onclick="closeAddModal()" aria-label="Close">✕</button>
       </div>
@@ -247,17 +268,18 @@
             </select>
           </div>
           <div class="form-group">
-            <label class="form-label" for="field-section">Portfolio Section</label>
-            <select class="form-select" id="field-section" name="sectionType" required>
-              <option value="awards">Awards &amp; Certificates</option>
-              <option value="projects">Projects &amp; Community Service</option>
+            <label class="form-label" for="field-section">Portfolio Section (02, 03, or 04)</label>
+            <select class="form-select" id="field-section" name="sectionType" onchange="handleSectionTypeChange(this.value)" required>
+              <option value="awards">02 • Awards &amp; Certificates</option>
+              <option value="ccas">03 • CCA, Sports &amp; Music</option>
+              <option value="projects">04 • Projects &amp; Community Service</option>
             </select>
           </div>
         </div>
 
         <div class="form-row">
           <div class="form-group">
-            <label class="form-label" for="field-category">Category (Open-Ended: Type Any or Select)</label>
+            <label class="form-label" id="label-field-category" for="field-category">Category (Open-Ended: Type Any or Select)</label>
             <span class="form-hint">Type your own custom category or choose from suggestions</span>
             <input
               type="text"
@@ -294,17 +316,17 @@
         </div>
 
         <div class="form-group">
-          <label class="form-label" for="field-title">Title of Award, Competition, or Project</label>
-          <input type="text" class="form-input" id="field-title" name="title" placeholder="e.g., Singapore Math Olympiad / ABRSM Violin / Science Inquiry" required />
+          <label class="form-label" for="field-title">Title of Award, CCA Activity, or Project</label>
+          <input type="text" class="form-input" id="field-title" name="title" placeholder="e.g., Singapore Math Olympiad / Varsity Badminton / Science Inquiry" required />
         </div>
 
         <div class="form-row">
           <div class="form-group">
-            <label class="form-label" for="field-result">Result / Distinction Achieved</label>
+            <label class="form-label" id="label-field-result" for="field-result">Result / Distinction Achieved</label>
             <input type="text" class="form-input" id="field-result" name="result" placeholder="e.g., Gold Award / 1st Place / Distinction" required />
           </div>
           <div class="form-group">
-            <label class="form-label" for="field-issuer">Issuing Body / Organization</label>
+            <label class="form-label" id="label-field-issuer" for="field-issuer">Issuing Body / Organization</label>
             <input type="text" class="form-input" id="field-issuer" name="issuer" placeholder="e.g., Anglo Singapore / SIMCC / ABRSM" />
           </div>
         </div>

@@ -26,6 +26,32 @@ const DEFAULT_DATA = {
     projectFilter: 'all',  // 'all' | any dynamic category string
     editMode: false
   },
+  sectionVisibility: {
+    academics: true,
+    awards: true,
+    cca: true,
+    projects: true
+  },
+  sectionHeaders: {
+    academics: {
+      eyebrow: '01 • Academic Excellence & Subject Mastery',
+      title: 'Singapore-Cambridge Curriculum & Trilingual Fluency',
+      subtitle: 'Rigorous academic grounding across Mathematics, Pure Sciences, Humanities, and trilingual proficiency in English, Mandarin Chinese, and Thai.'
+    },
+    awards: {
+      eyebrow: '02 • Awards, Competitions & Certificates',
+      title: 'Academic Olympiads & Distinctions'
+    },
+    cca: {
+      eyebrow: '03 • Co-Curricular Activities (CCA), Sports & Music',
+      title: 'Holistic Growth Beyond the Classroom',
+      subtitle: 'Active involvement in student governance, orchestral performance, varsity athletics, and environmental clubs at Anglo Singapore International School.'
+    },
+    projects: {
+      eyebrow: '04 • Research Projects, Creative Portfolio & Service',
+      title: 'Innovation, Artistry & Community Impact'
+    }
+  },
   sisters: {
     noodee: {
       id: 'noodee',
@@ -34,7 +60,7 @@ const DEFAULT_DATA = {
       curriculum: 'Singapore-Cambridge IGCSE Track',
       tagline: 'STEM Scholar, Analytical Thinker & Student Leader',
       bio: 'A dedicated Secondary 3 student at Anglo Singapore International School with a deep passion for Additional Mathematics, Biomedical Sciences, and trilingual communication. Noodee thrives on collaborative research, debate, and mentoring younger peers.',
-      avatar: 'assets/noodee.jpg',
+      avatar: 'assets/uploads/avatar-noodee.jpg?v=1794969986555',
       stats: [
         { value: '4.0 / A*', label: 'Academic GPA' },
         { value: 'HSK 5', label: 'Mandarin Level' },
@@ -86,7 +112,7 @@ const DEFAULT_DATA = {
       curriculum: 'Lower Secondary Singapore Honours Track',
       tagline: 'Young Violinist, Creative Problem Solver & Eco Innovator',
       bio: 'An enthusiastic and curious Secondary 1 student at Anglo Singapore International School who blends strong foundations in Singapore Mathematics with classical violin performance, digital illustration, and environmental stewardship.',
-      avatar: 'assets/nadia.jpg',
+      avatar: 'assets/uploads/avatar-nadia.jpg?v=1794969990725',
       stats: [
         { value: 'Distinction', label: 'Honour Roll' },
         { value: 'ABRSM G6', label: 'Violin & Theory' },
@@ -134,19 +160,67 @@ const DEFAULT_DATA = {
   },
   awards: [
     {
-      id: 'aw-1',
+      id: 'custom-1794970263859',
       sister: 'noodee',
       sisterName: 'Noodee (Sec 3)',
-      year: '2026',
-      category: 'STEM & Math',
-      title: 'SASMO (Singapore & Asian Schools Math Olympiad)',
-      result: 'Gold Award — Top 8% Globally',
-      issuer: 'Singapore International Mastery Contests Centre (SIMCC)',
-      description: 'Achieved Gold standing in the Secondary 3 division, demonstrating advanced algebraic reasoning, combinatorics, and non-routine problem-solving skills.',
-      skills: 'Combinatorics, Number Theory, Deductive Proof',
-      attachmentData: null,
-      attachmentType: null,
-      attachmentName: null,
+      year: '2025',
+      category: 'Piano',
+      title: 'Certificate',
+      result: 'Piano Grade 7',
+      issuer: 'Yamaha Music Foundation',
+      description: 'has been successful in Piano Grade 7',
+      skills: 'Piano',
+      attachmentData: 'assets/uploads/cert-custom-1794970263859.jpg',
+      attachmentType: 'image',
+      attachmentName: '2025-Piano Grade7.jpg',
+      externalLink: ''
+    },
+    {
+      id: 'custom-1794970174011',
+      sister: 'noodee',
+      sisterName: 'Noodee (Sec 3)',
+      year: '2025',
+      category: 'Swimming',
+      title: 'Certificate of Training - Sea Survival and Basic Water Life Saving',
+      result: 'Certificate',
+      issuer: 'KIDO Survival Kids Camping',
+      description: 'Has successfully completed 25th Sea Survival and Basic Water Life Saving',
+      skills: 'Kido Camp',
+      attachmentData: 'assets/uploads/cert-custom-1794970174011.jpg',
+      attachmentType: 'image',
+      attachmentName: '2025-Kido Camp.jpg',
+      externalLink: ''
+    },
+    {
+      id: 'custom-1794969978725',
+      sister: 'noodee',
+      sisterName: 'Noodee (Sec 3)',
+      year: '2025',
+      category: 'Science',
+      title: 'Second Prize - Secondary 1 Science Group Project',
+      result: '2nd Place',
+      issuer: 'Anglo Singapore',
+      description: 'for outstanding work and attaining, Second Prize - Secondary 1 Science Group Project.',
+      skills: 'Innovative',
+      attachmentData: 'assets/uploads/cert-custom-1794969978725.jpg',
+      attachmentType: 'image',
+      attachmentName: '2025-Science Second Prize.jpg',
+      externalLink: ''
+    },
+    {
+      id: 'custom-1794969784931',
+      sister: 'noodee',
+      sisterName: 'Noodee (Sec 3)',
+      year: '2025',
+      category: 'Debate',
+      title: 'Certificate of Participation',
+      result: 'Volunteer Runner',
+      issuer: 'Asia World Schools Debating Chamionship',
+      description: 'for an outstanding performance in the 7th ASIA World Schools Debating Championship',
+      skills: 'Coordinator',
+      attachmentData: 'assets/uploads/cert-custom-1794969784931.jpg',
+      attachmentType: 'image',
+      attachmentName: '2025-Debate.jpg',
       externalLink: ''
     },
     {
@@ -166,22 +240,6 @@ const DEFAULT_DATA = {
       externalLink: ''
     },
     {
-      id: 'aw-3',
-      sister: 'noodee',
-      sisterName: 'Noodee (Sec 3)',
-      year: '2026',
-      category: 'Academic Honours',
-      title: 'VANDA International Science Competition',
-      result: 'Gold Medal — National Honor Roll',
-      issuer: 'VANDA Global Science Committee',
-      description: 'Awarded Gold for analytical application of Chemistry and Cellular Biology concepts to real-world environmental challenges.',
-      skills: 'Experimental Design, Organic Chemistry, Data Interpretation',
-      attachmentData: null,
-      attachmentType: null,
-      attachmentName: null,
-      externalLink: ''
-    },
-    {
       id: 'aw-4',
       sister: 'nadia',
       sisterName: 'Nadia (Sec 1)',
@@ -192,22 +250,6 @@ const DEFAULT_DATA = {
       issuer: 'Associated Board of the Royal Schools of Music (ABRSM)',
       description: 'Performed Baroque, Classical, and 20th-century repertoire with commendation from examiners for tonal warmth and expressive phrasing.',
       skills: 'Solo Performance, Sight-Reading, Musicality',
-      attachmentData: null,
-      attachmentType: null,
-      attachmentName: null,
-      externalLink: ''
-    },
-    {
-      id: 'aw-5',
-      sister: 'noodee',
-      sisterName: 'Noodee (Sec 3)',
-      year: '2025',
-      category: 'Leadership & MUN',
-      title: 'Bangkok International Schools Model United Nations (BISMUN)',
-      result: 'Best Delegate Commendation — UNEP Committee',
-      issuer: 'Anglo Singapore & Partner International Schools',
-      description: 'Authored the primary resolution on transboundary plastic waste reduction in ASEAN waterways and led coalition consensus building.',
-      skills: 'Public Speaking, Policy Drafting, Diplomacy',
       attachmentData: null,
       attachmentType: null,
       attachmentName: null,
@@ -368,6 +410,7 @@ let pendingAttachment = {
 
 let appData = JSON.parse(JSON.stringify(DEFAULT_DATA));
 let hasUnsyncedChanges = false;
+let editingItemContext = null; // { id, collectionKey } when editing an existing item
 
 /* ==========================================================================
    IndexedDB High-Capacity Storage Engine (Supports large PDFs & Photos)
@@ -437,7 +480,6 @@ async function clearIDB() {
 }
 
 async function initializePortfolioData() {
-  // 1. Fetch latest published data from GitHub Pages (portfolio-data.json)
   let remoteData = null;
   try {
     const res = await fetch(`portfolio-data.json?t=${Date.now()}`, { cache: 'no-store' });
@@ -448,7 +490,6 @@ async function initializePortfolioData() {
     console.info('Running offline or local file mode.');
   }
 
-  // 2. Check IndexedDB (or legacy localStorage) for local edits on this computer
   let localData = await readFromIDB();
   if (!localData) {
     try {
@@ -460,24 +501,43 @@ async function initializePortfolioData() {
     } catch (e) {}
   }
 
-  // Choose the most recent version
   if (localData && remoteData) {
     const localTime = localData.updatedAt || 0;
     const remoteTime = remoteData.updatedAt || 0;
     const chosen = localTime >= remoteTime ? localData : remoteData;
-    appData = { ...DEFAULT_DATA, ...chosen, state: { ...DEFAULT_DATA.state } };
+    appData = mergeWithDefaults(chosen);
   } else if (localData) {
-    appData = { ...DEFAULT_DATA, ...localData, state: { ...DEFAULT_DATA.state } };
+    appData = mergeWithDefaults(localData);
   } else if (remoteData) {
-    appData = { ...DEFAULT_DATA, ...remoteData, state: { ...DEFAULT_DATA.state } };
+    appData = mergeWithDefaults(remoteData);
   }
 
   renderAll();
 }
 
+function mergeWithDefaults(source) {
+  return {
+    ...DEFAULT_DATA,
+    ...source,
+    sectionVisibility: {
+      ...DEFAULT_DATA.sectionVisibility,
+      ...(source.sectionVisibility || {})
+    },
+    sectionHeaders: {
+      academics: { ...DEFAULT_DATA.sectionHeaders.academics, ...(source.sectionHeaders?.academics || {}) },
+      awards: { ...DEFAULT_DATA.sectionHeaders.awards, ...(source.sectionHeaders?.awards || {}) },
+      cca: { ...DEFAULT_DATA.sectionHeaders.cca, ...(source.sectionHeaders?.cca || {}) },
+      projects: { ...DEFAULT_DATA.sectionHeaders.projects, ...(source.sectionHeaders?.projects || {}) }
+    },
+    state: { ...DEFAULT_DATA.state }
+  };
+}
+
 async function savePortfolioData() {
   const payload = {
     updatedAt: Date.now(),
+    sectionVisibility: appData.sectionVisibility,
+    sectionHeaders: appData.sectionHeaders,
     sisters: appData.sisters,
     awards: appData.awards,
     ccas: appData.ccas,
@@ -486,12 +546,9 @@ async function savePortfolioData() {
 
   await writeToIDB(payload);
 
-  // Also keep a lightweight copy in localStorage if it fits
   try {
     localStorage.setItem('noodee_nadia_portfolio_v2', JSON.stringify(payload));
-  } catch (e) {
-    // Expected when large PDFs are stored in IndexedDB
-  }
+  } catch (e) {}
 
   hasUnsyncedChanges = true;
   updateSyncButtonBadge();
@@ -543,7 +600,6 @@ async function uploadFileToGitHubRepo(token, filePath, base64Content, commitMess
   const apiUrl = `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}/contents/${filePath}`;
   let existingSha = null;
 
-  // Check if file already exists to get its latest SHA (with cache-busting so browser never uses a stale SHA)
   const getRes = await fetch(`${apiUrl}?ref=${GITHUB_BRANCH}&_t=${Date.now()}`, {
     cache: 'no-store',
     headers: {
@@ -579,7 +635,6 @@ async function uploadFileToGitHubRepo(token, filePath, base64Content, commitMess
 
   if (!putRes.ok) {
     const errData = await putRes.json().catch(() => ({}));
-    // If GitHub returns 409 Conflict (stale SHA after previous commit), wait 800ms and retry automatically
     if (putRes.status === 409 && retryCount < 3) {
       await new Promise(r => setTimeout(r, 800));
       return uploadFileToGitHubRepo(token, filePath, base64Content, commitMessage, retryCount + 1);
@@ -614,7 +669,6 @@ async function handlePublishToGitHub(event) {
   statusBox.innerHTML = `<div style="padding:0.75rem; background:var(--surface-subtle); border-radius:8px; font-size:0.84rem; color:var(--text-primary);">Uploading profile photos, PDFs, and portfolio data directly to <strong>${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}</strong>...</div>`;
 
   try {
-    // 1. If either sister's avatar is a newly uploaded data:image URL, upload it as a real file in assets/uploads/
     for (const sisterKey of ['noodee', 'nadia']) {
       const s = appData.sisters[sisterKey];
       if (s && s.avatar && s.avatar.startsWith('data:image/')) {
@@ -630,7 +684,6 @@ async function handlePublishToGitHub(event) {
       }
     }
 
-    // 2. If any award or project has a data:image or data:application/pdf attachment, upload it as a real file in assets/uploads/
     const collections = [
       { key: 'awards', list: appData.awards },
       { key: 'projects', list: appData.projects }
@@ -649,15 +702,15 @@ async function handlePublishToGitHub(event) {
             dataUrlToBase64Content(item.attachmentData),
             `Upload certificate (${ext.toUpperCase()}) for ${item.title}`
           );
-          // Point attachmentData to the permanent repository file URL
           item.attachmentData = filePath;
         }
       }
     }
 
-    // 3. Upload the complete portfolio-data.json file
     const payload = {
       updatedAt: Date.now(),
+      sectionVisibility: appData.sectionVisibility,
+      sectionHeaders: appData.sectionHeaders,
       sisters: appData.sisters,
       awards: appData.awards,
       ccas: appData.ccas,
@@ -680,7 +733,7 @@ async function handlePublishToGitHub(event) {
     statusBox.innerHTML = `
       <div style="padding:0.9rem; background:hsl(150, 45%, 93%); border:1px solid hsl(152, 40%, 72%); border-radius:8px; font-size:0.85rem; color:hsl(152, 55%, 22%);">
         ✅ <strong>Successfully published to GitHub!</strong><br/>
-        All photos, PDF certificates, and text are now permanently stored in your GitHub repository. GitHub Pages will refresh worldwide within 30–60 seconds.
+        All photos, PDF certificates, CCA items, projects, and section settings are now permanently stored in your GitHub repository.
       </div>
     `;
   } catch (err) {
@@ -702,7 +755,7 @@ async function handlePublishToGitHub(event) {
 
 function getAllYearsWithCounts() {
   const activeSister = appData.state.activeSister;
-  const allItems = [...appData.awards, ...appData.projects];
+  const allItems = [...appData.awards, ...appData.projects, ...(appData.ccas || [])];
   const counts = {};
   let total = 0;
 
@@ -758,12 +811,14 @@ function setYearFilter(yearStr) {
   appData.state.activeYear = yearStr;
   renderYearSourcingBar();
   renderAwards();
+  renderCCAs();
   renderProjects();
 }
 
 function setYearSortOrder(sortVal) {
   appData.state.yearSort = sortVal;
   renderAwards();
+  renderCCAs();
   renderProjects();
 }
 
@@ -815,7 +870,11 @@ function updateCategoryDatalist() {
     'STEM & Research',
     'Community Service',
     'Creative Arts',
-    'Robotics & Coding'
+    'Robotics & Coding',
+    'Piano',
+    'Swimming',
+    'Science',
+    'Debate'
   ]);
 
   [...appData.awards, ...appData.projects].forEach(item => {
@@ -825,6 +884,69 @@ function updateCategoryDatalist() {
   datalist.innerHTML = Array.from(allCats)
     .map(c => `<option value="${c.replace(/"/g, '&quot;')}"></option>`)
     .join('');
+}
+
+/* ==========================================================================
+   Section Headers & Section Visibility Controls (Show / Hide Sections 1-4)
+   ========================================================================== */
+
+function renderSectionHeadersAndVisibility() {
+  const editable = appData.state.editMode;
+  const vis = appData.sectionVisibility || { academics: true, awards: true, cca: true, projects: true };
+  const headers = appData.sectionHeaders || DEFAULT_DATA.sectionHeaders;
+
+  ['academics', 'awards', 'cca', 'projects'].forEach(secKey => {
+    const secEl = document.getElementById(secKey);
+    if (!secEl) return;
+
+    const isVisible = vis[secKey] !== false;
+    // If hidden and not in edit mode, hide the entire section
+    if (!isVisible && !editable) {
+      secEl.style.display = 'none';
+    } else {
+      secEl.style.display = '';
+      secEl.style.opacity = (!isVisible && editable) ? '0.45' : '1';
+    }
+
+    // Update header text and make editable in Edit Mode
+    const eyebrowEl = document.getElementById(`sec-eyebrow-${secKey}`);
+    const titleEl = document.getElementById(`sec-title-${secKey}`);
+    const subEl = document.getElementById(`sec-sub-${secKey}`);
+
+    if (eyebrowEl && headers[secKey]?.eyebrow) {
+      eyebrowEl.innerText = headers[secKey].eyebrow;
+      eyebrowEl.contentEditable = editable ? 'true' : 'false';
+    }
+    if (titleEl && headers[secKey]?.title) {
+      titleEl.innerText = headers[secKey].title;
+      titleEl.contentEditable = editable ? 'true' : 'false';
+    }
+    if (subEl && headers[secKey]?.subtitle) {
+      subEl.innerText = headers[secKey].subtitle;
+      subEl.contentEditable = editable ? 'true' : 'false';
+    }
+
+    // Update visibility toggle button in Edit Mode
+    const toggleBtn = document.getElementById(`btn-vis-${secKey}`);
+    if (toggleBtn) {
+      toggleBtn.style.display = editable ? 'inline-flex' : 'none';
+      toggleBtn.innerHTML = isVisible ? '👁️ Hide Section' : '👁️‍🗨️ Show Section';
+    }
+  });
+}
+
+function updateSectionHeader(secKey, field, val) {
+  if (!appData.sectionHeaders) appData.sectionHeaders = JSON.parse(JSON.stringify(DEFAULT_DATA.sectionHeaders));
+  if (!appData.sectionHeaders[secKey]) appData.sectionHeaders[secKey] = {};
+  appData.sectionHeaders[secKey][field] = val.trim();
+  savePortfolioData();
+}
+
+function toggleSectionVisibility(secKey) {
+  if (!appData.sectionVisibility) appData.sectionVisibility = { academics: true, awards: true, cca: true, projects: true };
+  appData.sectionVisibility[secKey] = appData.sectionVisibility[secKey] === false ? true : false;
+  savePortfolioData();
+  renderSectionHeadersAndVisibility();
 }
 
 /* ==========================================================================
@@ -892,7 +1014,13 @@ function renderHeroCards() {
           </div>
 
           <div class="sister-tags">
-            ${s.interests.map(tag => `<span class="interest-tag">${tag}</span>`).join('')}
+            ${s.interests.map((tag, tIdx) => `
+              <span class="interest-tag">
+                <span ${editable} onblur="updateInterestTag('${s.id}', ${tIdx}, this.innerText)">${tag}</span>
+                ${appData.state.editMode ? `<button type="button" onclick="removeInterestTag('${s.id}', ${tIdx})" style="margin-left:4px; color:hsl(0,65%,45%); font-weight:700;" title="Remove tag">×</button>` : ''}
+              </span>
+            `).join('')}
+            ${appData.state.editMode ? `<button type="button" class="interest-tag" style="border-style:dashed; color:var(--active-accent);" onclick="addInterestTag('${s.id}')">+ Add Tag</button>` : ''}
           </div>
         </div>
 
@@ -927,15 +1055,18 @@ function renderAcademics() {
           <span class="switch-dot dot-${s.id}"></span>
           <h3>${s.name} — ${s.level}</h3>
         </div>
-        <span class="curriculum-tag">${s.curriculum}</span>
+        <span class="curriculum-tag" ${editable} onblur="updateSisterField('${s.id}', 'curriculum', this.innerText)">${s.curriculum}</span>
       </div>
 
       <div class="subject-list">
         ${s.subjects.map((sub, idx) => `
-          <div class="subject-item">
+          <div class="subject-item" style="position: relative;">
             <div class="subject-top">
               <span class="subject-name" ${editable} onblur="updateSubject('${s.id}', ${idx}, 'name', this.innerText)">${sub.name}</span>
-              <span class="subject-grade" ${editable} onblur="updateSubject('${s.id}', ${idx}, 'grade', this.innerText)">${sub.grade}</span>
+              <div style="display:flex; align-items:center; gap:0.4rem;">
+                <span class="subject-grade" ${editable} onblur="updateSubject('${s.id}', ${idx}, 'grade', this.innerText)">${sub.grade}</span>
+                ${appData.state.editMode ? `<button type="button" onclick="deleteSubject('${s.id}', ${idx})" style="color:hsl(0,65%,45%); font-size:0.8rem; font-weight:700; padding:0 4px;" title="Delete subject">🗑️</button>` : ''}
+              </div>
             </div>
             <div class="progress-track">
               <div class="progress-fill fill-${s.id}" style="width: ${sub.percent}%"></div>
@@ -943,15 +1074,20 @@ function renderAcademics() {
             <p class="subject-note" ${editable} onblur="updateSubject('${s.id}', ${idx}, 'note', this.innerText)">${sub.note}</p>
           </div>
         `).join('')}
+        ${appData.state.editMode ? `
+          <button type="button" class="btn btn-outline" style="width:100%; border-style:dashed;" onclick="addSubject('${s.id}')">
+            + Add Subject for ${s.name}
+          </button>
+        ` : ''}
       </div>
 
       <div class="language-strip">
         <div class="language-strip-title">Trilingual Mastery (Anglo Singapore Benchmark)</div>
         <div class="language-badges">
-          ${s.languages.map(lang => `
+          ${s.languages.map((lang, lIdx) => `
             <div class="lang-badge">
-              <span class="lang-name">${lang.name}</span>
-              <span class="lang-level">${lang.level}</span>
+              <span class="lang-name" ${editable} onblur="updateLanguage('${s.id}', ${lIdx}, 'name', this.innerText)">${lang.name}</span>
+              <span class="lang-level" ${editable} onblur="updateLanguage('${s.id}', ${lIdx}, 'level', this.innerText)">${lang.level}</span>
             </div>
           `).join('')}
         </div>
@@ -1018,7 +1154,11 @@ function renderAwards() {
           <span class="owner-badge owner-${item.sister}">
             <span>●</span> ${item.sisterName}
           </span>
-          <span class="year-badge">📅 ${item.year}</span>
+          <div style="display:flex; align-items:center; gap:0.4rem;">
+            <span class="year-badge">📅 ${item.year}</span>
+            <button type="button" class="btn-outline" style="padding:0.15rem 0.45rem; border-radius:6px; font-size:0.74rem;" onclick="event.stopPropagation(); openEditItemModal('${item.id}', 'awards')" title="Edit this item">✎</button>
+            <button type="button" class="btn-outline" style="padding:0.15rem 0.45rem; border-radius:6px; font-size:0.74rem; color:hsl(0,65%,45%);" onclick="event.stopPropagation(); deletePortfolioItem('${item.id}', 'awards')" title="Delete this item">🗑️</button>
+          </div>
         </div>
         <div class="card-category">${item.category}</div>
         <h3 class="card-title">${item.title}</h3>
@@ -1027,7 +1167,7 @@ function renderAwards() {
       </div>
       <div class="card-bottom">
         <span class="award-Result">🏆 ${item.result}</span>
-        <span class="card-action-link">View Certificate →</span>
+        <span class="card-action-link">View / Edit →</span>
       </div>
     </article>
   `).join('');
@@ -1036,23 +1176,39 @@ function renderAwards() {
 function renderCCAs() {
   const container = document.getElementById('cca-grid');
   const activeSister = appData.state.activeSister;
+  const activeYear = appData.state.activeYear;
 
-  const filtered = appData.ccas.filter(item => {
-    return activeSister === 'both' || item.sister === activeSister || item.sister === 'both';
-  });
+  const filtered = sortItemsByYear((appData.ccas || []).filter(item => {
+    const matchesSister = activeSister === 'both' || item.sister === activeSister || item.sister === 'both';
+    const matchesYear = activeYear === 'all' || !item.year || String(item.year) === String(activeYear);
+    return matchesSister && matchesYear;
+  }));
+
+  if (filtered.length === 0) {
+    container.innerHTML = `
+      <div style="grid-column: 1/-1; text-align: center; padding: 2.5rem; background: var(--surface-card); border-radius: var(--radius-md); border: 1px dashed var(--border-strong); color: var(--text-secondary);">
+        No CCA activities for this filter. Click "+ Add CCA Activity" to add one.
+      </div>
+    `;
+    return;
+  }
 
   container.innerHTML = filtered.map(item => `
-    <article class="cca-card" id="cca-card-${item.id}">
-      <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-        <div class="cca-icon-box">${item.icon}</div>
-        <span class="owner-badge owner-${item.sister}">${item.sisterName}</span>
+    <article class="cca-card" id="cca-card-${item.id}" style="position: relative; cursor: pointer;" onclick="openEditItemModal('${item.id}', 'ccas')">
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 0.5rem;">
+        <div class="cca-icon-box">${item.icon || '🌟'}</div>
+        <div style="display: flex; align-items: center; gap: 0.35rem; flex-wrap: wrap; justify-content: flex-end;">
+          <span class="owner-badge owner-${item.sister}">${item.sisterName}</span>
+          <button type="button" class="btn-outline" style="padding:0.15rem 0.45rem; border-radius:6px; font-size:0.74rem;" onclick="event.stopPropagation(); openEditItemModal('${item.id}', 'ccas')" title="Edit CCA">✎</button>
+          <button type="button" class="btn-outline" style="padding:0.15rem 0.45rem; border-radius:6px; font-size:0.74rem; color:hsl(0,65%,45%);" onclick="event.stopPropagation(); deletePortfolioItem('${item.id}', 'ccas')" title="Delete CCA">🗑️</button>
+        </div>
       </div>
-      <div class="cca-role">${item.role}</div>
+      <div class="cca-role">${item.role || item.category || 'Member'}</div>
       <h3 class="cca-title">${item.title}</h3>
-      <p class="cca-detail">${item.detail}</p>
+      <p class="cca-detail">${item.detail || item.description || ''}</p>
       <div class="cca-schedule">
-        <span>${item.schedule}</span>
-        <span>Anglo Singapore CCA</span>
+        <span>${item.schedule || item.year || '2026'}</span>
+        <span style="color: var(--active-accent);">Edit CCA →</span>
       </div>
     </article>
   `).join('');
@@ -1076,7 +1232,7 @@ function renderProjects() {
   if (filtered.length === 0) {
     container.innerHTML = `
       <div style="grid-column: 1/-1; text-align: center; padding: 3rem; background: var(--surface-card); border-radius: var(--radius-md); border: 1px dashed var(--border-strong); color: var(--text-secondary);">
-        No projects match the selected Year (${activeYear === 'all' ? 'All' : activeYear}) or Category filter.
+        No projects match the selected Year (${activeYear === 'all' ? 'All' : activeYear}) or Category filter. Click "+ Add Project" to add one.
       </div>
     `;
     return;
@@ -1089,7 +1245,11 @@ function renderProjects() {
           <span class="owner-badge owner-${item.sister}">
             <span>✦</span> ${item.sisterName}
           </span>
-          <span class="year-badge">📅 ${item.year}</span>
+          <div style="display:flex; align-items:center; gap:0.4rem;">
+            <span class="year-badge">📅 ${item.year}</span>
+            <button type="button" class="btn-outline" style="padding:0.15rem 0.45rem; border-radius:6px; font-size:0.74rem;" onclick="event.stopPropagation(); openEditItemModal('${item.id}', 'projects')" title="Edit Project">✎</button>
+            <button type="button" class="btn-outline" style="padding:0.15rem 0.45rem; border-radius:6px; font-size:0.74rem; color:hsl(0,65%,45%);" onclick="event.stopPropagation(); deletePortfolioItem('${item.id}', 'projects')" title="Delete Project">🗑️</button>
+          </div>
         </div>
         <div class="card-category">${item.category}</div>
         <h3 class="card-title">${item.title}</h3>
@@ -1098,13 +1258,14 @@ function renderProjects() {
       </div>
       <div class="card-bottom">
         <span class="award-Result">✨ ${item.result}</span>
-        <span class="card-action-link">Project &amp; Files →</span>
+        <span class="card-action-link">View / Edit →</span>
       </div>
     </article>
   `).join('');
 }
 
 function renderAll() {
+  renderSectionHeadersAndVisibility();
   renderYearSourcingBar();
   renderHeroCards();
   renderAcademics();
@@ -1209,10 +1370,15 @@ function openCertificateModal(itemId, collectionKey) {
     </div>
 
     <div style="display: flex; justify-content: space-between; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
-      <label class="btn btn-outline" style="font-size: 0.8rem; cursor: pointer;">
-        📎 Attach / Replace Photo or PDF
-        <input type="file" accept="image/*,.pdf,application/pdf" style="display:none" onchange="attachFileToExistingItem('${item.id}', '${collectionKey}', event)" />
-      </label>
+      <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+        <button type="button" class="btn btn-outline" style="font-size: 0.8rem;" onclick="closeDetailModal(); openEditItemModal('${item.id}', '${collectionKey}')">
+          ✎ Edit Details
+        </button>
+        <label class="btn btn-outline" style="font-size: 0.8rem; cursor: pointer;">
+          📎 Attach / Replace Photo or PDF
+          <input type="file" accept="image/*,.pdf,application/pdf" style="display:none" onchange="attachFileToExistingItem('${item.id}', '${collectionKey}', event)" />
+        </label>
+      </div>
       <div style="display: flex; gap: 0.5rem;">
         <button type="button" class="btn btn-outline" style="color: hsl(0, 65%, 45%); border-color: hsl(0, 50%, 82%); font-size: 0.8rem;" onclick="deletePortfolioItem('${item.id}', '${collectionKey}')">
           🗑️ Delete
@@ -1229,15 +1395,121 @@ function closeDetailModal() {
   document.getElementById('detail-modal').classList.remove('open');
 }
 
-function openAddModal() {
+/* Open Add / Edit Modal (Supports Awards [02], CCA [03], and Projects [04]) */
+function openAddModal(defaultSection = 'awards') {
+  editingItemContext = null;
   pendingAttachment = { data: null, type: null, name: null };
+
+  const form = document.getElementById('add-achievement-form');
+  if (form) form.reset();
+
+  const modalTitle = document.getElementById('add-modal-title');
+  if (modalTitle) modalTitle.innerText = 'Add New Award, CCA Activity, or Project';
+
+  const submitBtn = document.getElementById('btn-submit-achievement');
+  if (submitBtn) submitBtn.innerText = 'Save to Portfolio';
+
+  const sectionSelect = document.getElementById('field-section');
+  if (sectionSelect) {
+    sectionSelect.value = defaultSection;
+    handleSectionTypeChange(defaultSection);
+  }
+
+  const activeSister = appData.state.activeSister;
+  const sisterSelect = document.getElementById('field-sister');
+  if (sisterSelect && (activeSister === 'noodee' || activeSister === 'nadia')) {
+    sisterSelect.value = activeSister;
+  }
+
   const previewEl = document.getElementById('attachment-file-status');
   if (previewEl) previewEl.innerHTML = '';
+
   updateCategoryDatalist();
   document.getElementById('add-modal').classList.add('open');
 }
 
+function openEditItemModal(itemId, collectionKey) {
+  const list = appData[collectionKey] || [];
+  const item = list.find(x => x.id === itemId);
+  if (!item) return;
+
+  editingItemContext = { id: itemId, collectionKey: collectionKey };
+  pendingAttachment = {
+    data: item.attachmentData || null,
+    type: item.attachmentType || null,
+    name: item.attachmentName || null
+  };
+
+  const form = document.getElementById('add-achievement-form');
+  if (!form) return;
+
+  document.getElementById('add-modal-title').innerText = '✎ Edit Portfolio Item';
+  document.getElementById('btn-submit-achievement').innerText = 'Update Item';
+
+  form.sister.value = item.sister || 'noodee';
+  form.sectionType.value = collectionKey;
+  handleSectionTypeChange(collectionKey);
+
+  if (collectionKey === 'ccas') {
+    form.category.value = item.role || '';
+    form.year.value = item.year || '2026';
+    form.title.value = item.title || '';
+    form.result.value = item.schedule || '';
+    form.issuer.value = item.icon || '🌟';
+    form.description.value = item.detail || '';
+    form.skills.value = '';
+    if (form.externalLink) form.externalLink.value = '';
+  } else {
+    form.category.value = item.category || '';
+    form.year.value = item.year || '2026';
+    form.title.value = item.title || '';
+    form.result.value = item.result || '';
+    form.issuer.value = item.issuer || '';
+    form.description.value = item.description || '';
+    form.skills.value = item.skills || '';
+    if (form.externalLink) form.externalLink.value = item.externalLink || '';
+  }
+
+  const previewEl = document.getElementById('attachment-file-status');
+  if (previewEl) {
+    if (pendingAttachment.data) {
+      previewEl.innerHTML = `<span class="file-preview-pill">📎 Current file attached (${pendingAttachment.name || pendingAttachment.type})</span>`;
+    } else {
+      previewEl.innerHTML = '';
+    }
+  }
+
+  updateCategoryDatalist();
+  document.getElementById('add-modal').classList.add('open');
+}
+
+function handleSectionTypeChange(secVal) {
+  const catLabel = document.getElementById('label-field-category');
+  const resLabel = document.getElementById('label-field-result');
+  const issLabel = document.getElementById('label-field-issuer');
+  const catInput = document.getElementById('field-category');
+  const resInput = document.getElementById('field-result');
+  const issInput = document.getElementById('field-issuer');
+
+  if (secVal === 'ccas') {
+    if (catLabel) catLabel.innerText = 'Role / Position in CCA or Club';
+    if (catInput) catInput.placeholder = 'e.g., Vice President, First Violin, Varsity Squad...';
+    if (resLabel) resLabel.innerText = 'Schedule / Duration';
+    if (resInput) resInput.placeholder = 'e.g., 2025 – 2026 • 3 hrs/week';
+    if (issLabel) issLabel.innerText = 'Icon Emoji (Optional)';
+    if (issInput) issInput.placeholder = 'e.g., 🎻, 🏸, 🏛️, 🌱, 🏊‍♀️, 🎹';
+  } else {
+    if (catLabel) catLabel.innerText = 'Category (Open-Ended: Type Any or Select)';
+    if (catInput) catInput.placeholder = 'e.g., STEM & Math, Piano, Swimming, Coding, Debate...';
+    if (resLabel) resLabel.innerText = 'Result / Distinction Achieved';
+    if (resInput) resInput.placeholder = 'e.g., Gold Award / 1st Place / Distinction';
+    if (issLabel) issLabel.innerText = 'Issuing Body / Organization';
+    if (issInput) issInput.placeholder = 'e.g., Anglo Singapore / SIMCC / ABRSM';
+  }
+}
+
 function closeAddModal() {
+  editingItemContext = null;
   document.getElementById('add-modal').classList.remove('open');
 }
 
@@ -1350,7 +1622,7 @@ async function deletePortfolioItem(itemId, collectionKey) {
 async function handleAddAchievement(event) {
   event.preventDefault();
   const form = event.target;
-  const sectionType = form.sectionType.value;
+  const sectionType = form.sectionType.value; // 'awards' | 'ccas' | 'projects'
   const sister = form.sister.value;
   const sisterMap = {
     noodee: 'Noodee (Sec 3)',
@@ -1358,34 +1630,58 @@ async function handleAddAchievement(event) {
     both: 'Noodee & Nadia (Sister Collaboration)'
   };
 
-  const customCategory = form.category.value.trim() || 'Academic Honours';
+  // If editing an existing item, remove it from its old collection if sectionType changed
+  let itemId = 'custom-' + Date.now();
+  if (editingItemContext) {
+    itemId = editingItemContext.id;
+    const oldCol = editingItemContext.collectionKey;
+    appData[oldCol] = (appData[oldCol] || []).filter(x => x.id !== itemId);
+  }
 
-  const newEntry = {
-    id: 'custom-' + Date.now(),
-    sister: sister,
-    sisterName: sisterMap[sister],
-    year: form.year.value.trim() || '2026',
-    category: customCategory,
-    title: form.title.value.trim(),
-    result: form.result.value.trim(),
-    issuer: form.issuer.value.trim() || 'Anglo Singapore International School',
-    description: form.description.value.trim(),
-    skills: form.skills.value.trim() || 'Academic & Co-Curricular Excellence',
-    attachmentData: pendingAttachment.data,
-    attachmentType: pendingAttachment.type,
-    attachmentName: pendingAttachment.name,
-    externalLink: form.externalLink ? form.externalLink.value.trim() : ''
-  };
-
-  if (sectionType === 'awards') {
-    appData.awards.unshift(newEntry);
+  if (sectionType === 'ccas') {
+    const ccaEntry = {
+      id: itemId,
+      sister: sister,
+      sisterName: sisterMap[sister],
+      year: form.year.value.trim() || '2026',
+      icon: form.issuer.value.trim() || '🌟',
+      role: form.category.value.trim() || 'Member',
+      title: form.title.value.trim(),
+      detail: form.description.value.trim(),
+      schedule: form.result.value.trim() || `${form.year.value.trim() || '2026'} • Anglo Singapore CCA`
+    };
+    if (!appData.ccas) appData.ccas = [];
+    appData.ccas.unshift(ccaEntry);
   } else {
-    appData.projects.unshift(newEntry);
+    const customCategory = form.category.value.trim() || 'Academic Honours';
+    const newEntry = {
+      id: itemId,
+      sister: sister,
+      sisterName: sisterMap[sister],
+      year: form.year.value.trim() || '2026',
+      category: customCategory,
+      title: form.title.value.trim(),
+      result: form.result.value.trim(),
+      issuer: form.issuer.value.trim() || 'Anglo Singapore International School',
+      description: form.description.value.trim(),
+      skills: form.skills.value.trim() || 'Academic & Co-Curricular Excellence',
+      attachmentData: pendingAttachment.data,
+      attachmentType: pendingAttachment.type,
+      attachmentName: pendingAttachment.name,
+      externalLink: form.externalLink ? form.externalLink.value.trim() : ''
+    };
+
+    if (sectionType === 'awards') {
+      appData.awards.unshift(newEntry);
+    } else {
+      appData.projects.unshift(newEntry);
+    }
   }
 
   await savePortfolioData();
   form.reset();
   pendingAttachment = { data: null, type: null, name: null };
+  editingItemContext = null;
   closeAddModal();
   renderAll();
 }
@@ -1419,9 +1715,58 @@ function updateStat(sisterId, idx, field, value) {
   savePortfolioData();
 }
 
+function updateInterestTag(sisterId, idx, value) {
+  if (!appData.sisters[sisterId]?.interests) return;
+  appData.sisters[sisterId].interests[idx] = value.trim();
+  savePortfolioData();
+}
+
+function removeInterestTag(sisterId, idx) {
+  if (!appData.sisters[sisterId]?.interests) return;
+  appData.sisters[sisterId].interests.splice(idx, 1);
+  savePortfolioData();
+  renderHeroCards();
+}
+
+function addInterestTag(sisterId) {
+  const newTag = prompt('Enter new interest or skill tag:');
+  if (!newTag || !newTag.trim()) return;
+  appData.sisters[sisterId].interests.push(newTag.trim());
+  savePortfolioData();
+  renderHeroCards();
+}
+
 function updateSubject(sisterId, idx, field, value) {
   if (!appData.sisters[sisterId]?.subjects[idx]) return;
   appData.sisters[sisterId].subjects[idx][field] = value.trim();
+  savePortfolioData();
+}
+
+function addSubject(sisterId) {
+  const name = prompt('Subject Name (e.g., Physics, Mandarin Chinese):');
+  if (!name || !name.trim()) return;
+  const grade = prompt('Grade / Score (e.g., A* (95%)):', 'A* (95%)') || 'A*';
+  const note = prompt('Short description or achievement in this subject:', 'Consistent academic distinction.') || '';
+  appData.sisters[sisterId].subjects.push({
+    name: name.trim(),
+    grade: grade.trim(),
+    percent: 95,
+    note: note.trim()
+  });
+  savePortfolioData();
+  renderAcademics();
+}
+
+function deleteSubject(sisterId, idx) {
+  if (!confirm('Remove this subject?')) return;
+  appData.sisters[sisterId].subjects.splice(idx, 1);
+  savePortfolioData();
+  renderAcademics();
+}
+
+function updateLanguage(sisterId, idx, field, value) {
+  if (!appData.sisters[sisterId]?.languages[idx]) return;
+  appData.sisters[sisterId].languages[idx][field] = value.trim();
   savePortfolioData();
 }
 
@@ -1439,6 +1784,8 @@ function handleAvatarUpload(sisterId, event) {
 function exportPortfolioBackup() {
   const dataStr = JSON.stringify({
     updatedAt: Date.now(),
+    sectionVisibility: appData.sectionVisibility,
+    sectionHeaders: appData.sectionHeaders,
     sisters: appData.sisters,
     awards: appData.awards,
     ccas: appData.ccas,
@@ -1461,10 +1808,7 @@ function importPortfolioBackup(event) {
     try {
       const imported = JSON.parse(e.target.result);
       if (imported.sisters && imported.awards) {
-        appData.sisters = imported.sisters;
-        appData.awards = imported.awards;
-        appData.ccas = imported.ccas || appData.ccas;
-        appData.projects = imported.projects || appData.projects;
+        appData = mergeWithDefaults(imported);
         await savePortfolioData();
         renderAll();
         alert('Portfolio backup restored to this computer! Click "☁️ Save to GitHub" if you want to publish it to GitHub Pages.');
@@ -1479,10 +1823,9 @@ function importPortfolioBackup(event) {
 }
 
 async function resetDefaultData() {
-  if (confirm('Reset local changes on this browser back to the published template?')) {
+  if (confirm('Reset local changes on this browser back to the latest published version on GitHub?')) {
     await clearIDB();
     localStorage.removeItem('noodee_nadia_portfolio_v2');
-    appData = JSON.parse(JSON.stringify(DEFAULT_DATA));
     document.body.classList.remove('edit-mode');
     hasUnsyncedChanges = false;
     updateSyncButtonBadge();
