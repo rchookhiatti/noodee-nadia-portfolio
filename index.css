@@ -1494,10 +1494,269 @@ body.edit-mode .edit-banner {
 }
 
 /* ==========================================================================
+   Feature 5: Future Aspirations & Personal Statement Box
+   ========================================================================== */
+.aspiration-box {
+  background: linear-gradient(135deg, var(--surface-subtle), var(--bg-primary));
+  border-left: 4px solid var(--active-accent);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  padding: 0.9rem 1.1rem;
+  margin-bottom: 1.35rem;
+}
+
+.aspiration-box.asp-noodee {
+  border-left-color: var(--noodee-primary);
+}
+
+.aspiration-box.asp-nadia {
+  border-left-color: var(--nadia-primary);
+}
+
+.aspiration-goal {
+  font-size: 0.76rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-primary);
+  margin-bottom: 0.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.aspiration-quote {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 0.92rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+/* ==========================================================================
+   Feature 2: Holistic 5-Dimension Competency Radar Chart
+   ========================================================================== */
+.radar-section-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2rem;
+  margin-bottom: 2.5rem;
+}
+
+.radar-section-grid.single-focus {
+  grid-template-columns: 1fr;
+  max-width: 780px;
+  margin: 0 auto 2.5rem;
+}
+
+.radar-card {
+  background: var(--surface-card);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-subtle);
+  padding: 1.75rem;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.radar-svg-wrap {
+  width: 100%;
+  max-width: 340px;
+  aspect-ratio: 1 / 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0.5rem auto;
+}
+
+.radar-Sliders {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.65rem 1rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px dashed var(--border-subtle);
+}
+
+.radar-slider-item {
+  font-size: 0.76rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+/* ==========================================================================
+   Feature 1: Growth & Milestone Timeline (Chronological Journey)
+   ========================================================================== */
+.timeline-wrapper {
+  position: relative;
+  padding-left: 2rem;
+  margin-top: 1.5rem;
+}
+
+.timeline-wrapper::before {
+  content: '';
+  position: absolute;
+  left: 9px;
+  top: 6px;
+  bottom: 6px;
+  width: 3px;
+  background: linear-gradient(180deg, var(--noodee-primary), var(--brand-gold), var(--nadia-primary));
+  border-radius: var(--radius-pill);
+}
+
+.timeline-year-group {
+  position: relative;
+  margin-bottom: 2.25rem;
+}
+
+.timeline-year-marker {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: var(--brand-navy);
+  color: var(--text-inverse);
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  font-weight: 700;
+  padding: 0.35rem 1rem;
+  border-radius: var(--radius-pill);
+  margin-bottom: 1rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.timeline-year-marker::before {
+  content: '';
+  position: absolute;
+  left: -1.95rem;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--brand-gold);
+  border: 3px solid var(--bg-primary);
+  box-shadow: 0 0 0 2px var(--brand-navy);
+}
+
+.timeline-items-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(285px, 1fr));
+  gap: 1rem;
+}
+
+.timeline-mini-card {
+  background: var(--surface-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 1.1rem 1.25rem;
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition-smooth);
+  cursor: pointer;
+}
+
+.timeline-mini-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--border-strong);
+}
+
+/* ==========================================================================
+   Feature 3 & 4: Video Showcase & Activity Photo Gallery
+   ========================================================================== */
+.media-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 1.5rem;
+}
+
+.media-card {
+  background: var(--surface-card);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-subtle);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.media-embed-box {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: hsl(222, 38%, 12%);
+  position: relative;
+  overflow: hidden;
+}
+
+.media-embed-box iframe,
+.media-embed-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border: none;
+}
+
+.media-body {
+  padding: 1.25rem 1.4rem;
+}
+
+.activity-photos-strip {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(95px, 1fr));
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.activity-photo-thumb {
+  width: 100%;
+  height: 76px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid var(--border-subtle);
+  cursor: pointer;
+  transition: var(--transition-smooth);
+}
+
+.activity-photo-thumb:hover {
+  transform: scale(1.04);
+  border-color: var(--brand-navy);
+}
+
+/* ==========================================================================
+   Feature 6: QR Code Digital Portfolio Dossier Card (Footer & Print Header)
+   ========================================================================== */
+.qr-dossier-card {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  background: var(--surface-subtle);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 1rem 1.35rem;
+}
+
+.qr-code-box {
+  width: 78px;
+  height: 78px;
+  border-radius: 10px;
+  background: #fff;
+  padding: 6px;
+  border: 1px solid var(--border-strong);
+  flex-shrink: 0;
+}
+
+.qr-code-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* ==========================================================================
    Responsive Breakpoints
    ========================================================================== */
 @media (max-width: 960px) {
-  .sisters-grid, .academics-grid {
+  .sisters-grid, .academics-grid, .radar-section-grid {
     grid-template-columns: 1fr;
   }
   .header-inner {
@@ -1513,7 +1772,7 @@ body.edit-mode .edit-banner {
   .sister-QuickStats {
     grid-template-columns: 1fr;
   }
-  .form-row {
+  .form-row, .radar-Sliders {
     grid-template-columns: 1fr;
   }
   .sister-switcher {

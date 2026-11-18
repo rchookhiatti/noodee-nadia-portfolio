@@ -17,7 +17,7 @@
 
   <!-- Edit Mode Top Notification Banner -->
   <div class="edit-banner" id="edit-mode-banner">
-    ✨ <strong>Interactive Edit Mode Active:</strong> You can now click any section title (01–04) to rename it, click <strong>"👁️ Hide Section"</strong> to hide an entire section, add/remove subjects, or edit/delete any card. Click <strong>"☁️ Save to GitHub"</strong> when done!
+    ✨ <strong>Interactive Edit Mode Active:</strong> Click any text, aspiration quote, or section header (01–06) to edit it, adjust the 5-Pillar Radar sliders, or click <strong>"👁️ Hide Section"</strong> to toggle sections. Click <strong>"☁️ Save to GitHub"</strong> when done!
     <button type="button" onclick="resetDefaultData()" style="margin-left: 1rem; text-decoration: underline; color: #ffd98e; font-weight: 700;">Reset Local Edits</button>
   </div>
 
@@ -81,7 +81,7 @@
   </div>
 
   <main>
-    <!-- Hero Section & Sister Overview -->
+    <!-- Hero Section & Sister Overview (Includes Feature 5: Future Aspirations & Personal Statement) -->
     <section class="hero-section" id="hero">
       <div class="container">
         <div class="hero-intro">
@@ -97,6 +97,26 @@
 
         <!-- Dynamic Sister Profile Cards -->
         <div class="sisters-grid" id="sisters-hero-grid"></div>
+      </div>
+    </section>
+
+    <!-- Feature 2: 5-Dimension Holistic Competency Radar Chart -->
+    <section class="section" id="radar" style="padding-top: 2rem; padding-bottom: 1rem;">
+      <div class="container">
+        <div class="section-header">
+          <div>
+            <div class="section-eyebrow" id="sec-eyebrow-radar" onblur="updateSectionHeader('radar', 'eyebrow', this.innerText)">Holistic Competency Profile</div>
+            <h2 class="section-title" id="sec-title-radar" onblur="updateSectionHeader('radar', 'title', this.innerText)">5-Dimension Well-Rounded Scholar Radar</h2>
+          </div>
+          <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 0.65rem;">
+            <p class="section-subtitle" id="sec-sub-radar" onblur="updateSectionHeader('radar', 'subtitle', this.innerText)">
+              Visualizing balanced development across STEM, Global Languages, Performing Arts, Leadership, and Sports &amp; Outdoor Survival.
+            </p>
+            <button type="button" class="btn btn-outline" id="btn-vis-radar" style="display:none; font-size:0.78rem;" onclick="toggleSectionVisibility('radar')">👁️ Hide Section</button>
+          </div>
+        </div>
+
+        <div class="radar-section-grid" id="radar-grid"></div>
       </div>
     </section>
 
@@ -141,7 +161,6 @@
               <button type="button" class="btn btn-outline" id="btn-vis-awards" style="display:none; font-size:0.78rem;" onclick="toggleSectionVisibility('awards')">👁️ Hide Section</button>
               <button type="button" class="btn btn-primary" style="font-size: 0.8rem; padding: 0.45rem 0.95rem;" onclick="openAddModal('awards')">+ Add Award / Certificate</button>
             </div>
-            <!-- Dynamic Category Filter Chips -->
             <div class="filter-controls" id="award-filters" role="group" aria-label="Filter awards by category"></div>
           </div>
         </div>
@@ -201,7 +220,6 @@
               <button type="button" class="btn btn-outline" id="btn-vis-projects" style="display:none; font-size:0.78rem;" onclick="toggleSectionVisibility('projects')">👁️ Hide Section</button>
               <button type="button" class="btn btn-primary" style="font-size: 0.8rem; padding: 0.45rem 0.95rem;" onclick="openAddModal('projects')">+ Add Project / Service</button>
             </div>
-            <!-- Dynamic Project Category Filter Chips -->
             <div class="filter-controls" id="project-filters" role="group" aria-label="Filter projects by category"></div>
           </div>
         </div>
@@ -209,11 +227,120 @@
         <div class="cards-grid" id="projects-grid"></div>
       </div>
     </section>
+
+    <!-- Feature 3 & 4: Section 5 — Video Performances & Activity Photo Memories -->
+    <section class="section" id="media">
+      <div class="container">
+        <div class="section-header">
+          <div>
+            <div class="section-eyebrow" id="sec-eyebrow-media" onblur="updateSectionHeader('media', 'eyebrow', this.innerText)">05 • Video Performances &amp; Camp Memories</div>
+            <h2 class="section-title" id="sec-title-media" onblur="updateSectionHeader('media', 'title', this.innerText)">Music Recitals, Debates &amp; Action Snapshots</h2>
+          </div>
+          <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 0.65rem;">
+            <p class="section-subtitle" id="sec-sub-media" onblur="updateSectionHeader('media', 'subtitle', this.innerText)">
+              Watch solo music performances, debate speeches, and behind-the-scenes moments from science labs and leadership camps.
+            </p>
+            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+              <button type="button" class="btn btn-outline" id="btn-vis-media" style="display:none; font-size:0.78rem;" onclick="toggleSectionVisibility('media')">👁️ Hide Section</button>
+              <button type="button" class="btn btn-primary" style="font-size: 0.8rem; padding: 0.45rem 0.95rem;" onclick="openAddMediaModal()">🎬 + Add Video / Photo Memory</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="media-grid" id="media-grid"></div>
+      </div>
+    </section>
+
+    <!-- Feature 1: Section 6 — Interactive Growth & Milestone Timeline -->
+    <section class="section" id="timeline">
+      <div class="container">
+        <div class="section-header">
+          <div>
+            <div class="section-eyebrow" id="sec-eyebrow-timeline" onblur="updateSectionHeader('timeline', 'eyebrow', this.innerText)">06 • Chronological Milestone Journey</div>
+            <h2 class="section-title" id="sec-title-timeline" onblur="updateSectionHeader('timeline', 'title', this.innerText)">Continuous Growth &amp; Progression Timeline</h2>
+          </div>
+          <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 0.65rem;">
+            <p class="section-subtitle" id="sec-sub-timeline" onblur="updateSectionHeader('timeline', 'subtitle', this.innerText)">
+              Tracking every milestone across academic years from Lower Secondary to Upper Secondary.
+            </p>
+            <button type="button" class="btn btn-outline" id="btn-vis-timeline" style="display:none; font-size:0.78rem;" onclick="toggleSectionVisibility('timeline')">👁️ Hide Section</button>
+          </div>
+        </div>
+
+        <div class="timeline-wrapper" id="timeline-container"></div>
+      </div>
+    </section>
   </main>
 
   <!-- Certificate / Project Detail Modal -->
   <div class="modal-backdrop" id="detail-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
     <div class="modal-panel" id="detail-modal-body"></div>
+  </div>
+
+  <!-- Add Video / Activity Photo Memory Modal -->
+  <div class="modal-backdrop" id="add-media-modal" role="dialog" aria-modal="true" aria-labelledby="add-media-title">
+    <div class="modal-panel">
+      <div class="modal-header">
+        <div>
+          <span class="section-eyebrow">Section 05 • Multimedia Showcase</span>
+          <h3 id="add-media-title" style="font-family: var(--font-serif); font-size: 1.45rem;">🎬 Add Video Performance or Activity Photo</h3>
+        </div>
+        <button type="button" class="modal-close" onclick="closeAddMediaModal()" aria-label="Close">✕</button>
+      </div>
+
+      <form id="add-media-form" onsubmit="handleAddMediaSubmit(event)">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="med-sister">Student</label>
+            <select class="form-select" id="med-sister" name="sister" required>
+              <option value="noodee">Noodee (Secondary 3)</option>
+              <option value="nadia">Nadia (Secondary 1)</option>
+              <option value="both">Both Sisters</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="med-year">Academic Year</label>
+            <input type="text" class="form-input" id="med-year" name="year" value="2026" required />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="med-category">Category</label>
+            <input type="text" class="form-input" id="med-category" name="category" placeholder="e.g., Piano Recital, Violin, Camp Memory, Debate" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="med-title">Title</label>
+            <input type="text" class="form-input" id="med-title" name="title" placeholder="e.g., Yamaha Grade 7 Solo Performance" required />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="med-video-url">YouTube or Video Link (Optional)</label>
+          <input type="url" class="form-input" id="med-video-url" name="videoUrl" placeholder="https://www.youtube.com/watch?v=..." />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Or Upload Activity / Performance Photo</label>
+          <label class="file-dropzone" for="med-photo-file">
+            <div style="font-size: 1.3rem;">📸 🎬</div>
+            <div style="font-weight: 700; font-size: 0.86rem;">Click to Choose Activity Photo</div>
+            <input type="file" id="med-photo-file" accept="image/*" style="display:none;" onchange="handleMediaPhotoSelect(event)" />
+            <div id="media-file-status"></div>
+          </label>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="med-desc">Caption / Description</label>
+          <textarea class="form-textarea" id="med-desc" name="description" rows="2" placeholder="Short description of this performance or camp moment..."></textarea>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 0.75rem;">
+          <button type="button" class="btn btn-outline" onclick="closeAddMediaModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save to Showcase</button>
+        </div>
+      </form>
+    </div>
   </div>
 
   <!-- Cloud Sync to GitHub Modal -->
@@ -315,7 +442,7 @@
           </div>
           <div class="form-group">
             <label class="form-label" for="field-year">Academic Year</label>
-            <span class="form-hint">Used for Year Sourcing filter</span>
+            <span class="form-hint">Used for Year Sourcing &amp; Timeline</span>
             <input
               type="text"
               class="form-input"
@@ -353,31 +480,52 @@
         </div>
 
         <!-- Upload Certificate Photo or PDF Document -->
-        <div class="form-group">
-          <label class="form-label">Upload Certificate Image (.jpg, .png) or Document (.pdf)</label>
-          <label class="file-dropzone" for="field-attachment-file">
-            <div style="font-size: 1.4rem; margin-bottom: 0.25rem;">📎 🖼️ 📄</div>
-            <div style="font-weight: 700; font-size: 0.88rem; color: var(--text-primary);">
-              Click to Choose Certificate Photo or .PDF File
-            </div>
-            <div style="font-size: 0.76rem; color: var(--text-muted);">
-              Stored in high-capacity IndexedDB (supports PDFs up to 25 MB) &amp; syncs directly to GitHub
-            </div>
-            <input
-              type="file"
-              id="field-attachment-file"
-              accept="image/*,.pdf,application/pdf"
-              style="display: none;"
-              onchange="handleCertificateFileSelect(event)"
-            />
-            <div id="attachment-file-status"></div>
-          </label>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">1. Certificate Image (.jpg/.png) or .PDF</label>
+            <label class="file-dropzone" for="field-attachment-file" style="padding: 0.85rem;">
+              <div style="font-size: 1.2rem;">📎 📄</div>
+              <div style="font-weight: 700; font-size: 0.82rem;">Choose Certificate Photo or PDF</div>
+              <input
+                type="file"
+                id="field-attachment-file"
+                accept="image/*,.pdf,application/pdf"
+                style="display: none;"
+                onchange="handleCertificateFileSelect(event)"
+              />
+              <div id="attachment-file-status"></div>
+            </label>
+          </div>
+
+          <!-- Upload Multiple Activity / Camp Action Photos -->
+          <div class="form-group">
+            <label class="form-label">2. Activity / Camp Action Photos (Multiple)</label>
+            <label class="file-dropzone" for="field-activity-photos" style="padding: 0.85rem;">
+              <div style="font-size: 1.2rem;">📸 🌟</div>
+              <div style="font-weight: 700; font-size: 0.82rem;">Add Behind-the-Scenes Photos</div>
+              <input
+                type="file"
+                id="field-activity-photos"
+                accept="image/*"
+                multiple
+                style="display: none;"
+                onchange="handleActivityPhotosSelect(event)"
+              />
+              <div id="activity-photos-status"></div>
+            </label>
+          </div>
         </div>
 
-        <!-- Optional External Link (Google Drive / PDF URL) -->
-        <div class="form-group">
-          <label class="form-label" for="field-external-link">Or Paste External Certificate / Google Drive Link (Optional)</label>
-          <input type="url" class="form-input" id="field-external-link" name="externalLink" placeholder="https://drive.google.com/..." />
+        <!-- Optional Video URL & External Link -->
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="field-video-url">YouTube / Performance Video URL (Optional)</label>
+            <input type="url" class="form-input" id="field-video-url" name="videoUrl" placeholder="https://www.youtube.com/watch?v=..." />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="field-external-link">External Google Drive / Document Link (Optional)</label>
+            <input type="url" class="form-input" id="field-external-link" name="externalLink" placeholder="https://drive.google.com/..." />
+          </div>
         </div>
 
         <div class="form-group">
@@ -398,28 +546,41 @@
     </div>
   </div>
 
-  <!-- Footer -->
+  <!-- Footer (Includes Feature 6: QR Code Digital Portfolio Dossier Card) -->
   <footer class="site-footer">
-    <div class="container footer-inner">
-      <div>
-        <div class="brand-names">Noodee (Sec 3) &amp; Nadia (Sec 1) — Student Portfolio</div>
-        <p class="footer-note">Anglo Singapore International School • Academic &amp; Co-Curricular Dossier</p>
-      </div>
-      <div style="display: flex; gap: 0.65rem; flex-wrap: wrap;">
-        <button type="button" class="btn btn-outline" id="btn-footer-github-sync" onclick="openGitHubSyncModal()">
-          ☁️ Save to GitHub
-        </button>
-        <button type="button" class="btn btn-outline" id="btn-export-backup" onclick="exportPortfolioBackup()" title="Download all portfolio data and certificates as a backup file">
-          💾 Export Backup (.json)
-        </button>
-        <label class="btn btn-outline" style="cursor: pointer;" title="Restore portfolio data from a backup file">
-          📂 Import Backup
-          <input type="file" accept=".json,application/json" style="display: none;" onchange="importPortfolioBackup(event)" />
-        </label>
-        <button type="button" class="btn btn-outline" id="btn-print-portfolio" onclick="window.print()">
-          🖨️ Print / Save PDF Dossier
-        </button>
-        <a href="#top-nav" class="btn btn-outline" id="btn-back-to-top">↑ Back to Top</a>
+    <div class="container">
+      <div class="footer-inner" style="margin-bottom: 1.75rem;">
+        <div class="qr-dossier-card">
+          <div class="qr-code-box">
+            <img id="portfolio-qr-img" src="https://api.qrserver.com/v1/create-qr-code/?size=160x160&margin=4&data=https%3A%2F%2Frchookhiatti.github.io%2Fnoodee-nadia-portfolio%2F" alt="QR Code to Online Portfolio" />
+          </div>
+          <div>
+            <div style="font-size: 0.74rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--active-accent);">
+              📱 Digital Portfolio Verification QR
+            </div>
+            <div class="brand-names" style="font-size: 1.05rem;">Noodee (Sec 3) &amp; Nadia (Sec 1) — Anglo Singapore International School</div>
+            <p class="footer-note" style="font-size: 0.8rem;">
+              Scan QR code on printed dossiers to view interactive certificates, recitals &amp; live updates at <code>rchookhiatti.github.io/noodee-nadia-portfolio</code>
+            </p>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 0.65rem; flex-wrap: wrap;">
+          <button type="button" class="btn btn-outline" id="btn-footer-github-sync" onclick="openGitHubSyncModal()">
+            ☁️ Save to GitHub
+          </button>
+          <button type="button" class="btn btn-outline" id="btn-export-backup" onclick="exportPortfolioBackup()" title="Download all portfolio data and certificates as a backup file">
+            💾 Export Backup (.json)
+          </button>
+          <label class="btn btn-outline" style="cursor: pointer;" title="Restore portfolio data from a backup file">
+            📂 Import Backup
+            <input type="file" accept=".json,application/json" style="display: none;" onchange="importPortfolioBackup(event)" />
+          </label>
+          <button type="button" class="btn btn-outline" id="btn-print-portfolio" onclick="window.print()">
+            🖨️ Print / Save PDF Dossier
+          </button>
+          <a href="#top-nav" class="btn btn-outline" id="btn-back-to-top">↑ Back to Top</a>
+        </div>
       </div>
     </div>
   </footer>

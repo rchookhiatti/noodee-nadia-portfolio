@@ -2,17 +2,19 @@
  * Noodee & Nadia — Student Portfolio Application Logic
  * Anglo Singapore International School (Secondary 3 & Secondary 1)
  *
- * Features:
- * 1. Drag & Drop between Section 02 (Awards), Section 03 (CCA), and Section 04 (Projects)
- *    + 1-Click "Move to..." dropdown on every card (preserving photos & PDFs across all sections)
- * 2. Prominent "✎ Edit" and "🗑️ Delete" buttons on every card in Sections 02, 03, and 04
- *    (Works both in Normal View and in Customize Mode)
- * 3. IndexedDB High-Capacity Browser Storage + Direct Browser-to-GitHub Cloud Publishing
+ * Includes all 6 Showcase Enhancements:
+ * 1. Interactive Growth & Milestone Timeline (Chronological Journey)
+ * 2. 5-Dimension Holistic Competency Radar Chart (Interactive SVG + Sliders in Edit Mode)
+ * 3. Video & Performance Showcase + Activity Photo Memories (Multiple photos & YouTube embeds)
+ * 4. Activity Photo Strips inside every Award, CCA, and Project card
+ * 5. Future Aspirations & Personal Statement Box on each sister's profile card
+ * 6. QR Code Digital Portfolio Dossier Card (for instant mobile scanning on printouts/PDFs)
  */
 
 const GITHUB_REPO_OWNER = 'rchookhiatti';
 const GITHUB_REPO_NAME = 'noodee-nadia-portfolio';
 const GITHUB_BRANCH = 'main';
+const PORTFOLIO_PUBLIC_URL = 'https://rchookhiatti.github.io/noodee-nadia-portfolio/';
 
 const IDB_NAME = 'NoodeeNadiaPortfolioDB';
 const IDB_VERSION = 1;
@@ -21,24 +23,32 @@ const IDB_KEY = 'mainData';
 
 const DEFAULT_DATA = {
   state: {
-    activeSister: 'both',  // 'both' | 'noodee' | 'nadia'
-    activeYear: 'all',     // 'all' | '2026' | '2025' | '2024' | ...
-    yearSort: 'desc',      // 'desc' (Newest first) | 'asc' (Oldest first)
-    awardFilter: 'all',    // 'all' | any dynamic category string
-    projectFilter: 'all',  // 'all' | any dynamic category string
+    activeSister: 'both',
+    activeYear: 'all',
+    yearSort: 'desc',
+    awardFilter: 'all',
+    projectFilter: 'all',
     editMode: false
   },
   sectionVisibility: {
     academics: true,
+    radar: true,
     awards: true,
     cca: true,
-    projects: true
+    projects: true,
+    media: true,
+    timeline: true
   },
   sectionHeaders: {
     academics: {
       eyebrow: '01 • Academic Excellence & Subject Mastery',
       title: 'Singapore-Cambridge Curriculum & Trilingual Fluency',
       subtitle: 'Rigorous academic grounding across Mathematics, Pure Sciences, Humanities, and trilingual proficiency in English, Mandarin Chinese, and Thai.'
+    },
+    radar: {
+      eyebrow: 'Holistic Competency Profile',
+      title: '5-Dimension Well-Rounded Scholar Radar',
+      subtitle: 'Visualizing balanced development across STEM, Global Languages, Performing Arts, Leadership, and Sports & Outdoor Survival.'
     },
     awards: {
       eyebrow: '02 • Awards, Competitions & Certificates',
@@ -52,6 +62,16 @@ const DEFAULT_DATA = {
     projects: {
       eyebrow: '04 • Research Projects, Creative Portfolio & Service',
       title: 'Innovation, Artistry & Community Impact'
+    },
+    media: {
+      eyebrow: '05 • Video Performances & Camp Memories',
+      title: 'Music Recitals, Debates & Action Snapshots',
+      subtitle: 'Watch solo music performances, debate speeches, and behind-the-scenes moments from science labs and leadership camps.'
+    },
+    timeline: {
+      eyebrow: '06 • Chronological Milestone Journey',
+      title: 'Continuous Growth & Progression Timeline',
+      subtitle: 'Tracking every milestone across academic years from Lower Secondary to Upper Secondary.'
     }
   },
   sisters: {
@@ -62,7 +82,16 @@ const DEFAULT_DATA = {
       curriculum: 'Singapore-Cambridge IGCSE Track',
       tagline: 'STEM Scholar, Analytical Thinker & Student Leader',
       bio: 'A dedicated Secondary 3 student at Anglo Singapore International School with a deep passion for Additional Mathematics, Biomedical Sciences, and trilingual communication. Noodee thrives on collaborative research, debate, and mentoring younger peers.',
+      aspirationGoal: 'Future Pathway: Biomedical & Veterinary Sciences / STEM Innovation',
+      aspirationQuote: '“I believe scientific curiosity and compassionate leadership can bridge classroom discovery with real-world care for people, animals, and our environment.”',
       avatar: 'assets/uploads/avatar-noodee.jpg?v=1794969986555',
+      radarScores: [
+        { label: 'STEM & Science', score: 96 },
+        { label: 'Languages & Debate', score: 92 },
+        { label: 'Music (Piano G7)', score: 94 },
+        { label: 'Leadership & NLP', score: 95 },
+        { label: 'Sports & Survival', score: 90 }
+      ],
       stats: [
         { value: '4.0 / A*', label: 'Academic GPA' },
         { value: 'HSK 5', label: 'Mandarin Level' },
@@ -72,7 +101,7 @@ const DEFAULT_DATA = {
         'Additional Mathematics',
         'Biomedical Chemistry',
         'Model United Nations',
-        'Robotics & Python',
+        'Piano Grade 7',
         'Badminton Varsity'
       ],
       subjects: [
@@ -86,13 +115,13 @@ const DEFAULT_DATA = {
           name: 'Pure Sciences (Physics, Chemistry & Biology)',
           grade: 'A* (94%)',
           percent: 94,
-          note: 'Lead student researcher in Sustainable Bioplastics & Water Filtration lab.'
+          note: 'Lead student researcher in Sustainable Bioplastics & Second Prize Science Group Project.'
         },
         {
           name: 'First Language English & World Literature',
           grade: 'A (91%)',
           percent: 91,
-          note: 'Varsity Debater and Editor for the Secondary School Chronicle.'
+          note: 'ASIA World Schools Debating Championship Coordinator & Editor.'
         },
         {
           name: 'Computer Science & Algorithmic Thinking',
@@ -114,7 +143,16 @@ const DEFAULT_DATA = {
       curriculum: 'Lower Secondary Singapore Honours Track',
       tagline: 'Young Violinist, Creative Problem Solver & Eco Innovator',
       bio: 'An enthusiastic and curious Secondary 1 student at Anglo Singapore International School who blends strong foundations in Singapore Mathematics with classical violin performance, digital illustration, and environmental stewardship.',
+      aspirationGoal: 'Future Pathway: Architectural Design, Creative Arts & Sustainability',
+      aspirationQuote: '“Whether solving a math puzzle or playing the violin, I love finding harmony between logic, creativity, and caring for our planet.”',
       avatar: 'assets/uploads/avatar-nadia.jpg?v=1794969990725',
+      radarScores: [
+        { label: 'STEM & Math', score: 94 },
+        { label: 'Trilingual Fluency', score: 90 },
+        { label: 'Music & Visual Arts', score: 97 },
+        { label: 'Eco Leadership', score: 89 },
+        { label: 'Swimming & Sports', score: 91 }
+      ],
       stats: [
         { value: 'Distinction', label: 'Honour Roll' },
         { value: 'ABRSM G6', label: 'Violin & Theory' },
@@ -132,7 +170,7 @@ const DEFAULT_DATA = {
           name: 'Lower Secondary Singapore Mathematics',
           grade: 'A* (95%)',
           percent: 95,
-          note: 'SASMO Gold Medalist; excels in heuristic problem solving and number theory.'
+          note: 'SASMO Medalist; excels in heuristic problem solving and number theory.'
         },
         {
           name: 'Integrated Inquiry Science',
@@ -161,86 +199,6 @@ const DEFAULT_DATA = {
     }
   },
   awards: [
-    {
-      id: 'custom-1794971462275',
-      sister: 'noodee',
-      sisterName: 'Noodee (Sec 3)',
-      year: '2025',
-      category: 'STEM & Research',
-      title: 'Certificate Veterinary Camp',
-      result: 'Certificate',
-      issuer: 'Career Hub',
-      description: 'has successfully completed Veterinary Camp',
-      skills: 'Leadership',
-      attachmentData: 'assets/uploads/cert-custom-1794971462275.jpg',
-      attachmentType: 'image',
-      attachmentName: '2025-Career Hub.jpg',
-      externalLink: ''
-    },
-    {
-      id: 'custom-1794971342649',
-      sister: 'noodee',
-      sisterName: 'Noodee (Sec 3)',
-      year: '2025',
-      category: 'Leadership',
-      title: 'Alpha Leadership Camp',
-      result: 'Certificate',
-      issuer: 'Inside Out Academy',
-      description: 'has successfully demonstrated and completed Alpha Leadership Camp',
-      skills: 'Leadership',
-      attachmentData: 'assets/uploads/cert-custom-1794971342649.jpg',
-      attachmentType: 'image',
-      attachmentName: '2025-Inside Out.jpg',
-      externalLink: ''
-    },
-    {
-      id: 'custom-1794970263859',
-      sister: 'noodee',
-      sisterName: 'Noodee (Sec 3)',
-      year: '2025',
-      category: 'Piano',
-      title: 'Certificate',
-      result: 'Piano Grade 7',
-      issuer: 'Yamaha Music Foundation',
-      description: 'has been successful in Piano Grade 7',
-      skills: 'Piano',
-      attachmentData: 'assets/uploads/cert-custom-1794970263859.jpg',
-      attachmentType: 'image',
-      attachmentName: '2025-Piano Grade7.jpg',
-      externalLink: ''
-    },
-    {
-      id: 'custom-1794970174011',
-      sister: 'noodee',
-      sisterName: 'Noodee (Sec 3)',
-      year: '2025',
-      category: 'Swimming',
-      title: 'Certificate of Training - Sea Survival and Basic Water Life Saving',
-      result: 'Certificate',
-      issuer: 'KIDO Survival Kids Camping',
-      description: 'Has successfully completed 25th Sea Survival and Basic Water Life Saving',
-      skills: 'Kido Camp',
-      attachmentData: 'assets/uploads/cert-custom-1794970174011.jpg',
-      attachmentType: 'image',
-      attachmentName: '2025-Kido Camp.jpg',
-      externalLink: ''
-    },
-    {
-      id: 'custom-1794969978725',
-      sister: 'noodee',
-      sisterName: 'Noodee (Sec 3)',
-      year: '2025',
-      category: 'Science',
-      title: 'Second Prize - Secondary 1 Science Group Project',
-      result: '2nd Place',
-      issuer: 'Anglo Singapore',
-      description: 'for outstanding work and attaining, Second Prize - Secondary 1 Science Group Project.',
-      skills: 'Innovative',
-      attachmentData: 'assets/uploads/cert-custom-1794969978725.jpg',
-      attachmentType: 'image',
-      attachmentName: '2025-Science Second Prize.jpg',
-      externalLink: ''
-    },
     {
       id: 'custom-1794969784931',
       sister: 'noodee',
@@ -324,6 +282,106 @@ const DEFAULT_DATA = {
   ],
   ccas: [
     {
+      id: 'custom-1794970174011',
+      sister: 'noodee',
+      sisterName: 'Noodee (Sec 3)',
+      year: '2025',
+      category: 'Swimming',
+      title: 'Certificate of Training - Sea Survival and Basic Water Life Saving',
+      result: 'Certificate',
+      issuer: 'KIDO Survival Kids Camping',
+      description: 'Has successfully completed 25th Sea Survival and Basic Water Life Saving',
+      skills: 'Kido Camp',
+      attachmentData: 'assets/uploads/cert-custom-1794970174011.jpg',
+      attachmentType: 'image',
+      attachmentName: '2025-Kido Camp.jpg',
+      externalLink: '',
+      icon: '🌟',
+      role: 'Swimming',
+      detail: 'Has successfully completed 25th Sea Survival and Basic Water Life Saving',
+      schedule: 'Certificate'
+    },
+    {
+      id: 'custom-1794983113731',
+      sister: 'noodee',
+      sisterName: 'Noodee (Sec 3)',
+      year: '2025',
+      category: 'Leadership',
+      role: 'Leadership',
+      title: 'Certificate Life 101 Program',
+      result: 'Certificate',
+      schedule: 'Certificate',
+      issuer: 'Inside Out',
+      description: 'has successfully demonstrated and completed Life 101 Program (Junior NLP Certification)',
+      detail: 'has successfully demonstrated and completed Life 101 Program (Junior NLP Certification)',
+      skills: 'Problem Solving',
+      attachmentData: 'assets/uploads/cert-custom-1794983113731.jpg',
+      attachmentType: 'image',
+      attachmentName: '2025-Life 101.jpg',
+      externalLink: '',
+      icon: '🌟'
+    },
+    {
+      id: 'custom-1794971342649',
+      sister: 'noodee',
+      sisterName: 'Noodee (Sec 3)',
+      year: '2025',
+      category: 'Leadership',
+      title: 'Alpha Leadership Camp',
+      result: 'Certificate',
+      issuer: 'Inside Out Academy',
+      description: 'has successfully demonstrated and completed Alpha Leadership Camp',
+      skills: 'Leadership',
+      attachmentData: 'assets/uploads/cert-custom-1794971342649.jpg',
+      attachmentType: 'image',
+      attachmentName: '2025-Inside Out.jpg',
+      externalLink: '',
+      icon: '🌟',
+      role: 'Leadership',
+      detail: 'has successfully demonstrated and completed Alpha Leadership Camp',
+      schedule: 'Certificate'
+    },
+    {
+      id: 'custom-1794971462275',
+      sister: 'noodee',
+      sisterName: 'Noodee (Sec 3)',
+      year: '2025',
+      category: 'STEM & Research',
+      title: 'Certificate Veterinary Camp',
+      result: 'Certificate',
+      issuer: 'Career Hub',
+      description: 'has successfully completed Veterinary Camp',
+      skills: 'Leadership',
+      attachmentData: 'assets/uploads/cert-custom-1794971462275.jpg',
+      attachmentType: 'image',
+      attachmentName: '2025-Career Hub.jpg',
+      externalLink: '',
+      icon: '🌟',
+      role: 'STEM & Research',
+      detail: 'has successfully completed Veterinary Camp',
+      schedule: 'Certificate'
+    },
+    {
+      id: 'custom-1794970263859',
+      sister: 'noodee',
+      sisterName: 'Noodee (Sec 3)',
+      year: '2025',
+      category: 'Piano',
+      title: 'Certificate',
+      result: 'Piano Grade 7',
+      issuer: 'Yamaha Music Foundation',
+      description: 'has been successful in Piano Grade 7',
+      skills: 'Piano',
+      attachmentData: 'assets/uploads/cert-custom-1794970263859.jpg',
+      attachmentType: 'image',
+      attachmentName: '2025-Piano Grade7.jpg',
+      externalLink: '',
+      icon: '🌟',
+      role: 'Piano',
+      detail: 'has been successful in Piano Grade 7',
+      schedule: 'Piano Grade 7'
+    },
+    {
       id: 'cca-1',
       sister: 'noodee',
       sisterName: 'Noodee (Sec 3)',
@@ -369,6 +427,22 @@ const DEFAULT_DATA = {
     }
   ],
   projects: [
+    {
+      id: 'custom-1794969978725',
+      sister: 'noodee',
+      sisterName: 'Noodee (Sec 3)',
+      year: '2025',
+      category: 'Science',
+      title: 'Second Prize - Secondary 1 Science Group Project',
+      result: '2nd Place',
+      issuer: 'Anglo Singapore',
+      description: 'for outstanding work and attaining, Second Prize - Secondary 1 Science Group Project.',
+      skills: 'Innovative',
+      attachmentData: 'assets/uploads/cert-custom-1794969978725.jpg',
+      attachmentType: 'image',
+      attachmentName: '2025-Science Second Prize.jpg',
+      externalLink: ''
+    },
     {
       id: 'proj-2',
       sister: 'noodee',
@@ -417,6 +491,41 @@ const DEFAULT_DATA = {
       attachmentName: null,
       externalLink: ''
     }
+  ],
+  mediaGallery: [
+    {
+      id: 'med-1',
+      sister: 'noodee',
+      sisterName: 'Noodee (Sec 3)',
+      year: '2025',
+      category: 'Music Recital',
+      title: 'Yamaha Piano Grade 7 Performance & Repertoire',
+      description: 'Solo piano recital showcasing expressive dynamics and technical mastery for Grade 7 assessment.',
+      videoUrl: '',
+      photoData: 'assets/uploads/cert-custom-1794970263859.jpg'
+    },
+    {
+      id: 'med-2',
+      sister: 'noodee',
+      sisterName: 'Noodee (Sec 3)',
+      year: '2025',
+      category: 'Camp & Leadership',
+      title: 'Veterinary Camp & Sea Survival Action Highlights',
+      description: 'Hands-on clinical animal care workshop at Career Hub Veterinary Camp and KIDO 25th Sea Survival training.',
+      videoUrl: '',
+      photoData: 'assets/uploads/cert-custom-1794971462275.jpg'
+    },
+    {
+      id: 'med-3',
+      sister: 'nadia',
+      sisterName: 'Nadia (Sec 1)',
+      year: '2026',
+      category: 'Violin & Ensemble',
+      title: 'ABRSM Grade 6 Violin Recital & String Ensemble',
+      description: 'Classical solo violin performance and Anglo Singapore String Ensemble concert highlights.',
+      videoUrl: '',
+      photoData: 'assets/uploads/avatar-nadia.jpg?v=1794969990725'
+    }
   ]
 };
 
@@ -426,6 +535,7 @@ let pendingAttachment = {
   name: null
 };
 
+let pendingActivityPhotos = []; // Array of compressed image data URLs for activity memories
 let appData = JSON.parse(JSON.stringify(DEFAULT_DATA));
 let hasUnsyncedChanges = false;
 let editingItemContext = null; // { id, collectionKey }
@@ -464,7 +574,6 @@ async function readFromIDB() {
       req.onerror = () => reject(req.error);
     });
   } catch (e) {
-    console.warn('IDB read fallback to localStorage:', e);
     return null;
   }
 }
@@ -480,7 +589,6 @@ async function writeToIDB(payload) {
       req.onerror = () => reject(req.error);
     });
   } catch (e) {
-    console.warn('IDB write error:', e);
     return false;
   }
 }
@@ -535,18 +643,36 @@ async function initializePortfolioData() {
 }
 
 function mergeWithDefaults(source) {
+  const mergedSisters = {
+    noodee: {
+      ...DEFAULT_DATA.sisters.noodee,
+      ...(source.sisters?.noodee || {}),
+      radarScores: source.sisters?.noodee?.radarScores || DEFAULT_DATA.sisters.noodee.radarScores
+    },
+    nadia: {
+      ...DEFAULT_DATA.sisters.nadia,
+      ...(source.sisters?.nadia || {}),
+      radarScores: source.sisters?.nadia?.radarScores || DEFAULT_DATA.sisters.nadia.radarScores
+    }
+  };
+
   return {
     ...DEFAULT_DATA,
     ...source,
+    sisters: mergedSisters,
+    mediaGallery: source.mediaGallery || DEFAULT_DATA.mediaGallery,
     sectionVisibility: {
       ...DEFAULT_DATA.sectionVisibility,
       ...(source.sectionVisibility || {})
     },
     sectionHeaders: {
       academics: { ...DEFAULT_DATA.sectionHeaders.academics, ...(source.sectionHeaders?.academics || {}) },
+      radar: { ...DEFAULT_DATA.sectionHeaders.radar, ...(source.sectionHeaders?.radar || {}) },
       awards: { ...DEFAULT_DATA.sectionHeaders.awards, ...(source.sectionHeaders?.awards || {}) },
       cca: { ...DEFAULT_DATA.sectionHeaders.cca, ...(source.sectionHeaders?.cca || {}) },
-      projects: { ...DEFAULT_DATA.sectionHeaders.projects, ...(source.sectionHeaders?.projects || {}) }
+      projects: { ...DEFAULT_DATA.sectionHeaders.projects, ...(source.sectionHeaders?.projects || {}) },
+      media: { ...DEFAULT_DATA.sectionHeaders.media, ...(source.sectionHeaders?.media || {}) },
+      timeline: { ...DEFAULT_DATA.sectionHeaders.timeline, ...(source.sectionHeaders?.timeline || {}) }
     },
     state: { ...DEFAULT_DATA.state }
   };
@@ -560,7 +686,8 @@ async function savePortfolioData() {
     sisters: appData.sisters,
     awards: appData.awards,
     ccas: appData.ccas,
-    projects: appData.projects
+    projects: appData.projects,
+    mediaGallery: appData.mediaGallery
   };
 
   await writeToIDB(payload);
@@ -590,7 +717,6 @@ function updateSyncButtonBadge() {
    ========================================================================== */
 
 function normalizeItemForTargetSection(item, fromCollection, toCollection) {
-  // Preserve every field including attachmentData, attachmentType, attachmentName, externalLink
   const copy = JSON.parse(JSON.stringify(item));
 
   if (toCollection === 'ccas') {
@@ -598,7 +724,6 @@ function normalizeItemForTargetSection(item, fromCollection, toCollection) {
     copy.role = copy.role || copy.category || 'Member';
     copy.detail = copy.detail || copy.description || '';
     copy.schedule = copy.schedule || copy.result || `${copy.year || '2026'} • Anglo Singapore CCA`;
-    // Also keep standard fields in sync so moving back to Awards/Projects is lossless
     copy.category = copy.category || copy.role;
     copy.description = copy.description || copy.detail;
     copy.result = copy.result || copy.schedule;
@@ -787,7 +912,7 @@ async function handlePublishToGitHub(event) {
 
   submitBtn.disabled = true;
   submitBtn.innerText = '⏳ Uploading to GitHub...';
-  statusBox.innerHTML = `<div style="padding:0.75rem; background:var(--surface-subtle); border-radius:8px; font-size:0.84rem; color:var(--text-primary);">Uploading profile photos, PDFs, and portfolio data directly to <strong>${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}</strong>...</div>`;
+  statusBox.innerHTML = `<div style="padding:0.75rem; background:var(--surface-subtle); border-radius:8px; font-size:0.84rem; color:var(--text-primary);">Uploading profile photos, PDFs, activity photos, and portfolio data directly to <strong>${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}</strong>...</div>`;
 
   try {
     for (const sisterKey of ['noodee', 'nadia']) {
@@ -826,6 +951,41 @@ async function handlePublishToGitHub(event) {
           );
           item.attachmentData = filePath;
         }
+
+        // Upload any additional activity photos attached to this card
+        if (Array.isArray(item.activityPhotos)) {
+          for (let pIdx = 0; pIdx < item.activityPhotos.length; pIdx++) {
+            const pData = item.activityPhotos[pIdx];
+            if (pData && pData.startsWith('data:image/')) {
+              const safeId = String(item.id).replace(/[^a-zA-Z0-9_-]/g, '');
+              const photoPath = `assets/uploads/act-${safeId}-${pIdx}.jpg`;
+              statusBox.innerHTML = `<div style="padding:0.75rem; background:var(--surface-subtle); border-radius:8px; font-size:0.84rem;">Uploading activity photo #${pIdx + 1} for <strong>${item.title}</strong>...</div>`;
+              await uploadFileToGitHubRepo(
+                token,
+                photoPath,
+                dataUrlToBase64Content(pData),
+                `Upload activity photo for ${item.title}`
+              );
+              item.activityPhotos[pIdx] = photoPath;
+            }
+          }
+        }
+      }
+    }
+
+    // Upload any new photos in mediaGallery
+    for (const med of (appData.mediaGallery || [])) {
+      if (med.photoData && med.photoData.startsWith('data:image/')) {
+        const safeId = String(med.id).replace(/[^a-zA-Z0-9_-]/g, '');
+        const medPath = `assets/uploads/media-${safeId}.jpg`;
+        statusBox.innerHTML = `<div style="padding:0.75rem; background:var(--surface-subtle); border-radius:8px; font-size:0.84rem;">Uploading showcase photo for <strong>${med.title}</strong>...</div>`;
+        await uploadFileToGitHubRepo(
+          token,
+          medPath,
+          dataUrlToBase64Content(med.photoData),
+          `Upload media showcase photo for ${med.title}`
+        );
+        med.photoData = medPath;
       }
     }
 
@@ -836,7 +996,8 @@ async function handlePublishToGitHub(event) {
       sisters: appData.sisters,
       awards: appData.awards,
       ccas: appData.ccas,
-      projects: appData.projects
+      projects: appData.projects,
+      mediaGallery: appData.mediaGallery
     };
 
     statusBox.innerHTML = `<div style="padding:0.75rem; background:var(--surface-subtle); border-radius:8px; font-size:0.84rem;">Saving master <code>portfolio-data.json</code> to GitHub...</div>`;
@@ -855,7 +1016,7 @@ async function handlePublishToGitHub(event) {
     statusBox.innerHTML = `
       <div style="padding:0.9rem; background:hsl(150, 45%, 93%); border:1px solid hsl(152, 40%, 72%); border-radius:8px; font-size:0.85rem; color:hsl(152, 55%, 22%);">
         ✅ <strong>Successfully published to GitHub!</strong><br/>
-        All photos, PDF certificates, CCA items, projects, and section settings are now permanently stored in your GitHub repository.
+        All photos, PDF certificates, radar scores, videos, and timeline milestones are now permanently stored on GitHub Pages.
       </div>
     `;
   } catch (err) {
@@ -935,6 +1096,8 @@ function setYearFilter(yearStr) {
   renderAwards();
   renderCCAs();
   renderProjects();
+  renderMediaGallery();
+  renderTimeline();
 }
 
 function setYearSortOrder(sortVal) {
@@ -942,6 +1105,8 @@ function setYearSortOrder(sortVal) {
   renderAwards();
   renderCCAs();
   renderProjects();
+  renderMediaGallery();
+  renderTimeline();
 }
 
 function renderDynamicCategoryChips(collectionKey, containerId, activeFilterKey, handlerName) {
@@ -1009,15 +1174,15 @@ function updateCategoryDatalist() {
 }
 
 /* ==========================================================================
-   Section Headers & Section Visibility Controls (Show / Hide Sections 1-4)
+   Section Headers & Section Visibility Controls (Show / Hide All Sections)
    ========================================================================== */
 
 function renderSectionHeadersAndVisibility() {
   const editable = appData.state.editMode;
-  const vis = appData.sectionVisibility || { academics: true, awards: true, cca: true, projects: true };
+  const vis = appData.sectionVisibility || DEFAULT_DATA.sectionVisibility;
   const headers = appData.sectionHeaders || DEFAULT_DATA.sectionHeaders;
 
-  ['academics', 'awards', 'cca', 'projects'].forEach(secKey => {
+  ['academics', 'radar', 'awards', 'cca', 'projects', 'media', 'timeline'].forEach(secKey => {
     const secEl = document.getElementById(secKey);
     if (!secEl) return;
 
@@ -1062,14 +1227,14 @@ function updateSectionHeader(secKey, field, val) {
 }
 
 function toggleSectionVisibility(secKey) {
-  if (!appData.sectionVisibility) appData.sectionVisibility = { academics: true, awards: true, cca: true, projects: true };
+  if (!appData.sectionVisibility) appData.sectionVisibility = { ...DEFAULT_DATA.sectionVisibility };
   appData.sectionVisibility[secKey] = appData.sectionVisibility[secKey] === false ? true : false;
   savePortfolioData();
   renderSectionHeadersAndVisibility();
 }
 
 /* ==========================================================================
-   Rendering Functions
+   Rendering Functions (Including 6 New Showcase Features)
    ========================================================================== */
 
 function setSisterView(sisterKey) {
@@ -1123,6 +1288,17 @@ function renderHeroCards() {
 
           <p class="sister-bio" ${editable} onblur="updateSisterField('${s.id}', 'bio', this.innerText)">${s.bio}</p>
 
+          <!-- Feature 5: Future Aspirations & Personal Statement -->
+          <div class="aspiration-box asp-${s.id}">
+            <div class="aspiration-goal">
+              <span>🎯</span>
+              <span ${editable} onblur="updateSisterField('${s.id}', 'aspirationGoal', this.innerText)">${s.aspirationGoal || 'Future Aspiration & Pathway'}</span>
+            </div>
+            <div class="aspiration-quote" ${editable} onblur="updateSisterField('${s.id}', 'aspirationQuote', this.innerText)">
+              ${s.aspirationQuote || '“Committed to lifelong curiosity, leadership, and making a positive impact.”'}
+            </div>
+          </div>
+
           <div class="sister-QuickStats">
             ${s.stats.map((st, idx) => `
               <div class="stat-box">
@@ -1154,6 +1330,130 @@ function renderHeroCards() {
       </article>
     `;
   }).join('');
+}
+
+/* Feature 2: 5-Dimension Holistic Competency Radar Chart */
+function buildRadarSVG(scores, sisterId) {
+  const size = 300;
+  const cx = size / 2;
+  const cy = size / 2;
+  const maxR = 95;
+  const dims = scores && scores.length === 5 ? scores : DEFAULT_DATA.sisters[sisterId].radarScores;
+
+  const strokeColor = sisterId === 'noodee' ? 'hsl(14, 72%, 56%)' : 'hsl(212, 68%, 52%)';
+  const fillColor = sisterId === 'noodee' ? 'hsla(14, 72%, 56%, 0.24)' : 'hsla(212, 68%, 52%, 0.24)';
+
+  const angleFor = (i) => (Math.PI * 2 * i) / 5 - Math.PI / 2;
+  const ptFor = (i, rRatio) => {
+    const a = angleFor(i);
+    return [cx + maxR * rRatio * Math.cos(a), cy + maxR * rRatio * Math.sin(a)];
+  };
+
+  // Concentric pentagon rings
+  const rings = [0.25, 0.5, 0.75, 1.0].map(ratio => {
+    const pts = [0, 1, 2, 3, 4].map(i => ptFor(i, ratio).join(',')).join(' ');
+    return `<polygon points="${pts}" fill="none" stroke="hsl(35, 25%, 86%)" stroke-width="1" />`;
+  }).join('');
+
+  // Axis lines
+  const axes = [0, 1, 2, 3, 4].map(i => {
+    const [x, y] = ptFor(i, 1.0);
+    return `<line x1="${cx}" y1="${cy}" x2="${x}" y2="${y}" stroke="hsl(35, 25%, 84%)" stroke-width="1" stroke-dasharray="3,3" />`;
+  }).join('');
+
+  // Data polygon
+  const dataPoints = dims.map((d, i) => {
+    const val = Math.max(20, Math.min(100, Number(d.score) || 85)) / 100;
+    return ptFor(i, val);
+  });
+  const polyPointsStr = dataPoints.map(p => p.join(',')).join(' ');
+
+  // Dots and labels
+  const dotsAndLabels = dims.map((d, i) => {
+    const [dx, dy] = dataPoints[i];
+    const [lx, ly] = ptFor(i, 1.27);
+    const anchor = Math.abs(lx - cx) < 12 ? 'middle' : (lx > cx ? 'start' : 'end');
+    return `
+      <circle cx="${dx}" cy="${dy}" r="4.5" fill="${strokeColor}" stroke="#fff" stroke-width="1.5" />
+      <text x="${lx}" y="${ly}" text-anchor="${anchor}" dominant-baseline="middle" font-size="10.5" font-weight="700" fill="hsl(222, 38%, 18%)">
+        ${d.label} (${d.score}%)
+      </text>
+    `;
+  }).join('');
+
+  return `
+    <svg viewBox="0 0 ${size} ${size}" width="100%" height="100%" role="img" aria-label="${sisterId} 5-Dimension Competency Radar">
+      ${rings}
+      ${axes}
+      <polygon points="${polyPointsStr}" fill="${fillColor}" stroke="${strokeColor}" stroke-width="2.5" />
+      ${dotsAndLabels}
+    </svg>
+  `;
+}
+
+function renderRadarSection() {
+  const container = document.getElementById('radar-grid');
+  if (!container) return;
+
+  const active = appData.state.activeSister;
+  const editable = appData.state.editMode;
+
+  const list = active === 'both'
+    ? [appData.sisters.noodee, appData.sisters.nadia]
+    : [appData.sisters[active]];
+
+  container.className = `radar-section-grid ${list.length === 1 ? 'single-focus' : ''}`;
+
+  container.innerHTML = list.map(s => {
+    const dims = s.radarScores || DEFAULT_DATA.sisters[s.id].radarScores;
+    return `
+      <div class="radar-card" id="radar-card-${s.id}">
+        <div style="width:100%; display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem;">
+          <div style="display:flex; align-items:center; gap:0.6rem;">
+            <span class="switch-dot dot-${s.id}"></span>
+            <h3 style="font-family:var(--font-serif); font-size:1.25rem;">${s.name} — 5-Pillar Balance</h3>
+          </div>
+          <span class="owner-badge owner-${s.id}">${s.level}</span>
+        </div>
+
+        <div class="radar-svg-wrap" id="radar-svg-${s.id}">
+          ${buildRadarSVG(dims, s.id)}
+        </div>
+
+        ${editable ? `
+          <div class="radar-Sliders">
+            ${dims.map((d, idx) => `
+              <div class="radar-slider-item">
+                <label style="font-weight:700; display:flex; justify-content:space-between;">
+                  <span contenteditable="true" onblur="updateRadarLabel('${s.id}', ${idx}, this.innerText)">${d.label}</span>
+                  <span>${d.score}%</span>
+                </label>
+                <input type="range" min="50" max="100" value="${d.score}" oninput="updateRadarScore('${s.id}', ${idx}, this.value)" style="accent-color: var(--${s.id}-primary); cursor:pointer;" />
+              </div>
+            `).join('')}
+          </div>
+        ` : `
+          <p style="font-size:0.82rem; color:var(--text-secondary); text-align:center; margin-top:0.25rem;">
+            Balanced excellence across STEM, Trilingual Communication, Music/Arts, Leadership &amp; Athletics.
+          </p>
+        `}
+      </div>
+    `;
+  }).join('');
+}
+
+function updateRadarScore(sisterId, idx, val) {
+  if (!appData.sisters[sisterId]?.radarScores?.[idx]) return;
+  appData.sisters[sisterId].radarScores[idx].score = Number(val);
+  savePortfolioData();
+  renderRadarSection();
+}
+
+function updateRadarLabel(sisterId, idx, val) {
+  if (!appData.sisters[sisterId]?.radarScores?.[idx]) return;
+  appData.sisters[sisterId].radarScores[idx].label = val.trim();
+  savePortfolioData();
+  renderRadarSection();
 }
 
 function renderAcademics() {
@@ -1216,30 +1516,49 @@ function renderAcademics() {
 }
 
 function renderCardAttachmentSnippet(item) {
+  let html = '';
   if (item.attachmentData && item.attachmentType === 'image') {
-    return `
+    html += `
       <div class="card-attachment-preview">
         <img src="${item.attachmentData}" alt="${item.title} Certificate" loading="lazy" />
       </div>
     `;
-  }
-  if (item.attachmentData && item.attachmentType === 'pdf') {
-    return `
+  } else if (item.attachmentData && item.attachmentType === 'pdf') {
+    html += `
       <div class="card-pdf-badge">
         <span>📄</span>
         <span>PDF Certificate Attached: ${item.attachmentName || 'Certificate.pdf'}</span>
       </div>
     `;
   }
-  if (item.externalLink) {
-    return `
+
+  // Feature 4: Activity Action Photos Strip inside any card
+  if (Array.isArray(item.activityPhotos) && item.activityPhotos.length > 0) {
+    html += `
+      <div class="activity-photos-strip" style="margin-bottom:0.85rem;">
+        ${item.activityPhotos.map((pUrl, idx) => `
+          <img src="${pUrl}" alt="Activity memory ${idx + 1}" class="activity-photo-thumb" loading="lazy" />
+        `).join('')}
+      </div>
+    `;
+  }
+
+  if (item.videoUrl) {
+    html += `
+      <div class="card-pdf-badge" style="background:var(--brand-gold-soft);">
+        <span>🎬</span>
+        <span>Performance / Activity Video Attached</span>
+      </div>
+    `;
+  } else if (item.externalLink) {
+    html += `
       <div class="card-pdf-badge">
         <span>🔗</span>
         <span>External Certificate / Document Link Attached</span>
       </div>
     `;
   }
-  return '';
+  return html;
 }
 
 function renderCardToolbar(item, currentCollection) {
@@ -1429,14 +1748,214 @@ function renderProjects() {
   `).join('');
 }
 
+/* Feature 3 & 4: Video Performances & Activity Photo Memories Showcase (Section 05) */
+function convertToYouTubeEmbed(url) {
+  if (!url) return null;
+  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=|shorts\/)([^#&?]*).*/;
+  const match = url.match(regExp);
+  if (match && match[2].length === 11) {
+    return `https://www.youtube.com/embed/${match[2]}`;
+  }
+  return null;
+}
+
+function renderMediaGallery() {
+  const container = document.getElementById('media-grid');
+  if (!container) return;
+
+  const activeSister = appData.state.activeSister;
+  const activeYear = appData.state.activeYear;
+
+  const filtered = sortItemsByYear((appData.mediaGallery || []).filter(item => {
+    const matchesSister = activeSister === 'both' || item.sister === activeSister || item.sister === 'both';
+    const matchesYear = activeYear === 'all' || !item.year || String(item.year) === String(activeYear);
+    return matchesSister && matchesYear;
+  }));
+
+  if (filtered.length === 0) {
+    container.innerHTML = `
+      <div style="grid-column: 1/-1; text-align: center; padding: 2.5rem; background: var(--surface-card); border-radius: var(--radius-md); border: 1px dashed var(--border-strong); color: var(--text-secondary);">
+        No video performances or photo memories for this filter yet. Click "+ Add Video / Photo Memory" to showcase recitals, sports, or camp snapshots!
+      </div>
+    `;
+    return;
+  }
+
+  container.innerHTML = filtered.map(item => {
+    const ytEmbed = convertToYouTubeEmbed(item.videoUrl);
+    let mediaBoxHtml = '';
+    if (ytEmbed) {
+      mediaBoxHtml = `<div class="media-embed-box"><iframe src="${ytEmbed}" title="${item.title}" allowfullscreen loading="lazy"></iframe></div>`;
+    } else if (item.photoData) {
+      mediaBoxHtml = `<div class="media-embed-box"><img src="${item.photoData}" alt="${item.title}" loading="lazy" /></div>`;
+    } else {
+      mediaBoxHtml = `<div class="media-embed-box" style="display:flex;align-items:center;justify-content:center;color:#fff;font-size:2rem;">🎬 📸</div>`;
+    }
+
+    return `
+      <article class="media-card" id="media-card-${item.id}">
+        <div>
+          ${mediaBoxHtml}
+          <div class="media-body">
+            <div class="card-top-meta">
+              <span class="owner-badge owner-${item.sister}">${item.sisterName}</span>
+              <span class="year-badge">📅 ${item.year || '2026'}</span>
+            </div>
+            <div class="card-category">${item.category || 'Showcase'}</div>
+            <h3 class="card-title" style="font-size:1.12rem;">${item.title}</h3>
+            <p class="card-desc" style="margin-bottom:0.5rem;">${item.description || ''}</p>
+            ${item.videoUrl && !ytEmbed ? `<a href="${item.videoUrl}" target="_blank" rel="noopener" class="btn btn-outline" style="font-size:0.78rem; margin-top:0.4rem;">🎬 Watch Video Link ↗</a>` : ''}
+          </div>
+        </div>
+        <div style="padding: 0 1.4rem 1.1rem;">
+          <div class="card-toolbar">
+            <span style="font-size:0.74rem; color:var(--text-muted); font-weight:600;">📸 Media &amp; Performance</span>
+            <div class="card-btn-group">
+              <button type="button" class="card-tool-btn btn-del" onclick="deleteMediaItem('${item.id}')" title="Delete this memory">🗑️</button>
+            </div>
+          </div>
+        </div>
+      </article>
+    `;
+  }).join('');
+}
+
+function openAddMediaModal() {
+  pendingAttachment = { data: null, type: null, name: null };
+  const form = document.getElementById('add-media-form');
+  if (form) form.reset();
+  const statusEl = document.getElementById('media-file-status');
+  if (statusEl) statusEl.innerHTML = '';
+  document.getElementById('add-media-modal').classList.add('open');
+}
+
+function closeAddMediaModal() {
+  document.getElementById('add-media-modal').classList.remove('open');
+}
+
+function handleMediaPhotoSelect(event) {
+  const file = event.target.files?.[0];
+  const statusEl = document.getElementById('media-file-status');
+  if (!file) return;
+  compressImageFile(file, (compressedUrl) => {
+    pendingAttachment = { data: compressedUrl, type: 'image', name: file.name };
+    if (statusEl) {
+      statusEl.innerHTML = `<span class="file-preview-pill">📸 Photo Ready: ${file.name}</span>`;
+    }
+  });
+}
+
+async function handleAddMediaSubmit(event) {
+  event.preventDefault();
+  const form = event.target;
+  const sister = form.sister.value;
+  const sisterMap = {
+    noodee: 'Noodee (Sec 3)',
+    nadia: 'Nadia (Sec 1)',
+    both: 'Noodee & Nadia (Sister Collaboration)'
+  };
+
+  const newEntry = {
+    id: 'med-' + Date.now(),
+    sister: sister,
+    sisterName: sisterMap[sister],
+    year: form.year.value.trim() || '2026',
+    category: form.category.value.trim() || 'Performance & Activity',
+    title: form.title.value.trim(),
+    description: form.description.value.trim(),
+    videoUrl: form.videoUrl.value.trim(),
+    photoData: pendingAttachment.data || null
+  };
+
+  if (!appData.mediaGallery) appData.mediaGallery = [];
+  appData.mediaGallery.unshift(newEntry);
+  await savePortfolioData();
+  closeAddMediaModal();
+  renderMediaGallery();
+}
+
+async function deleteMediaItem(id) {
+  if (!confirm('Remove this video/photo memory?')) return;
+  appData.mediaGallery = (appData.mediaGallery || []).filter(x => x.id !== id);
+  await savePortfolioData();
+  renderMediaGallery();
+}
+
+/* Feature 1: Interactive Growth & Milestone Timeline (Section 06) */
+function renderTimeline() {
+  const container = document.getElementById('timeline-container');
+  if (!container) return;
+
+  const activeSister = appData.state.activeSister;
+  const activeYear = appData.state.activeYear;
+
+  const combined = [
+    ...(appData.awards || []).map(x => ({ ...x, _col: 'awards', _badge: '🏆 Award' })),
+    ...(appData.ccas || []).map(x => ({ ...x, _col: 'ccas', _badge: '🌟 CCA' })),
+    ...(appData.projects || []).map(x => ({ ...x, _col: 'projects', _badge: '✨ Project' }))
+  ].filter(item => {
+    const matchesSister = activeSister === 'both' || item.sister === activeSister || item.sister === 'both';
+    const matchesYear = activeYear === 'all' || String(item.year || '2026') === String(activeYear);
+    return matchesSister && matchesYear;
+  });
+
+  const groups = {};
+  combined.forEach(item => {
+    const yr = String(item.year || '2026').trim();
+    if (!groups[yr]) groups[yr] = [];
+    groups[yr].push(item);
+  });
+
+  const dir = appData.state.yearSort === 'asc' ? 1 : -1;
+  const years = Object.keys(groups).sort((a, b) => a.localeCompare(b, undefined, { numeric: true }) * dir);
+
+  if (years.length === 0) {
+    container.innerHTML = `<p style="color:var(--text-secondary);">No timeline milestones match the selected filter.</p>`;
+    return;
+  }
+
+  container.innerHTML = years.map(yr => `
+    <div class="timeline-year-group">
+      <div class="timeline-year-marker">
+        <span>📅 Academic Year ${yr}</span>
+        <span style="font-size:0.75rem; opacity:0.85;">(${groups[yr].length} Milestones)</span>
+      </div>
+      <div class="timeline-items-row">
+        ${groups[yr].map(item => `
+          <div class="timeline-mini-card" onclick="openCertificateModal('${item.id}', '${item._col}')">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.4rem;">
+              <span class="owner-badge owner-${item.sister}">${item.sisterName}</span>
+              <span style="font-size:0.72rem; font-weight:700; color:var(--text-muted);">${item._badge} • ${item.category || item.role || ''}</span>
+            </div>
+            <h4 style="font-family:var(--font-serif); font-size:1.02rem; margin-bottom:0.25rem;">${item.title}</h4>
+            <p style="font-size:0.8rem; color:var(--text-secondary);">${item.result || item.schedule || ''}</p>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `).join('');
+}
+
+/* Feature 6: QR Code Generator for Digital Portfolio Card */
+function renderQRCodeCard() {
+  const qrImg = document.getElementById('portfolio-qr-img');
+  if (!qrImg) return;
+  const encodedUrl = encodeURIComponent(PORTFOLIO_PUBLIC_URL);
+  qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=160x160&margin=4&data=${encodedUrl}`;
+}
+
 function renderAll() {
   renderSectionHeadersAndVisibility();
   renderYearSourcingBar();
   renderHeroCards();
   renderAcademics();
+  renderRadarSection();
   renderAwards();
   renderCCAs();
   renderProjects();
+  renderMediaGallery();
+  renderTimeline();
+  renderQRCodeCard();
 }
 
 /* ==========================================================================
@@ -1458,7 +1977,6 @@ function openCertificateModal(itemId, collectionKey) {
   const item = list.find(x => x.id === itemId);
   if (!item) return;
 
-  // If user is in Edit Mode, clicking the card directly opens the Edit Item Modal!
   if (appData.state.editMode) {
     openEditItemModal(itemId, collectionKey);
     return;
@@ -1487,6 +2005,36 @@ function openCertificateModal(itemId, collectionKey) {
       <div style="margin-bottom: 1rem;">
         <a href="${item.attachmentData}" download="${item.attachmentName || 'certificate.pdf'}" class="btn btn-primary" style="font-size:0.8rem;">
           📄 Download / Open PDF (${item.attachmentName || 'certificate.pdf'})
+        </a>
+      </div>
+    `;
+  }
+
+  let activityPhotosModalHtml = '';
+  if (Array.isArray(item.activityPhotos) && item.activityPhotos.length > 0) {
+    activityPhotosModalHtml = `
+      <div style="margin: 1rem 0; text-align: left;">
+        <strong style="display:block; font-size:0.75rem; color:var(--text-muted); text-transform:uppercase; margin-bottom:0.4rem;">📸 Activity &amp; Camp Action Photos</strong>
+        <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 0.6rem;">
+          ${item.activityPhotos.map(pUrl => `<img src="${pUrl}" alt="Activity photo" style="width:100%; height:120px; object-fit:cover; border-radius:8px; border:1px solid var(--border-subtle);" />`).join('')}
+        </div>
+      </div>
+    `;
+  }
+
+  let videoEmbedHtml = '';
+  const ytEmbed = convertToYouTubeEmbed(item.videoUrl);
+  if (ytEmbed) {
+    videoEmbedHtml = `
+      <div class="media-embed-box" style="border-radius:10px; margin: 1rem 0;">
+        <iframe src="${ytEmbed}" title="${item.title} Video" allowfullscreen></iframe>
+      </div>
+    `;
+  } else if (item.videoUrl) {
+    videoEmbedHtml = `
+      <div style="margin-bottom: 1rem;">
+        <a href="${item.videoUrl}" target="_blank" rel="noopener noreferrer" class="btn btn-outline" style="font-size:0.82rem;">
+          🎬 Watch Performance / Activity Video ↗
         </a>
       </div>
     `;
@@ -1525,6 +2073,8 @@ function openCertificateModal(itemId, collectionKey) {
       </p>
 
       ${attachmentViewerHtml}
+      ${videoEmbedHtml}
+      ${activityPhotosModalHtml}
       ${externalLinkHtml}
 
       <div class="cert-meta-grid">
@@ -1549,8 +2099,12 @@ function openCertificateModal(itemId, collectionKey) {
           ✎ Edit Text / Move Section
         </button>
         <label class="btn btn-outline" style="font-size: 0.8rem; cursor: pointer;">
-          📎 Attach / Replace Photo or PDF
+          📎 Replace Certificate
           <input type="file" accept="image/*,.pdf,application/pdf" style="display:none" onchange="attachFileToExistingItem('${item.id}', '${collectionKey}', event)" />
+        </label>
+        <label class="btn btn-outline" style="font-size: 0.8rem; cursor: pointer;">
+          📸 + Add Action Photos
+          <input type="file" accept="image/*" multiple style="display:none" onchange="attachActivityPhotosToExistingItem('${item.id}', '${collectionKey}', event)" />
         </label>
       </div>
       <div style="display: flex; gap: 0.5rem;">
@@ -1569,10 +2123,10 @@ function closeDetailModal() {
   document.getElementById('detail-modal').classList.remove('open');
 }
 
-/* Open Add / Edit Modal (Supports Awards [02], CCA [03], and Projects [04]) */
 function openAddModal(defaultSection = 'awards') {
   editingItemContext = null;
   pendingAttachment = { data: null, type: null, name: null };
+  pendingActivityPhotos = [];
 
   const form = document.getElementById('add-achievement-form');
   if (form) form.reset();
@@ -1597,6 +2151,8 @@ function openAddModal(defaultSection = 'awards') {
 
   const previewEl = document.getElementById('attachment-file-status');
   if (previewEl) previewEl.innerHTML = '';
+  const actPreviewEl = document.getElementById('activity-photos-status');
+  if (actPreviewEl) actPreviewEl.innerHTML = '';
 
   updateCategoryDatalist();
   document.getElementById('add-modal').classList.add('open');
@@ -1613,6 +2169,7 @@ function openEditItemModal(itemId, collectionKey) {
     type: item.attachmentType || null,
     name: item.attachmentName || null
   };
+  pendingActivityPhotos = Array.isArray(item.activityPhotos) ? [...item.activityPhotos] : [];
 
   const form = document.getElementById('add-achievement-form');
   if (!form) return;
@@ -1633,6 +2190,7 @@ function openEditItemModal(itemId, collectionKey) {
     form.description.value = item.detail || item.description || '';
     form.skills.value = item.skills || '';
     if (form.externalLink) form.externalLink.value = item.externalLink || '';
+    if (form.videoUrl) form.videoUrl.value = item.videoUrl || '';
   } else {
     form.category.value = item.category || item.role || '';
     form.year.value = item.year || '2026';
@@ -1642,14 +2200,24 @@ function openEditItemModal(itemId, collectionKey) {
     form.description.value = item.description || item.detail || '';
     form.skills.value = item.skills || '';
     if (form.externalLink) form.externalLink.value = item.externalLink || '';
+    if (form.videoUrl) form.videoUrl.value = item.videoUrl || '';
   }
 
   const previewEl = document.getElementById('attachment-file-status');
   if (previewEl) {
     if (pendingAttachment.data) {
-      previewEl.innerHTML = `<span class="file-preview-pill">📎 Current file attached (${pendingAttachment.name || pendingAttachment.type})</span>`;
+      previewEl.innerHTML = `<span class="file-preview-pill">📎 Current certificate attached (${pendingAttachment.name || pendingAttachment.type})</span>`;
     } else {
       previewEl.innerHTML = '';
+    }
+  }
+
+  const actPreviewEl = document.getElementById('activity-photos-status');
+  if (actPreviewEl) {
+    if (pendingActivityPhotos.length > 0) {
+      actPreviewEl.innerHTML = `<span class="file-preview-pill">📸 ${pendingActivityPhotos.length} Action Photo(s) attached</span>`;
+    } else {
+      actPreviewEl.innerHTML = '';
     }
   }
 
@@ -1751,6 +2319,23 @@ function handleCertificateFileSelect(event) {
   }
 }
 
+function handleActivityPhotosSelect(event) {
+  const files = Array.from(event.target.files || []);
+  const statusEl = document.getElementById('activity-photos-status');
+  if (!files.length) return;
+
+  files.forEach(file => {
+    if (file.type.startsWith('image/')) {
+      compressImageFile(file, (compressedUrl) => {
+        pendingActivityPhotos.push(compressedUrl);
+        if (statusEl) {
+          statusEl.innerHTML = `<span class="file-preview-pill">📸 ${pendingActivityPhotos.length} Action Photo(s) Ready</span>`;
+        }
+      });
+    }
+  });
+}
+
 function attachFileToExistingItem(itemId, collectionKey, event) {
   const file = event.target.files?.[0];
   if (!file) return;
@@ -1783,6 +2368,30 @@ function attachFileToExistingItem(itemId, collectionKey, event) {
       openCertificateModal(itemId, collectionKey);
     });
   }
+}
+
+function attachActivityPhotosToExistingItem(itemId, collectionKey, event) {
+  const files = Array.from(event.target.files || []);
+  if (!files.length) return;
+  const list = appData[collectionKey] || [];
+  const item = list.find(x => x.id === itemId);
+  if (!item) return;
+  if (!Array.isArray(item.activityPhotos)) item.activityPhotos = [];
+
+  let processed = 0;
+  files.forEach(file => {
+    if (file.type.startsWith('image/')) {
+      compressImageFile(file, async (compressedUrl) => {
+        item.activityPhotos.push(compressedUrl);
+        processed++;
+        if (processed === files.length) {
+          await savePortfolioData();
+          renderAll();
+          openCertificateModal(itemId, collectionKey);
+        }
+      });
+    }
+  });
 }
 
 async function deletePortfolioItem(itemId, collectionKey) {
@@ -1840,6 +2449,8 @@ async function handleAddAchievement(event) {
       attachmentData: pendingAttachment.data,
       attachmentType: pendingAttachment.type,
       attachmentName: pendingAttachment.name,
+      activityPhotos: pendingActivityPhotos,
+      videoUrl: form.videoUrl ? form.videoUrl.value.trim() : '',
       externalLink: form.externalLink ? form.externalLink.value.trim() : ''
     };
   } else {
@@ -1861,6 +2472,8 @@ async function handleAddAchievement(event) {
       attachmentData: pendingAttachment.data,
       attachmentType: pendingAttachment.type,
       attachmentName: pendingAttachment.name,
+      activityPhotos: pendingActivityPhotos,
+      videoUrl: form.videoUrl ? form.videoUrl.value.trim() : '',
       externalLink: form.externalLink ? form.externalLink.value.trim() : ''
     };
   }
@@ -1875,6 +2488,7 @@ async function handleAddAchievement(event) {
   await savePortfolioData();
   form.reset();
   pendingAttachment = { data: null, type: null, name: null };
+  pendingActivityPhotos = [];
   editingItemContext = null;
   closeAddModal();
   renderAll();
@@ -1983,7 +2597,8 @@ function exportPortfolioBackup() {
     sisters: appData.sisters,
     awards: appData.awards,
     ccas: appData.ccas,
-    projects: appData.projects
+    projects: appData.projects,
+    mediaGallery: appData.mediaGallery
   }, null, 2);
   const blob = new Blob([dataStr], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
