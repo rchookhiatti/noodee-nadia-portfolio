@@ -1,5 +1,5 @@
 {
-  "updatedAt": 1794970419425,
+  "updatedAt": 1794971565842,
   "sisters": {
     "noodee": {
       "id": "noodee",
@@ -143,6 +143,38 @@
     }
   },
   "awards": [
+    {
+      "id": "custom-1794971462275",
+      "sister": "noodee",
+      "sisterName": "Noodee (Sec 3)",
+      "year": "2025",
+      "category": "STEM & Research",
+      "title": "Certificate Veterinary Camp",
+      "result": "Certificate",
+      "issuer": "Career Hub",
+      "description": "has successfully completed Veterinary Camp",
+      "skills": "Leadership",
+      "attachmentData": "assets/uploads/cert-custom-1794971462275.jpg",
+      "attachmentType": "image",
+      "attachmentName": "2025-Career Hub.jpg",
+      "externalLink": ""
+    },
+    {
+      "id": "custom-1794971342649",
+      "sister": "noodee",
+      "sisterName": "Noodee (Sec 3)",
+      "year": "2025",
+      "category": "Leadership",
+      "title": "Alpha Leadership Camp",
+      "result": "Certificate",
+      "issuer": "Inside Out Academy",
+      "description": "has successfully demonstrated and completed Alpha Leadership Camp",
+      "skills": "Leadership",
+      "attachmentData": "assets/uploads/cert-custom-1794971342649.jpg",
+      "attachmentType": "image",
+      "attachmentName": "2025-Inside Out.jpg",
+      "externalLink": ""
+    },
     {
       "id": "custom-1794970263859",
       "sister": "noodee",
@@ -319,22 +351,6 @@
     }
   ],
   "projects": [
-    {
-      "id": "proj-1",
-      "sister": "both",
-      "sisterName": "Noodee & Nadia (Sister Collaboration)",
-      "year": "2026",
-      "category": "Community Service",
-      "title": "“Read & Spark” Bilingual STEM Picture Books for Rural Schools",
-      "result": "350+ Books Donated across 4 Provinces",
-      "issuer": "Community Service & Literacy Initiative",
-      "description": "A joint sister initiative where Noodee wrote accessible science stories in English and Thai while Nadia illustrated every chapter. Together they raised funds to print and donate 350 copies to rural primary libraries.",
-      "skills": "Bilingual Storytelling, Book Illustration, Community Fundraising",
-      "attachmentData": null,
-      "attachmentType": null,
-      "attachmentName": null,
-      "externalLink": ""
-    },
     {
       "id": "proj-2",
       "sister": "noodee",
