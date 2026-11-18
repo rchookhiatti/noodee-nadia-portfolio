@@ -1,5 +1,5 @@
 {
-  "updatedAt": 1794969996631,
+  "updatedAt": 1794970419425,
   "sisters": {
     "noodee": {
       "id": "noodee",
@@ -144,6 +144,38 @@
   },
   "awards": [
     {
+      "id": "custom-1794970263859",
+      "sister": "noodee",
+      "sisterName": "Noodee (Sec 3)",
+      "year": "2025",
+      "category": "Piano",
+      "title": "Certificate",
+      "result": "Piano Grade 7",
+      "issuer": "Yamaha Music Foundation",
+      "description": "has been successful in Piano Grade 7",
+      "skills": "Piano",
+      "attachmentData": "assets/uploads/cert-custom-1794970263859.jpg",
+      "attachmentType": "image",
+      "attachmentName": "2025-Piano Grade7.jpg",
+      "externalLink": ""
+    },
+    {
+      "id": "custom-1794970174011",
+      "sister": "noodee",
+      "sisterName": "Noodee (Sec 3)",
+      "year": "2025",
+      "category": "Swimming",
+      "title": "Certificate of Training - Sea Survival and Basic Water Life Saving",
+      "result": "Certificate",
+      "issuer": "KIDO Survival Kids Camping",
+      "description": "Has successfully completed 25th Sea Survival and Basic Water Life Saving",
+      "skills": "Kido Camp",
+      "attachmentData": "assets/uploads/cert-custom-1794970174011.jpg",
+      "attachmentType": "image",
+      "attachmentName": "2025-Kido Camp.jpg",
+      "externalLink": ""
+    },
+    {
       "id": "custom-1794969978725",
       "sister": "noodee",
       "sisterName": "Noodee (Sec 3)",
@@ -176,22 +208,6 @@
       "externalLink": ""
     },
     {
-      "id": "aw-1",
-      "sister": "noodee",
-      "sisterName": "Noodee (Sec 3)",
-      "year": "2026",
-      "category": "STEM & Math",
-      "title": "SASMO (Singapore & Asian Schools Math Olympiad)",
-      "result": "Gold Award — Top 8% Globally",
-      "issuer": "Singapore International Mastery Contests Centre (SIMCC)",
-      "description": "Achieved Gold standing in the Secondary 3 division, demonstrating advanced algebraic reasoning, combinatorics, and non-routine problem-solving skills.",
-      "skills": "Combinatorics, Number Theory, Deductive Proof",
-      "attachmentData": null,
-      "attachmentType": null,
-      "attachmentName": null,
-      "externalLink": ""
-    },
-    {
       "id": "aw-2",
       "sister": "nadia",
       "sisterName": "Nadia (Sec 1)",
@@ -218,22 +234,6 @@
       "issuer": "Associated Board of the Royal Schools of Music (ABRSM)",
       "description": "Performed Baroque, Classical, and 20th-century repertoire with commendation from examiners for tonal warmth and expressive phrasing.",
       "skills": "Solo Performance, Sight-Reading, Musicality",
-      "attachmentData": null,
-      "attachmentType": null,
-      "attachmentName": null,
-      "externalLink": ""
-    },
-    {
-      "id": "aw-5",
-      "sister": "noodee",
-      "sisterName": "Noodee (Sec 3)",
-      "year": "2025",
-      "category": "Leadership & MUN",
-      "title": "Bangkok International Schools Model United Nations (BISMUN)",
-      "result": "Best Delegate Commendation — UNEP Committee",
-      "issuer": "Anglo Singapore & Partner International Schools",
-      "description": "Authored the primary resolution on transboundary plastic waste reduction in ASEAN waterways and led coalition consensus building.",
-      "skills": "Public Speaking, Policy Drafting, Diplomacy",
       "attachmentData": null,
       "attachmentType": null,
       "attachmentName": null,
