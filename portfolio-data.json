@@ -1,5 +1,31 @@
 {
-  "updatedAt": 1794971565842,
+  "updatedAt": 1794981602466,
+  "sectionVisibility": {
+    "academics": true,
+    "awards": true,
+    "cca": true,
+    "projects": true
+  },
+  "sectionHeaders": {
+    "academics": {
+      "eyebrow": "01 • Academic Excellence & Subject Mastery",
+      "title": "Singapore-Cambridge Curriculum & Trilingual Fluency",
+      "subtitle": "Rigorous academic grounding across Mathematics, Pure Sciences, Humanities, and trilingual proficiency in English, Mandarin Chinese, and Thai."
+    },
+    "awards": {
+      "eyebrow": "02 • Awards, Competitions & Certificates",
+      "title": "Academic Olympiads & Distinctions"
+    },
+    "cca": {
+      "eyebrow": "03 • Co-Curricular Activities (CCA), Sports & Music",
+      "title": "Holistic Growth Beyond the Classroom",
+      "subtitle": "Active involvement in student governance, orchestral performance, varsity athletics, and environmental clubs at Anglo Singapore International School."
+    },
+    "projects": {
+      "eyebrow": "04 • Research Projects, Creative Portfolio & Service",
+      "title": "Innovation, Artistry & Community Impact"
+    }
+  },
   "sisters": {
     "noodee": {
       "id": "noodee",
@@ -176,22 +202,6 @@
       "externalLink": ""
     },
     {
-      "id": "custom-1794970263859",
-      "sister": "noodee",
-      "sisterName": "Noodee (Sec 3)",
-      "year": "2025",
-      "category": "Piano",
-      "title": "Certificate",
-      "result": "Piano Grade 7",
-      "issuer": "Yamaha Music Foundation",
-      "description": "has been successful in Piano Grade 7",
-      "skills": "Piano",
-      "attachmentData": "assets/uploads/cert-custom-1794970263859.jpg",
-      "attachmentType": "image",
-      "attachmentName": "2025-Piano Grade7.jpg",
-      "externalLink": ""
-    },
-    {
       "id": "custom-1794970174011",
       "sister": "noodee",
       "sisterName": "Noodee (Sec 3)",
@@ -205,22 +215,6 @@
       "attachmentData": "assets/uploads/cert-custom-1794970174011.jpg",
       "attachmentType": "image",
       "attachmentName": "2025-Kido Camp.jpg",
-      "externalLink": ""
-    },
-    {
-      "id": "custom-1794969978725",
-      "sister": "noodee",
-      "sisterName": "Noodee (Sec 3)",
-      "year": "2025",
-      "category": "Science",
-      "title": "Second Prize - Secondary 1 Science Group Project",
-      "result": "2nd Place",
-      "issuer": "Anglo Singapore",
-      "description": "for outstanding work and attaining, Second Prize - Secondary 1 Science Group Project.",
-      "skills": "Innovative",
-      "attachmentData": "assets/uploads/cert-custom-1794969978725.jpg",
-      "attachmentType": "image",
-      "attachmentName": "2025-Science Second Prize.jpg",
       "externalLink": ""
     },
     {
@@ -306,6 +300,26 @@
   ],
   "ccas": [
     {
+      "id": "custom-1794970263859",
+      "sister": "noodee",
+      "sisterName": "Noodee (Sec 3)",
+      "year": "2025",
+      "category": "Piano",
+      "title": "Certificate",
+      "result": "Piano Grade 7",
+      "issuer": "Yamaha Music Foundation",
+      "description": "has been successful in Piano Grade 7",
+      "skills": "Piano",
+      "attachmentData": "assets/uploads/cert-custom-1794970263859.jpg",
+      "attachmentType": "image",
+      "attachmentName": "2025-Piano Grade7.jpg",
+      "externalLink": "",
+      "icon": "🌟",
+      "role": "Piano",
+      "detail": "has been successful in Piano Grade 7",
+      "schedule": "Piano Grade 7"
+    },
+    {
       "id": "cca-1",
       "sister": "noodee",
       "sisterName": "Noodee (Sec 3)",
@@ -351,6 +365,22 @@
     }
   ],
   "projects": [
+    {
+      "id": "custom-1794969978725",
+      "sister": "noodee",
+      "sisterName": "Noodee (Sec 3)",
+      "year": "2025",
+      "category": "Science",
+      "title": "Second Prize - Secondary 1 Science Group Project",
+      "result": "2nd Place",
+      "issuer": "Anglo Singapore",
+      "description": "for outstanding work and attaining, Second Prize - Secondary 1 Science Group Project.",
+      "skills": "Innovative",
+      "attachmentData": "assets/uploads/cert-custom-1794969978725.jpg",
+      "attachmentType": "image",
+      "attachmentName": "2025-Science Second Prize.jpg",
+      "externalLink": ""
+    },
     {
       "id": "proj-2",
       "sister": "noodee",
