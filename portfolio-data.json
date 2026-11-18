@@ -1,5 +1,5 @@
 {
-  "updatedAt": 1794981602466,
+  "updatedAt": 1794983901858,
   "sectionVisibility": {
     "academics": true,
     "awards": true,
@@ -169,6 +169,25 @@
     }
   },
   "awards": [
+    {
+      "id": "custom-1794983113731",
+      "sister": "noodee",
+      "sisterName": "Noodee (Sec 3)",
+      "year": "2025",
+      "category": "Leadership",
+      "role": "Leadership",
+      "title": "Certificate Life 101 Program",
+      "result": "Certificate",
+      "schedule": "Certificate",
+      "issuer": "Inside Out",
+      "description": "has successfully demonstrated and completed Life 101 Program (Junior NLP Certification)",
+      "detail": "has successfully demonstrated and completed Life 101 Program (Junior NLP Certification)",
+      "skills": "Problem Solving",
+      "attachmentData": "assets/uploads/cert-custom-1794983113731.jpg",
+      "attachmentType": "image",
+      "attachmentName": "2025-Life 101.jpg",
+      "externalLink": ""
+    },
     {
       "id": "custom-1794971462275",
       "sister": "noodee",
