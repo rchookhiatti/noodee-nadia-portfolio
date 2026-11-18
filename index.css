@@ -1394,6 +1394,106 @@ body.edit-mode .edit-banner {
 }
 
 /* ==========================================================================
+   Drag & Drop Between Sections (02, 03, 04) & Card Action Toolbar
+   ========================================================================== */
+.draggable-card {
+  cursor: grab;
+}
+
+.draggable-card:active {
+  cursor: grabbing;
+}
+
+.draggable-card.dragging {
+  opacity: 0.45;
+  transform: scale(0.97);
+  border: 2px dashed var(--brand-navy) !important;
+}
+
+.dropzone-section {
+  transition: background-color 0.22s ease, outline 0.22s ease, border-radius 0.22s ease;
+}
+
+.dropzone-section.drag-over {
+  background-color: hsla(40, 75%, 92%, 0.55);
+  outline: 3px dashed var(--brand-navy);
+  outline-offset: -8px;
+  border-radius: var(--radius-lg);
+}
+
+.drag-hint-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.74rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  background: var(--surface-subtle);
+  padding: 0.25rem 0.65rem;
+  border-radius: var(--radius-pill);
+  border: 1px dashed var(--border-strong);
+}
+
+.card-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.4rem;
+  margin-top: 0.75rem;
+  padding-top: 0.65rem;
+  border-top: 1px dashed var(--border-subtle);
+  flex-wrap: wrap;
+}
+
+.card-move-select {
+  font-size: 0.74rem;
+  font-weight: 600;
+  padding: 0.22rem 0.5rem;
+  border-radius: 6px;
+  border: 1px solid var(--border-strong);
+  background: var(--bg-primary);
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.card-move-select:hover {
+  border-color: var(--brand-navy);
+  color: var(--text-primary);
+}
+
+.card-btn-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.card-tool-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.24rem 0.6rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  border: 1px solid var(--border-strong);
+  background: var(--surface-card);
+  color: var(--text-primary);
+  transition: var(--transition-smooth);
+}
+
+.card-tool-btn:hover {
+  background: var(--brand-navy);
+  color: #fff;
+  border-color: var(--brand-navy);
+}
+
+.card-tool-btn.btn-del:hover {
+  background: hsl(0, 65%, 48%);
+  border-color: hsl(0, 65%, 48%);
+  color: #fff;
+}
+
+/* ==========================================================================
    Responsive Breakpoints
    ========================================================================== */
 @media (max-width: 960px) {

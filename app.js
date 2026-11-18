@@ -2,10 +2,12 @@
  * Noodee & Nadia — Student Portfolio Application Logic
  * Anglo Singapore International School (Secondary 3 & Secondary 1)
  *
- * Persistence Architecture:
- * 1. IndexedDB ('NoodeeNadiaPortfolioDB') — High-capacity browser storage (hundreds of MBs for photos & PDFs)
- * 2. Cloud Sync ('portfolio-data.json' + 'assets/uploads/' on GitHub) — Direct browser-to-GitHub publishing
- *    so changes made on any computer are permanently saved to GitHub Pages for all visitors worldwide.
+ * Features:
+ * 1. Drag & Drop between Section 02 (Awards), Section 03 (CCA), and Section 04 (Projects)
+ *    + 1-Click "Move to..." dropdown on every card (preserving photos & PDFs across all sections)
+ * 2. Prominent "✎ Edit" and "🗑️ Delete" buttons on every card in Sections 02, 03, and 04
+ *    (Works both in Normal View and in Customize Mode)
+ * 3. IndexedDB High-Capacity Browser Storage + Direct Browser-to-GitHub Cloud Publishing
  */
 
 const GITHUB_REPO_OWNER = 'rchookhiatti';
@@ -159,6 +161,38 @@ const DEFAULT_DATA = {
     }
   },
   awards: [
+    {
+      id: 'custom-1794971462275',
+      sister: 'noodee',
+      sisterName: 'Noodee (Sec 3)',
+      year: '2025',
+      category: 'STEM & Research',
+      title: 'Certificate Veterinary Camp',
+      result: 'Certificate',
+      issuer: 'Career Hub',
+      description: 'has successfully completed Veterinary Camp',
+      skills: 'Leadership',
+      attachmentData: 'assets/uploads/cert-custom-1794971462275.jpg',
+      attachmentType: 'image',
+      attachmentName: '2025-Career Hub.jpg',
+      externalLink: ''
+    },
+    {
+      id: 'custom-1794971342649',
+      sister: 'noodee',
+      sisterName: 'Noodee (Sec 3)',
+      year: '2025',
+      category: 'Leadership',
+      title: 'Alpha Leadership Camp',
+      result: 'Certificate',
+      issuer: 'Inside Out Academy',
+      description: 'has successfully demonstrated and completed Alpha Leadership Camp',
+      skills: 'Leadership',
+      attachmentData: 'assets/uploads/cert-custom-1794971342649.jpg',
+      attachmentType: 'image',
+      attachmentName: '2025-Inside Out.jpg',
+      externalLink: ''
+    },
     {
       id: 'custom-1794970263859',
       sister: 'noodee',
@@ -336,22 +370,6 @@ const DEFAULT_DATA = {
   ],
   projects: [
     {
-      id: 'proj-1',
-      sister: 'both',
-      sisterName: 'Noodee & Nadia (Sister Collaboration)',
-      year: '2026',
-      category: 'Community Service',
-      title: '“Read & Spark” Bilingual STEM Picture Books for Rural Schools',
-      result: '350+ Books Donated across 4 Provinces',
-      issuer: 'Community Service & Literacy Initiative',
-      description: 'A joint sister initiative where Noodee wrote accessible science stories in English and Thai while Nadia illustrated every chapter. Together they raised funds to print and donate 350 copies to rural primary libraries.',
-      skills: 'Bilingual Storytelling, Book Illustration, Community Fundraising',
-      attachmentData: null,
-      attachmentType: null,
-      attachmentName: null,
-      externalLink: ''
-    },
-    {
       id: 'proj-2',
       sister: 'noodee',
       sisterName: 'Noodee (Sec 3)',
@@ -410,7 +428,8 @@ let pendingAttachment = {
 
 let appData = JSON.parse(JSON.stringify(DEFAULT_DATA));
 let hasUnsyncedChanges = false;
-let editingItemContext = null; // { id, collectionKey } when editing an existing item
+let editingItemContext = null; // { id, collectionKey }
+let draggedCardPayload = null; // { id, fromCollection }
 
 /* ==========================================================================
    IndexedDB High-Capacity Storage Engine (Supports large PDFs & Photos)
@@ -567,6 +586,108 @@ function updateSyncButtonBadge() {
 }
 
 /* ==========================================================================
+   Drag & Drop / Move Card Between Sections 02 (awards), 03 (ccas), 04 (projects)
+   ========================================================================== */
+
+function normalizeItemForTargetSection(item, fromCollection, toCollection) {
+  // Preserve every field including attachmentData, attachmentType, attachmentName, externalLink
+  const copy = JSON.parse(JSON.stringify(item));
+
+  if (toCollection === 'ccas') {
+    copy.icon = copy.icon || '🌟';
+    copy.role = copy.role || copy.category || 'Member';
+    copy.detail = copy.detail || copy.description || '';
+    copy.schedule = copy.schedule || copy.result || `${copy.year || '2026'} • Anglo Singapore CCA`;
+    // Also keep standard fields in sync so moving back to Awards/Projects is lossless
+    copy.category = copy.category || copy.role;
+    copy.description = copy.description || copy.detail;
+    copy.result = copy.result || copy.schedule;
+  } else {
+    copy.category = copy.category || copy.role || (toCollection === 'awards' ? 'Academic Honours' : 'STEM & Research');
+    copy.description = copy.description || copy.detail || '';
+    copy.result = copy.result || copy.schedule || 'Certificate';
+    copy.issuer = (copy.issuer && copy.issuer.length > 2) ? copy.issuer : 'Anglo Singapore International School';
+    copy.skills = copy.skills || copy.category;
+  }
+
+  return copy;
+}
+
+async function movePortfolioItem(itemId, fromCollection, toCollection) {
+  if (!toCollection || fromCollection === toCollection) return;
+
+  const sourceList = appData[fromCollection] || [];
+  const idx = sourceList.findIndex(x => x.id === itemId);
+  if (idx === -1) return;
+
+  const [item] = sourceList.splice(idx, 1);
+  const converted = normalizeItemForTargetSection(item, fromCollection, toCollection);
+
+  if (!appData[toCollection]) appData[toCollection] = [];
+  appData[toCollection].unshift(converted);
+
+  await savePortfolioData();
+  renderAll();
+}
+
+function handleCardDragStart(event, itemId, fromCollection) {
+  draggedCardPayload = { id: itemId, fromCollection: fromCollection };
+  if (event.dataTransfer) {
+    event.dataTransfer.effectAllowed = 'move';
+    event.dataTransfer.setData('text/plain', JSON.stringify(draggedCardPayload));
+  }
+  const cardEl = event.currentTarget;
+  setTimeout(() => {
+    if (cardEl) cardEl.classList.add('dragging');
+  }, 0);
+}
+
+function handleCardDragEnd(event) {
+  if (event.currentTarget) {
+    event.currentTarget.classList.remove('dragging');
+  }
+  document.querySelectorAll('.dropzone-section').forEach(sec => sec.classList.remove('drag-over'));
+}
+
+function handleSectionDragOver(event, targetCollection) {
+  event.preventDefault();
+  if (event.dataTransfer) {
+    event.dataTransfer.dropEffect = 'move';
+  }
+  const secEl = event.currentTarget;
+  if (secEl && !secEl.classList.contains('drag-over')) {
+    secEl.classList.add('drag-over');
+  }
+}
+
+function handleSectionDragLeave(event) {
+  const secEl = event.currentTarget;
+  if (secEl && !secEl.contains(event.relatedTarget)) {
+    secEl.classList.remove('drag-over');
+  }
+}
+
+async function handleSectionDrop(event, targetCollection) {
+  event.preventDefault();
+  const secEl = event.currentTarget;
+  if (secEl) secEl.classList.remove('drag-over');
+
+  let payload = draggedCardPayload;
+  if (!payload && event.dataTransfer) {
+    try {
+      payload = JSON.parse(event.dataTransfer.getData('text/plain'));
+    } catch (e) {}
+  }
+
+  if (!payload || !payload.id || !payload.fromCollection) return;
+  draggedCardPayload = null;
+
+  if (payload.fromCollection !== targetCollection) {
+    await movePortfolioItem(payload.id, payload.fromCollection, targetCollection);
+  }
+}
+
+/* ==========================================================================
    Direct Browser-to-GitHub Cloud Publishing (Works from ANY Computer)
    ========================================================================== */
 
@@ -685,8 +806,9 @@ async function handlePublishToGitHub(event) {
     }
 
     const collections = [
-      { key: 'awards', list: appData.awards },
-      { key: 'projects', list: appData.projects }
+      { key: 'awards', list: appData.awards || [] },
+      { key: 'ccas', list: appData.ccas || [] },
+      { key: 'projects', list: appData.projects || [] }
     ];
 
     for (const col of collections) {
@@ -900,7 +1022,6 @@ function renderSectionHeadersAndVisibility() {
     if (!secEl) return;
 
     const isVisible = vis[secKey] !== false;
-    // If hidden and not in edit mode, hide the entire section
     if (!isVisible && !editable) {
       secEl.style.display = 'none';
     } else {
@@ -908,7 +1029,6 @@ function renderSectionHeadersAndVisibility() {
       secEl.style.opacity = (!isVisible && editable) ? '0.45' : '1';
     }
 
-    // Update header text and make editable in Edit Mode
     const eyebrowEl = document.getElementById(`sec-eyebrow-${secKey}`);
     const titleEl = document.getElementById(`sec-title-${secKey}`);
     const subEl = document.getElementById(`sec-sub-${secKey}`);
@@ -926,7 +1046,6 @@ function renderSectionHeadersAndVisibility() {
       subEl.contentEditable = editable ? 'true' : 'false';
     }
 
-    // Update visibility toggle button in Edit Mode
     const toggleBtn = document.getElementById(`btn-vis-${secKey}`);
     if (toggleBtn) {
       toggleBtn.style.display = editable ? 'inline-flex' : 'none';
@@ -1123,6 +1242,27 @@ function renderCardAttachmentSnippet(item) {
   return '';
 }
 
+function renderCardToolbar(item, currentCollection) {
+  return `
+    <div class="card-toolbar" onclick="event.stopPropagation();">
+      <select class="card-move-select" onchange="movePortfolioItem('${item.id}', '${currentCollection}', this.value)" title="Move this item to another section">
+        <option value="" selected disabled>⇄ Move to Section...</option>
+        ${currentCollection !== 'awards' ? '<option value="awards">→ 02 • Awards & Certificates</option>' : ''}
+        ${currentCollection !== 'ccas' ? '<option value="ccas">→ 03 • CCA, Sports & Music</option>' : ''}
+        ${currentCollection !== 'projects' ? '<option value="projects">→ 04 • Projects & Service</option>' : ''}
+      </select>
+      <div class="card-btn-group">
+        <button type="button" class="card-tool-btn" onclick="openEditItemModal('${item.id}', '${currentCollection}')" title="Edit this item">
+          ✎ Edit
+        </button>
+        <button type="button" class="card-tool-btn btn-del" onclick="deletePortfolioItem('${item.id}', '${currentCollection}')" title="Delete this item">
+          🗑️
+        </button>
+      </div>
+    </div>
+  `;
+}
+
 function renderAwards() {
   renderDynamicCategoryChips('awards', 'award-filters', 'awardFilter', 'setAwardFilter');
 
@@ -1131,7 +1271,7 @@ function renderAwards() {
   const activeYear = appData.state.activeYear;
   const categoryFilter = appData.state.awardFilter;
 
-  const filtered = sortItemsByYear(appData.awards.filter(item => {
+  const filtered = sortItemsByYear((appData.awards || []).filter(item => {
     const matchesSister = activeSister === 'both' || item.sister === activeSister || item.sister === 'both';
     const matchesYear = activeYear === 'all' || String(item.year) === String(activeYear);
     const matchesCat = categoryFilter === 'all' || item.category === categoryFilter;
@@ -1140,34 +1280,40 @@ function renderAwards() {
 
   if (filtered.length === 0) {
     container.innerHTML = `
-      <div style="grid-column: 1/-1; text-align: center; padding: 3rem; background: var(--surface-card); border-radius: var(--radius-md); border: 1px dashed var(--border-strong); color: var(--text-secondary);">
-        No awards match the selected Year (${activeYear === 'all' ? 'All' : activeYear}) or Category filter. Try selecting "All Years" or click "+ Add Achievement".
+      <div style="grid-column: 1/-1; text-align: center; padding: 3rem; background: var(--surface-card); border-radius: var(--radius-md); border: 2px dashed var(--border-strong); color: var(--text-secondary);">
+        No awards match the selected filter — or drag &amp; drop a card here to move it into <strong>02 • Awards &amp; Certificates</strong>.
       </div>
     `;
     return;
   }
 
   container.innerHTML = filtered.map(item => `
-    <article class="portfolio-card" id="award-card-${item.id}" onclick="openCertificateModal('${item.id}', 'awards')">
+    <article
+      class="portfolio-card draggable-card"
+      id="award-card-${item.id}"
+      draggable="true"
+      ondragstart="handleCardDragStart(event, '${item.id}', 'awards')"
+      ondragend="handleCardDragEnd(event)"
+      onclick="openCertificateModal('${item.id}', 'awards')"
+    >
       <div>
         <div class="card-top-meta">
           <span class="owner-badge owner-${item.sister}">
             <span>●</span> ${item.sisterName}
           </span>
-          <div style="display:flex; align-items:center; gap:0.4rem;">
-            <span class="year-badge">📅 ${item.year}</span>
-            <button type="button" class="btn-outline" style="padding:0.15rem 0.45rem; border-radius:6px; font-size:0.74rem;" onclick="event.stopPropagation(); openEditItemModal('${item.id}', 'awards')" title="Edit this item">✎</button>
-            <button type="button" class="btn-outline" style="padding:0.15rem 0.45rem; border-radius:6px; font-size:0.74rem; color:hsl(0,65%,45%);" onclick="event.stopPropagation(); deletePortfolioItem('${item.id}', 'awards')" title="Delete this item">🗑️</button>
-          </div>
+          <span class="year-badge" title="Drag card to another section">⠿ 📅 ${item.year}</span>
         </div>
         <div class="card-category">${item.category}</div>
         <h3 class="card-title">${item.title}</h3>
         <p class="card-desc">${item.description}</p>
         ${renderCardAttachmentSnippet(item)}
       </div>
-      <div class="card-bottom">
-        <span class="award-Result">🏆 ${item.result}</span>
-        <span class="card-action-link">View / Edit →</span>
+      <div>
+        <div class="card-bottom">
+          <span class="award-Result">🏆 ${item.result}</span>
+          <span class="card-action-link">View Certificate →</span>
+        </div>
+        ${renderCardToolbar(item, 'awards')}
       </div>
     </article>
   `).join('');
@@ -1186,29 +1332,42 @@ function renderCCAs() {
 
   if (filtered.length === 0) {
     container.innerHTML = `
-      <div style="grid-column: 1/-1; text-align: center; padding: 2.5rem; background: var(--surface-card); border-radius: var(--radius-md); border: 1px dashed var(--border-strong); color: var(--text-secondary);">
-        No CCA activities for this filter. Click "+ Add CCA Activity" to add one.
+      <div style="grid-column: 1/-1; text-align: center; padding: 2.5rem; background: var(--surface-card); border-radius: var(--radius-md); border: 2px dashed var(--border-strong); color: var(--text-secondary);">
+        No CCA activities for this filter — drag &amp; drop any card from Section 02 or 04 here, or click "+ Add CCA Activity".
       </div>
     `;
     return;
   }
 
   container.innerHTML = filtered.map(item => `
-    <article class="cca-card" id="cca-card-${item.id}" style="position: relative; cursor: pointer;" onclick="openEditItemModal('${item.id}', 'ccas')">
-      <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 0.5rem;">
-        <div class="cca-icon-box">${item.icon || '🌟'}</div>
-        <div style="display: flex; align-items: center; gap: 0.35rem; flex-wrap: wrap; justify-content: flex-end;">
-          <span class="owner-badge owner-${item.sister}">${item.sisterName}</span>
-          <button type="button" class="btn-outline" style="padding:0.15rem 0.45rem; border-radius:6px; font-size:0.74rem;" onclick="event.stopPropagation(); openEditItemModal('${item.id}', 'ccas')" title="Edit CCA">✎</button>
-          <button type="button" class="btn-outline" style="padding:0.15rem 0.45rem; border-radius:6px; font-size:0.74rem; color:hsl(0,65%,45%);" onclick="event.stopPropagation(); deletePortfolioItem('${item.id}', 'ccas')" title="Delete CCA">🗑️</button>
+    <article
+      class="cca-card draggable-card"
+      id="cca-card-${item.id}"
+      draggable="true"
+      ondragstart="handleCardDragStart(event, '${item.id}', 'ccas')"
+      ondragend="handleCardDragEnd(event)"
+      style="position: relative; display: flex; flex-direction: column; justify-content: space-between;"
+      onclick="openCertificateModal('${item.id}', 'ccas')"
+    >
+      <div>
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 0.5rem;">
+          <div class="cca-icon-box">${item.icon || '🌟'}</div>
+          <div style="display: flex; align-items: center; gap: 0.35rem; flex-wrap: wrap; justify-content: flex-end;">
+            <span class="owner-badge owner-${item.sister}">${item.sisterName}</span>
+            <span class="year-badge" title="Drag card to another section">⠿ ${item.year || '2026'}</span>
+          </div>
         </div>
+        <div class="cca-role">${item.role || item.category || 'Member'}</div>
+        <h3 class="cca-title">${item.title}</h3>
+        <p class="cca-detail">${item.detail || item.description || ''}</p>
+        ${renderCardAttachmentSnippet(item)}
       </div>
-      <div class="cca-role">${item.role || item.category || 'Member'}</div>
-      <h3 class="cca-title">${item.title}</h3>
-      <p class="cca-detail">${item.detail || item.description || ''}</p>
-      <div class="cca-schedule">
-        <span>${item.schedule || item.year || '2026'}</span>
-        <span style="color: var(--active-accent);">Edit CCA →</span>
+      <div>
+        <div class="cca-schedule">
+          <span>${item.schedule || item.result || 'Anglo Singapore CCA'}</span>
+          <span style="color: var(--active-accent);">View Details →</span>
+        </div>
+        ${renderCardToolbar(item, 'ccas')}
       </div>
     </article>
   `).join('');
@@ -1222,7 +1381,7 @@ function renderProjects() {
   const activeYear = appData.state.activeYear;
   const categoryFilter = appData.state.projectFilter;
 
-  const filtered = sortItemsByYear(appData.projects.filter(item => {
+  const filtered = sortItemsByYear((appData.projects || []).filter(item => {
     const matchesSister = activeSister === 'both' || item.sister === activeSister || item.sister === 'both';
     const matchesYear = activeYear === 'all' || String(item.year) === String(activeYear);
     const matchesCat = categoryFilter === 'all' || item.category === categoryFilter;
@@ -1231,34 +1390,40 @@ function renderProjects() {
 
   if (filtered.length === 0) {
     container.innerHTML = `
-      <div style="grid-column: 1/-1; text-align: center; padding: 3rem; background: var(--surface-card); border-radius: var(--radius-md); border: 1px dashed var(--border-strong); color: var(--text-secondary);">
-        No projects match the selected Year (${activeYear === 'all' ? 'All' : activeYear}) or Category filter. Click "+ Add Project" to add one.
+      <div style="grid-column: 1/-1; text-align: center; padding: 3rem; background: var(--surface-card); border-radius: var(--radius-md); border: 2px dashed var(--border-strong); color: var(--text-secondary);">
+        No projects match the selected filter — drag &amp; drop any card here, or click "+ Add Project / Service".
       </div>
     `;
     return;
   }
 
   container.innerHTML = filtered.map(item => `
-    <article class="portfolio-card" id="project-card-${item.id}" onclick="openCertificateModal('${item.id}', 'projects')">
+    <article
+      class="portfolio-card draggable-card"
+      id="project-card-${item.id}"
+      draggable="true"
+      ondragstart="handleCardDragStart(event, '${item.id}', 'projects')"
+      ondragend="handleCardDragEnd(event)"
+      onclick="openCertificateModal('${item.id}', 'projects')"
+    >
       <div>
         <div class="card-top-meta">
           <span class="owner-badge owner-${item.sister}">
             <span>✦</span> ${item.sisterName}
           </span>
-          <div style="display:flex; align-items:center; gap:0.4rem;">
-            <span class="year-badge">📅 ${item.year}</span>
-            <button type="button" class="btn-outline" style="padding:0.15rem 0.45rem; border-radius:6px; font-size:0.74rem;" onclick="event.stopPropagation(); openEditItemModal('${item.id}', 'projects')" title="Edit Project">✎</button>
-            <button type="button" class="btn-outline" style="padding:0.15rem 0.45rem; border-radius:6px; font-size:0.74rem; color:hsl(0,65%,45%);" onclick="event.stopPropagation(); deletePortfolioItem('${item.id}', 'projects')" title="Delete Project">🗑️</button>
-          </div>
+          <span class="year-badge" title="Drag card to another section">⠿ 📅 ${item.year}</span>
         </div>
         <div class="card-category">${item.category}</div>
         <h3 class="card-title">${item.title}</h3>
         <p class="card-desc">${item.description}</p>
         ${renderCardAttachmentSnippet(item)}
       </div>
-      <div class="card-bottom">
-        <span class="award-Result">✨ ${item.result}</span>
-        <span class="card-action-link">View / Edit →</span>
+      <div>
+        <div class="card-bottom">
+          <span class="award-Result">✨ ${item.result}</span>
+          <span class="card-action-link">View Details →</span>
+        </div>
+        ${renderCardToolbar(item, 'projects')}
       </div>
     </article>
   `).join('');
@@ -1289,10 +1454,15 @@ function setProjectFilter(category) {
 }
 
 function openCertificateModal(itemId, collectionKey) {
-  if (appData.state.editMode) return;
   const list = appData[collectionKey] || [];
   const item = list.find(x => x.id === itemId);
   if (!item) return;
+
+  // If user is in Edit Mode, clicking the card directly opens the Edit Item Modal!
+  if (appData.state.editMode) {
+    openEditItemModal(itemId, collectionKey);
+    return;
+  }
 
   const modal = document.getElementById('detail-modal');
   const content = document.getElementById('detail-modal-body');
@@ -1333,10 +1503,14 @@ function openCertificateModal(itemId, collectionKey) {
     `;
   }
 
+  const headingText = item.result || item.schedule || 'Certificate of Achievement';
+  const descText = item.description || item.detail || '';
+  const catText = item.category || item.role || 'Co-Curricular';
+
   content.innerHTML = `
     <div class="modal-header">
       <div>
-        <span class="owner-badge owner-${item.sister}" style="margin-bottom: 0.5rem;">${item.sisterName} • ${item.year}</span>
+        <span class="owner-badge owner-${item.sister}" style="margin-bottom: 0.5rem;">${item.sisterName} • ${item.year || '2026'}</span>
         <h3 style="font-family: var(--font-serif); font-size: 1.5rem;">${item.title}</h3>
       </div>
       <button type="button" class="modal-close" onclick="closeDetailModal()" aria-label="Close modal">✕</button>
@@ -1344,10 +1518,10 @@ function openCertificateModal(itemId, collectionKey) {
 
     <div class="certificate-preview">
       <div class="cert-school">Anglo Singapore International School • Portfolio Record</div>
-      <div class="cert-heading">${item.result}</div>
+      <div class="cert-heading">${headingText}</div>
       <div class="cert-recipient">Awarded to ${item.sisterName}</div>
       <p style="font-size: 0.9rem; color: var(--text-secondary); max-width: 500px; margin: 0 auto 1.25rem;">
-        ${item.description}
+        ${descText}
       </p>
 
       ${attachmentViewerHtml}
@@ -1360,7 +1534,7 @@ function openCertificateModal(itemId, collectionKey) {
         </div>
         <div>
           <strong style="display:block; font-size:0.74rem; color:var(--text-muted); text-transform:uppercase;">Academic Year &amp; Category</strong>
-          <span>${item.year} • ${item.category}</span>
+          <span>${item.year || '2026'} • ${catText}</span>
         </div>
         <div style="grid-column: 1 / -1;">
           <strong style="display:block; font-size:0.74rem; color:var(--text-muted); text-transform:uppercase;">Key Competencies Demonstrated</strong>
@@ -1371,8 +1545,8 @@ function openCertificateModal(itemId, collectionKey) {
 
     <div style="display: flex; justify-content: space-between; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
       <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-        <button type="button" class="btn btn-outline" style="font-size: 0.8rem;" onclick="closeDetailModal(); openEditItemModal('${item.id}', '${collectionKey}')">
-          ✎ Edit Details
+        <button type="button" class="btn btn-primary" style="font-size: 0.82rem;" onclick="closeDetailModal(); openEditItemModal('${item.id}', '${collectionKey}')">
+          ✎ Edit Text / Move Section
         </button>
         <label class="btn btn-outline" style="font-size: 0.8rem; cursor: pointer;">
           📎 Attach / Replace Photo or PDF
@@ -1383,7 +1557,7 @@ function openCertificateModal(itemId, collectionKey) {
         <button type="button" class="btn btn-outline" style="color: hsl(0, 65%, 45%); border-color: hsl(0, 50%, 82%); font-size: 0.8rem;" onclick="deletePortfolioItem('${item.id}', '${collectionKey}')">
           🗑️ Delete
         </button>
-        <button type="button" class="btn btn-primary" onclick="closeDetailModal()">Done</button>
+        <button type="button" class="btn btn-outline" onclick="closeDetailModal()">Close</button>
       </div>
     </div>
   `;
@@ -1443,29 +1617,29 @@ function openEditItemModal(itemId, collectionKey) {
   const form = document.getElementById('add-achievement-form');
   if (!form) return;
 
-  document.getElementById('add-modal-title').innerText = '✎ Edit Portfolio Item';
-  document.getElementById('btn-submit-achievement').innerText = 'Update Item';
+  document.getElementById('add-modal-title').innerText = '✎ Edit Item / Move Section';
+  document.getElementById('btn-submit-achievement').innerText = '✓ Save Changes';
 
   form.sister.value = item.sister || 'noodee';
   form.sectionType.value = collectionKey;
   handleSectionTypeChange(collectionKey);
 
   if (collectionKey === 'ccas') {
-    form.category.value = item.role || '';
+    form.category.value = item.role || item.category || '';
     form.year.value = item.year || '2026';
     form.title.value = item.title || '';
-    form.result.value = item.schedule || '';
+    form.result.value = item.schedule || item.result || '';
     form.issuer.value = item.icon || '🌟';
-    form.description.value = item.detail || '';
-    form.skills.value = '';
-    if (form.externalLink) form.externalLink.value = '';
+    form.description.value = item.detail || item.description || '';
+    form.skills.value = item.skills || '';
+    if (form.externalLink) form.externalLink.value = item.externalLink || '';
   } else {
-    form.category.value = item.category || '';
+    form.category.value = item.category || item.role || '';
     form.year.value = item.year || '2026';
     form.title.value = item.title || '';
-    form.result.value = item.result || '';
+    form.result.value = item.result || item.schedule || '';
     form.issuer.value = item.issuer || '';
-    form.description.value = item.description || '';
+    form.description.value = item.description || item.detail || '';
     form.skills.value = item.skills || '';
     if (form.externalLink) form.externalLink.value = item.externalLink || '';
   }
@@ -1494,7 +1668,7 @@ function handleSectionTypeChange(secVal) {
   if (secVal === 'ccas') {
     if (catLabel) catLabel.innerText = 'Role / Position in CCA or Club';
     if (catInput) catInput.placeholder = 'e.g., Vice President, First Violin, Varsity Squad...';
-    if (resLabel) resLabel.innerText = 'Schedule / Duration';
+    if (resLabel) resLabel.innerText = 'Schedule / Achievement / Duration';
     if (resInput) resInput.placeholder = 'e.g., 2025 – 2026 • 3 hrs/week';
     if (issLabel) issLabel.innerText = 'Icon Emoji (Optional)';
     if (issInput) issInput.placeholder = 'e.g., 🎻, 🏸, 🏛️, 🌱, 🏊‍♀️, 🎹';
@@ -1630,52 +1804,72 @@ async function handleAddAchievement(event) {
     both: 'Noodee & Nadia (Sister Collaboration)'
   };
 
-  // If editing an existing item, remove it from its old collection if sectionType changed
   let itemId = 'custom-' + Date.now();
+  let originalIndex = -1;
+  let sameCollection = false;
+
   if (editingItemContext) {
     itemId = editingItemContext.id;
     const oldCol = editingItemContext.collectionKey;
-    appData[oldCol] = (appData[oldCol] || []).filter(x => x.id !== itemId);
+    sameCollection = (oldCol === sectionType);
+    const oldList = appData[oldCol] || [];
+    originalIndex = oldList.findIndex(x => x.id === itemId);
+    if (originalIndex !== -1) {
+      oldList.splice(originalIndex, 1);
+    }
   }
 
+  let newEntry;
   if (sectionType === 'ccas') {
-    const ccaEntry = {
+    const iconVal = form.issuer.value.trim();
+    newEntry = {
       id: itemId,
       sister: sister,
       sisterName: sisterMap[sister],
       year: form.year.value.trim() || '2026',
-      icon: form.issuer.value.trim() || '🌟',
+      icon: (iconVal && iconVal.length <= 4) ? iconVal : '🌟',
+      issuer: (iconVal && iconVal.length > 4) ? iconVal : 'Anglo Singapore International School',
       role: form.category.value.trim() || 'Member',
+      category: form.category.value.trim() || 'Co-Curricular',
       title: form.title.value.trim(),
       detail: form.description.value.trim(),
-      schedule: form.result.value.trim() || `${form.year.value.trim() || '2026'} • Anglo Singapore CCA`
+      description: form.description.value.trim(),
+      schedule: form.result.value.trim() || `${form.year.value.trim() || '2026'} • Anglo Singapore CCA`,
+      result: form.result.value.trim() || 'Active Member',
+      skills: form.skills.value.trim() || 'Leadership & Teamwork',
+      attachmentData: pendingAttachment.data,
+      attachmentType: pendingAttachment.type,
+      attachmentName: pendingAttachment.name,
+      externalLink: form.externalLink ? form.externalLink.value.trim() : ''
     };
-    if (!appData.ccas) appData.ccas = [];
-    appData.ccas.unshift(ccaEntry);
   } else {
     const customCategory = form.category.value.trim() || 'Academic Honours';
-    const newEntry = {
+    newEntry = {
       id: itemId,
       sister: sister,
       sisterName: sisterMap[sister],
       year: form.year.value.trim() || '2026',
       category: customCategory,
+      role: customCategory,
       title: form.title.value.trim(),
       result: form.result.value.trim(),
+      schedule: form.result.value.trim(),
       issuer: form.issuer.value.trim() || 'Anglo Singapore International School',
       description: form.description.value.trim(),
+      detail: form.description.value.trim(),
       skills: form.skills.value.trim() || 'Academic & Co-Curricular Excellence',
       attachmentData: pendingAttachment.data,
       attachmentType: pendingAttachment.type,
       attachmentName: pendingAttachment.name,
       externalLink: form.externalLink ? form.externalLink.value.trim() : ''
     };
+  }
 
-    if (sectionType === 'awards') {
-      appData.awards.unshift(newEntry);
-    } else {
-      appData.projects.unshift(newEntry);
-    }
+  if (!appData[sectionType]) appData[sectionType] = [];
+  if (sameCollection && originalIndex !== -1) {
+    appData[sectionType].splice(originalIndex, 0, newEntry);
+  } else {
+    appData[sectionType].unshift(newEntry);
   }
 
   await savePortfolioData();

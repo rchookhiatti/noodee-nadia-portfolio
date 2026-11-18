@@ -121,12 +121,19 @@
     </section>
 
     <!-- Section 2: Honours, Olympiads & Certificates -->
-    <section class="section" id="awards">
+    <section
+      class="section dropzone-section"
+      id="awards"
+      ondragover="handleSectionDragOver(event, 'awards')"
+      ondragleave="handleSectionDragLeave(event)"
+      ondrop="handleSectionDrop(event, 'awards')"
+    >
       <div class="container">
         <div class="section-header">
           <div>
             <div class="section-eyebrow" id="sec-eyebrow-awards" onblur="updateSectionHeader('awards', 'eyebrow', this.innerText)">02 • Awards, Competitions &amp; Certificates</div>
             <h2 class="section-title" id="sec-title-awards" onblur="updateSectionHeader('awards', 'title', this.innerText)">Academic Olympiads &amp; Distinctions</h2>
+            <span class="drag-hint-pill" style="margin-top: 0.45rem;">⠿ Tip: Drag any card between Sections 02, 03 &amp; 04 — or click "✎ Edit" on any card</span>
           </div>
 
           <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 0.75rem;">
@@ -144,12 +151,19 @@
     </section>
 
     <!-- Section 3: Co-Curricular Activities (CCA), Sports & Music -->
-    <section class="section" id="cca">
+    <section
+      class="section dropzone-section"
+      id="cca"
+      ondragover="handleSectionDragOver(event, 'ccas')"
+      ondragleave="handleSectionDragLeave(event)"
+      ondrop="handleSectionDrop(event, 'ccas')"
+    >
       <div class="container">
         <div class="section-header">
           <div>
             <div class="section-eyebrow" id="sec-eyebrow-cca" onblur="updateSectionHeader('cca', 'eyebrow', this.innerText)">03 • Co-Curricular Activities (CCA), Sports &amp; Music</div>
             <h2 class="section-title" id="sec-title-cca" onblur="updateSectionHeader('cca', 'title', this.innerText)">Holistic Growth Beyond the Classroom</h2>
+            <span class="drag-hint-pill" style="margin-top: 0.45rem;">⠿ Drop any card from Section 02 or 04 here to move it into CCA</span>
           </div>
           <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 0.65rem;">
             <p class="section-subtitle" id="sec-sub-cca" onblur="updateSectionHeader('cca', 'subtitle', this.innerText)">
@@ -167,12 +181,19 @@
     </section>
 
     <!-- Section 4: Projects, Creative Works & Community Service -->
-    <section class="section" id="projects">
+    <section
+      class="section dropzone-section"
+      id="projects"
+      ondragover="handleSectionDragOver(event, 'projects')"
+      ondragleave="handleSectionDragLeave(event)"
+      ondrop="handleSectionDrop(event, 'projects')"
+    >
       <div class="container">
         <div class="section-header">
           <div>
             <div class="section-eyebrow" id="sec-eyebrow-projects" onblur="updateSectionHeader('projects', 'eyebrow', this.innerText)">04 • Research Projects, Creative Portfolio &amp; Service</div>
             <h2 class="section-title" id="sec-title-projects" onblur="updateSectionHeader('projects', 'title', this.innerText)">Innovation, Artistry &amp; Community Impact</h2>
+            <span class="drag-hint-pill" style="margin-top: 0.45rem;">⠿ Drop any card from Section 02 or 03 here to move it into Projects</span>
           </div>
 
           <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 0.75rem;">
