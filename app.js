@@ -540,6 +540,159 @@ let appData = JSON.parse(JSON.stringify(DEFAULT_DATA));
 let hasUnsyncedChanges = false;
 let editingItemContext = null; // { id, collectionKey }
 let draggedCardPayload = null; // { id, fromCollection }
+let isAdminUnlocked = false;   // Default: Read-Only Visitor Mode (true only after Parent Login)
+let activeSessionToken = '';   // Verified GitHub PAT for the active parent session
+
+/* ==========================================================================
+   Parent Admin Authentication (Read-Only by Default for Public Visitors)
+   ========================================================================== */
+
+function openParentLoginModal() {
+  const modal = document.getElementById('parent-login-modal');
+  const tokenInput = document.getElementById('field-parent-token');
+  const savedHint = document.getElementById('parent-saved-token-hint');
+  const forgetBtn = document.getElementById('btn-forget-saved-token');
+  const statusBox = document.getElementById('parent-login-status');
+  const rememberCheck = document.getElementById('field-parent-remember');
+
+  const savedToken = localStorage.getItem('github_pat_noodee_nadia') || '';
+  if (tokenInput) {
+    tokenInput.value = savedToken;
+  }
+  if (savedHint) {
+    savedHint.style.display = savedToken ? 'block' : 'none';
+  }
+  if (forgetBtn) {
+    forgetBtn.style.display = savedToken ? 'inline-block' : 'none';
+  }
+  if (rememberCheck) {
+    rememberCheck.checked = Boolean(savedToken) || true;
+  }
+  if (statusBox) {
+    statusBox.innerHTML = '';
+  }
+  if (modal) {
+    modal.classList.add('open');
+  }
+}
+
+function closeParentLoginModal() {
+  const modal = document.getElementById('parent-login-modal');
+  if (modal) modal.classList.remove('open');
+}
+
+function forgetSavedGitHubToken() {
+  localStorage.removeItem('github_pat_noodee_nadia');
+  activeSessionToken = '';
+  const tokenInput = document.getElementById('field-parent-token');
+  const savedHint = document.getElementById('parent-saved-token-hint');
+  const forgetBtn = document.getElementById('btn-forget-saved-token');
+  const statusBox = document.getElementById('parent-login-status');
+  if (tokenInput) tokenInput.value = '';
+  if (savedHint) savedHint.style.display = 'none';
+  if (forgetBtn) forgetBtn.style.display = 'none';
+  if (statusBox) {
+    statusBox.innerHTML = `<div style="padding:0.65rem 0.85rem; background:var(--surface-subtle); border-radius:8px; font-size:0.82rem; color:var(--text-secondary);">Saved GitHub Token has been cleared from this browser.</div>`;
+  }
+}
+
+async function verifyGitHubTokenWriteAccess(token) {
+  const res = await fetch(`https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}?_t=${Date.now()}`, {
+    cache: 'no-store',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Accept': 'application/vnd.github+json'
+    }
+  });
+  if (!res.ok) {
+    if (res.status === 401) {
+      throw new Error('Invalid or expired GitHub Token (HTTP 401). Please check your token.');
+    }
+    throw new Error(`Unable to verify token with GitHub (HTTP ${res.status}).`);
+  }
+  const repoData = await res.json();
+  if (!repoData.permissions || repoData.permissions.push !== true) {
+    throw new Error('This token does not have write/push permission for rchookhiatti/noodee-nadia-portfolio.');
+  }
+  return true;
+}
+
+async function handleParentLoginSubmit(event) {
+  event.preventDefault();
+  const tokenInput = document.getElementById('field-parent-token');
+  const rememberCheck = document.getElementById('field-parent-remember');
+  const statusBox = document.getElementById('parent-login-status');
+  const submitBtn = document.getElementById('btn-confirm-parent-login');
+
+  const token = (tokenInput?.value || '').trim();
+  if (!token) {
+    alert('Please enter your GitHub Personal Access Token.');
+    return;
+  }
+
+  submitBtn.disabled = true;
+  submitBtn.innerText = '⏳ Verifying with GitHub...';
+  statusBox.innerHTML = `<div style="padding:0.7rem 0.9rem; background:var(--surface-subtle); border-radius:8px; font-size:0.83rem; color:var(--text-secondary);">Verifying repository write access with GitHub...</div>`;
+
+  try {
+    await verifyGitHubTokenWriteAccess(token);
+
+    activeSessionToken = token;
+    if (rememberCheck && rememberCheck.checked) {
+      localStorage.setItem('github_pat_noodee_nadia', token);
+    } else {
+      localStorage.removeItem('github_pat_noodee_nadia');
+    }
+
+    enterAdminMode();
+    closeParentLoginModal();
+  } catch (err) {
+    statusBox.innerHTML = `
+      <div style="padding:0.75rem 0.9rem; background:hsl(0, 75%, 96%); border:1px solid hsl(0, 60%, 82%); border-radius:8px; font-size:0.83rem; color:hsl(0, 65%, 36%);">
+        <strong>❌ Access Denied:</strong> ${err.message}
+      </div>
+    `;
+  } finally {
+    submitBtn.disabled = false;
+    submitBtn.innerText = '🔓 Unlock Admin Mode';
+  }
+}
+
+function enterAdminMode() {
+  isAdminUnlocked = true;
+  document.body.classList.add('admin-mode');
+  updateSyncButtonBadge();
+  renderAll();
+}
+
+function exitAdminMode(forgetToken = false) {
+  if (hasUnsyncedChanges) {
+    const proceed = confirm(
+      'You have unsynced edits on this browser that have not been saved to GitHub yet.\n\nClick OK to lock Admin Mode anyway (your local edits stay saved on this browser until you click "☁️ Save to GitHub"), or Cancel to save to GitHub first.'
+    );
+    if (!proceed) return;
+  }
+
+  isAdminUnlocked = false;
+  appData.state.editMode = false;
+  document.body.classList.remove('admin-mode');
+  document.body.classList.remove('edit-mode');
+
+  const editBtn = document.getElementById('btn-toggle-edit');
+  if (editBtn) {
+    editBtn.classList.remove('btn-edit-active');
+    editBtn.innerHTML = '✎ Customize Text & Photos';
+  }
+
+  if (forgetToken) {
+    activeSessionToken = '';
+    localStorage.removeItem('github_pat_noodee_nadia');
+  } else {
+    activeSessionToken = '';
+  }
+
+  renderAll();
+}
 
 /* ==========================================================================
    IndexedDB High-Capacity Storage Engine (Supports large PDFs & Photos)
@@ -679,6 +832,7 @@ function mergeWithDefaults(source) {
 }
 
 async function savePortfolioData() {
+  if (!isAdminUnlocked) return;
   const payload = {
     updatedAt: Date.now(),
     sectionVisibility: appData.sectionVisibility,
@@ -739,6 +893,7 @@ function normalizeItemForTargetSection(item, fromCollection, toCollection) {
 }
 
 async function movePortfolioItem(itemId, fromCollection, toCollection) {
+  if (!isAdminUnlocked) return;
   if (!toCollection || fromCollection === toCollection) return;
 
   const sourceList = appData[fromCollection] || [];
@@ -756,6 +911,10 @@ async function movePortfolioItem(itemId, fromCollection, toCollection) {
 }
 
 function handleCardDragStart(event, itemId, fromCollection) {
+  if (!isAdminUnlocked) {
+    event.preventDefault();
+    return;
+  }
   draggedCardPayload = { id: itemId, fromCollection: fromCollection };
   if (event.dataTransfer) {
     event.dataTransfer.effectAllowed = 'move';
@@ -775,6 +934,7 @@ function handleCardDragEnd(event) {
 }
 
 function handleSectionDragOver(event, targetCollection) {
+  if (!isAdminUnlocked) return;
   event.preventDefault();
   if (event.dataTransfer) {
     event.dataTransfer.dropEffect = 'move';
@@ -793,6 +953,7 @@ function handleSectionDragLeave(event) {
 }
 
 async function handleSectionDrop(event, targetCollection) {
+  if (!isAdminUnlocked) return;
   event.preventDefault();
   const secEl = event.currentTarget;
   if (secEl) secEl.classList.remove('drag-over');
@@ -817,7 +978,11 @@ async function handleSectionDrop(event, targetCollection) {
    ========================================================================== */
 
 function openGitHubSyncModal() {
-  const savedToken = localStorage.getItem('github_pat_noodee_nadia') || '';
+  if (!isAdminUnlocked) {
+    openParentLoginModal();
+    return;
+  }
+  const savedToken = activeSessionToken || localStorage.getItem('github_pat_noodee_nadia') || '';
   const tokenInput = document.getElementById('field-github-token');
   if (tokenInput && savedToken) {
     tokenInput.value = savedToken;
@@ -1220,6 +1385,7 @@ function renderSectionHeadersAndVisibility() {
 }
 
 function updateSectionHeader(secKey, field, val) {
+  if (!isAdminUnlocked) return;
   if (!appData.sectionHeaders) appData.sectionHeaders = JSON.parse(JSON.stringify(DEFAULT_DATA.sectionHeaders));
   if (!appData.sectionHeaders[secKey]) appData.sectionHeaders[secKey] = {};
   appData.sectionHeaders[secKey][field] = val.trim();
@@ -1227,6 +1393,7 @@ function updateSectionHeader(secKey, field, val) {
 }
 
 function toggleSectionVisibility(secKey) {
+  if (!isAdminUnlocked) return;
   if (!appData.sectionVisibility) appData.sectionVisibility = { ...DEFAULT_DATA.sectionVisibility };
   appData.sectionVisibility[secKey] = appData.sectionVisibility[secKey] === false ? true : false;
   savePortfolioData();
@@ -1271,10 +1438,12 @@ function renderHeroCards() {
           <div class="sister-card-top">
             <div class="avatar-wrapper">
               <img src="${s.avatar}" alt="${s.name} Portrait" id="avatar-img-${s.id}" />
-              <label class="avatar-upload-btn" for="avatar-input-${s.id}" title="Upload custom photo for ${s.name}">
-                <span>📷 Change Photo</span>
-                <input type="file" id="avatar-input-${s.id}" accept="image/*" style="display:none" onchange="handleAvatarUpload('${s.id}', event)" />
-              </label>
+              ${isAdminUnlocked ? `
+                <label class="avatar-upload-btn" for="avatar-input-${s.id}" title="Upload custom photo for ${s.name}">
+                  <span>📷 Change Photo</span>
+                  <input type="file" id="avatar-input-${s.id}" accept="image/*" style="display:none" onchange="handleAvatarUpload('${s.id}', event)" />
+                </label>
+              ` : ''}
             </div>
             <div class="sister-meta">
               <span class="grade-pill pill-${s.id}">
@@ -1443,14 +1612,14 @@ function renderRadarSection() {
 }
 
 function updateRadarScore(sisterId, idx, val) {
-  if (!appData.sisters[sisterId]?.radarScores?.[idx]) return;
+  if (!isAdminUnlocked || !appData.sisters[sisterId]?.radarScores?.[idx]) return;
   appData.sisters[sisterId].radarScores[idx].score = Number(val);
   savePortfolioData();
   renderRadarSection();
 }
 
 function updateRadarLabel(sisterId, idx, val) {
-  if (!appData.sisters[sisterId]?.radarScores?.[idx]) return;
+  if (!isAdminUnlocked || !appData.sisters[sisterId]?.radarScores?.[idx]) return;
   appData.sisters[sisterId].radarScores[idx].label = val.trim();
   savePortfolioData();
   renderRadarSection();
@@ -1562,6 +1731,7 @@ function renderCardAttachmentSnippet(item) {
 }
 
 function renderCardToolbar(item, currentCollection) {
+  if (!isAdminUnlocked) return '';
   return `
     <div class="card-toolbar" onclick="event.stopPropagation();">
       <select class="card-move-select" onchange="movePortfolioItem('${item.id}', '${currentCollection}', this.value)" title="Move this item to another section">
@@ -1599,8 +1769,10 @@ function renderAwards() {
 
   if (filtered.length === 0) {
     container.innerHTML = `
-      <div style="grid-column: 1/-1; text-align: center; padding: 3rem; background: var(--surface-card); border-radius: var(--radius-md); border: 2px dashed var(--border-strong); color: var(--text-secondary);">
-        No awards match the selected filter — or drag &amp; drop a card here to move it into <strong>02 • Awards &amp; Certificates</strong>.
+      <div style="grid-column: 1/-1; text-align: center; padding: 3rem; background: var(--surface-card); border-radius: var(--radius-md); border: 1px dashed var(--border-strong); color: var(--text-secondary);">
+        ${isAdminUnlocked
+          ? 'No awards match the selected filter — or drag &amp; drop a card here to move it into <strong>02 • Awards &amp; Certificates</strong>.'
+          : 'No awards recorded for the selected year or filter.'}
       </div>
     `;
     return;
@@ -1608,11 +1780,10 @@ function renderAwards() {
 
   container.innerHTML = filtered.map(item => `
     <article
-      class="portfolio-card draggable-card"
+      class="portfolio-card ${isAdminUnlocked ? 'draggable-card' : ''}"
       id="award-card-${item.id}"
-      draggable="true"
-      ondragstart="handleCardDragStart(event, '${item.id}', 'awards')"
-      ondragend="handleCardDragEnd(event)"
+      draggable="${isAdminUnlocked ? 'true' : 'false'}"
+      ${isAdminUnlocked ? `ondragstart="handleCardDragStart(event, '${item.id}', 'awards')" ondragend="handleCardDragEnd(event)"` : ''}
       onclick="openCertificateModal('${item.id}', 'awards')"
     >
       <div>
@@ -1620,7 +1791,7 @@ function renderAwards() {
           <span class="owner-badge owner-${item.sister}">
             <span>●</span> ${item.sisterName}
           </span>
-          <span class="year-badge" title="Drag card to another section">⠿ 📅 ${item.year}</span>
+          <span class="year-badge" ${isAdminUnlocked ? 'title="Drag card to another section"' : ''}>${isAdminUnlocked ? '⠿ ' : ''}📅 ${item.year}</span>
         </div>
         <div class="card-category">${item.category}</div>
         <h3 class="card-title">${item.title}</h3>
@@ -1651,8 +1822,10 @@ function renderCCAs() {
 
   if (filtered.length === 0) {
     container.innerHTML = `
-      <div style="grid-column: 1/-1; text-align: center; padding: 2.5rem; background: var(--surface-card); border-radius: var(--radius-md); border: 2px dashed var(--border-strong); color: var(--text-secondary);">
-        No CCA activities for this filter — drag &amp; drop any card from Section 02 or 04 here, or click "+ Add CCA Activity".
+      <div style="grid-column: 1/-1; text-align: center; padding: 2.5rem; background: var(--surface-card); border-radius: var(--radius-md); border: 1px dashed var(--border-strong); color: var(--text-secondary);">
+        ${isAdminUnlocked
+          ? 'No CCA activities for this filter — drag &amp; drop any card from Section 02 or 04 here, or click "+ Add CCA Activity".'
+          : 'No co-curricular activities recorded for the selected year or filter.'}
       </div>
     `;
     return;
@@ -1660,11 +1833,10 @@ function renderCCAs() {
 
   container.innerHTML = filtered.map(item => `
     <article
-      class="cca-card draggable-card"
+      class="cca-card ${isAdminUnlocked ? 'draggable-card' : ''}"
       id="cca-card-${item.id}"
-      draggable="true"
-      ondragstart="handleCardDragStart(event, '${item.id}', 'ccas')"
-      ondragend="handleCardDragEnd(event)"
+      draggable="${isAdminUnlocked ? 'true' : 'false'}"
+      ${isAdminUnlocked ? `ondragstart="handleCardDragStart(event, '${item.id}', 'ccas')" ondragend="handleCardDragEnd(event)"` : ''}
       style="position: relative; display: flex; flex-direction: column; justify-content: space-between;"
       onclick="openCertificateModal('${item.id}', 'ccas')"
     >
@@ -1673,7 +1845,7 @@ function renderCCAs() {
           <div class="cca-icon-box">${item.icon || '🌟'}</div>
           <div style="display: flex; align-items: center; gap: 0.35rem; flex-wrap: wrap; justify-content: flex-end;">
             <span class="owner-badge owner-${item.sister}">${item.sisterName}</span>
-            <span class="year-badge" title="Drag card to another section">⠿ ${item.year || '2026'}</span>
+            <span class="year-badge" ${isAdminUnlocked ? 'title="Drag card to another section"' : ''}>${isAdminUnlocked ? '⠿ ' : ''}${item.year || '2026'}</span>
           </div>
         </div>
         <div class="cca-role">${item.role || item.category || 'Member'}</div>
@@ -1709,8 +1881,10 @@ function renderProjects() {
 
   if (filtered.length === 0) {
     container.innerHTML = `
-      <div style="grid-column: 1/-1; text-align: center; padding: 3rem; background: var(--surface-card); border-radius: var(--radius-md); border: 2px dashed var(--border-strong); color: var(--text-secondary);">
-        No projects match the selected filter — drag &amp; drop any card here, or click "+ Add Project / Service".
+      <div style="grid-column: 1/-1; text-align: center; padding: 3rem; background: var(--surface-card); border-radius: var(--radius-md); border: 1px dashed var(--border-strong); color: var(--text-secondary);">
+        ${isAdminUnlocked
+          ? 'No projects match the selected filter — drag &amp; drop any card here, or click "+ Add Project / Service".'
+          : 'No projects recorded for the selected year or filter.'}
       </div>
     `;
     return;
@@ -1718,11 +1892,10 @@ function renderProjects() {
 
   container.innerHTML = filtered.map(item => `
     <article
-      class="portfolio-card draggable-card"
+      class="portfolio-card ${isAdminUnlocked ? 'draggable-card' : ''}"
       id="project-card-${item.id}"
-      draggable="true"
-      ondragstart="handleCardDragStart(event, '${item.id}', 'projects')"
-      ondragend="handleCardDragEnd(event)"
+      draggable="${isAdminUnlocked ? 'true' : 'false'}"
+      ${isAdminUnlocked ? `ondragstart="handleCardDragStart(event, '${item.id}', 'projects')" ondragend="handleCardDragEnd(event)"` : ''}
       onclick="openCertificateModal('${item.id}', 'projects')"
     >
       <div>
@@ -1730,7 +1903,7 @@ function renderProjects() {
           <span class="owner-badge owner-${item.sister}">
             <span>✦</span> ${item.sisterName}
           </span>
-          <span class="year-badge" title="Drag card to another section">⠿ 📅 ${item.year}</span>
+          <span class="year-badge" ${isAdminUnlocked ? 'title="Drag card to another section"' : ''}>${isAdminUnlocked ? '⠿ ' : ''}📅 ${item.year}</span>
         </div>
         <div class="card-category">${item.category}</div>
         <h3 class="card-title">${item.title}</h3>
@@ -1775,7 +1948,9 @@ function renderMediaGallery() {
   if (filtered.length === 0) {
     container.innerHTML = `
       <div style="grid-column: 1/-1; text-align: center; padding: 2.5rem; background: var(--surface-card); border-radius: var(--radius-md); border: 1px dashed var(--border-strong); color: var(--text-secondary);">
-        No video performances or photo memories for this filter yet. Click "+ Add Video / Photo Memory" to showcase recitals, sports, or camp snapshots!
+        ${isAdminUnlocked
+          ? 'No video performances or photo memories for this filter yet. Click "+ Add Video / Photo Memory" to showcase recitals, sports, or camp snapshots!'
+          : 'No video performances or activity photos recorded for the selected year.'}
       </div>
     `;
     return;
@@ -1807,20 +1982,23 @@ function renderMediaGallery() {
             ${item.videoUrl && !ytEmbed ? `<a href="${item.videoUrl}" target="_blank" rel="noopener" class="btn btn-outline" style="font-size:0.78rem; margin-top:0.4rem;">🎬 Watch Video Link ↗</a>` : ''}
           </div>
         </div>
-        <div style="padding: 0 1.4rem 1.1rem;">
-          <div class="card-toolbar">
-            <span style="font-size:0.74rem; color:var(--text-muted); font-weight:600;">📸 Media &amp; Performance</span>
-            <div class="card-btn-group">
-              <button type="button" class="card-tool-btn btn-del" onclick="deleteMediaItem('${item.id}')" title="Delete this memory">🗑️</button>
+        ${isAdminUnlocked ? `
+          <div style="padding: 0 1.4rem 1.1rem;">
+            <div class="card-toolbar">
+              <span style="font-size:0.74rem; color:var(--text-muted); font-weight:600;">📸 Media &amp; Performance</span>
+              <div class="card-btn-group">
+                <button type="button" class="card-tool-btn btn-del" onclick="deleteMediaItem('${item.id}')" title="Delete this memory">🗑️</button>
+              </div>
             </div>
           </div>
-        </div>
+        ` : ''}
       </article>
     `;
   }).join('');
 }
 
 function openAddMediaModal() {
+  if (!isAdminUnlocked) return;
   pendingAttachment = { data: null, type: null, name: null };
   const form = document.getElementById('add-media-form');
   if (form) form.reset();
@@ -1875,6 +2053,7 @@ async function handleAddMediaSubmit(event) {
 }
 
 async function deleteMediaItem(id) {
+  if (!isAdminUnlocked) return;
   if (!confirm('Remove this video/photo memory?')) return;
   appData.mediaGallery = (appData.mediaGallery || []).filter(x => x.id !== id);
   await savePortfolioData();
@@ -2093,27 +2272,33 @@ function openCertificateModal(itemId, collectionKey) {
       </div>
     </div>
 
-    <div style="display: flex; justify-content: space-between; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
-      <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-        <button type="button" class="btn btn-primary" style="font-size: 0.82rem;" onclick="closeDetailModal(); openEditItemModal('${item.id}', '${collectionKey}')">
-          ✎ Edit Text / Move Section
-        </button>
-        <label class="btn btn-outline" style="font-size: 0.8rem; cursor: pointer;">
-          📎 Replace Certificate
-          <input type="file" accept="image/*,.pdf,application/pdf" style="display:none" onchange="attachFileToExistingItem('${item.id}', '${collectionKey}', event)" />
-        </label>
-        <label class="btn btn-outline" style="font-size: 0.8rem; cursor: pointer;">
-          📸 + Add Action Photos
-          <input type="file" accept="image/*" multiple style="display:none" onchange="attachActivityPhotosToExistingItem('${item.id}', '${collectionKey}', event)" />
-        </label>
+    ${isAdminUnlocked ? `
+      <div style="display: flex; justify-content: space-between; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
+        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+          <button type="button" class="btn btn-primary" style="font-size: 0.82rem;" onclick="closeDetailModal(); openEditItemModal('${item.id}', '${collectionKey}')">
+            ✎ Edit Text / Move Section
+          </button>
+          <label class="btn btn-outline" style="font-size: 0.8rem; cursor: pointer;">
+            📎 Replace Certificate
+            <input type="file" accept="image/*,.pdf,application/pdf" style="display:none" onchange="attachFileToExistingItem('${item.id}', '${collectionKey}', event)" />
+          </label>
+          <label class="btn btn-outline" style="font-size: 0.8rem; cursor: pointer;">
+            📸 + Add Action Photos
+            <input type="file" accept="image/*" multiple style="display:none" onchange="attachActivityPhotosToExistingItem('${item.id}', '${collectionKey}', event)" />
+          </label>
+        </div>
+        <div style="display: flex; gap: 0.5rem;">
+          <button type="button" class="btn btn-outline" style="color: hsl(0, 65%, 45%); border-color: hsl(0, 50%, 82%); font-size: 0.8rem;" onclick="deletePortfolioItem('${item.id}', '${collectionKey}')">
+            🗑️ Delete
+          </button>
+          <button type="button" class="btn btn-outline" onclick="closeDetailModal()">Close</button>
+        </div>
       </div>
-      <div style="display: flex; gap: 0.5rem;">
-        <button type="button" class="btn btn-outline" style="color: hsl(0, 65%, 45%); border-color: hsl(0, 50%, 82%); font-size: 0.8rem;" onclick="deletePortfolioItem('${item.id}', '${collectionKey}')">
-          🗑️ Delete
-        </button>
+    ` : `
+      <div style="display: flex; justify-content: flex-end;">
         <button type="button" class="btn btn-outline" onclick="closeDetailModal()">Close</button>
       </div>
-    </div>
+    `}
   `;
 
   modal.classList.add('open');
@@ -2124,6 +2309,7 @@ function closeDetailModal() {
 }
 
 function openAddModal(defaultSection = 'awards') {
+  if (!isAdminUnlocked) return;
   editingItemContext = null;
   pendingAttachment = { data: null, type: null, name: null };
   pendingActivityPhotos = [];
@@ -2159,6 +2345,7 @@ function openAddModal(defaultSection = 'awards') {
 }
 
 function openEditItemModal(itemId, collectionKey) {
+  if (!isAdminUnlocked) return;
   const list = appData[collectionKey] || [];
   const item = list.find(x => x.id === itemId);
   if (!item) return;
@@ -2395,6 +2582,7 @@ function attachActivityPhotosToExistingItem(itemId, collectionKey, event) {
 }
 
 async function deletePortfolioItem(itemId, collectionKey) {
+  if (!isAdminUnlocked) return;
   if (!confirm('Remove this item from the portfolio?')) return;
   appData[collectionKey] = (appData[collectionKey] || []).filter(x => x.id !== itemId);
   await savePortfolioData();
@@ -2404,6 +2592,7 @@ async function deletePortfolioItem(itemId, collectionKey) {
 
 async function handleAddAchievement(event) {
   event.preventDefault();
+  if (!isAdminUnlocked) return;
   const form = event.target;
   const sectionType = form.sectionType.value; // 'awards' | 'ccas' | 'projects'
   const sister = form.sister.value;
@@ -2496,6 +2685,10 @@ async function handleAddAchievement(event) {
 
 /* Inline Editing & Custom Avatar Upload */
 async function toggleEditMode() {
+  if (!isAdminUnlocked) {
+    openParentLoginModal();
+    return;
+  }
   appData.state.editMode = !appData.state.editMode;
   document.body.classList.toggle('edit-mode', appData.state.editMode);
 
@@ -2512,31 +2705,32 @@ async function toggleEditMode() {
 }
 
 function updateSisterField(sisterId, field, value) {
-  if (!appData.sisters[sisterId]) return;
+  if (!isAdminUnlocked || !appData.sisters[sisterId]) return;
   appData.sisters[sisterId][field] = value.trim();
   savePortfolioData();
 }
 
 function updateStat(sisterId, idx, field, value) {
-  if (!appData.sisters[sisterId]?.stats[idx]) return;
+  if (!isAdminUnlocked || !appData.sisters[sisterId]?.stats[idx]) return;
   appData.sisters[sisterId].stats[idx][field] = value.trim();
   savePortfolioData();
 }
 
 function updateInterestTag(sisterId, idx, value) {
-  if (!appData.sisters[sisterId]?.interests) return;
+  if (!isAdminUnlocked || !appData.sisters[sisterId]?.interests) return;
   appData.sisters[sisterId].interests[idx] = value.trim();
   savePortfolioData();
 }
 
 function removeInterestTag(sisterId, idx) {
-  if (!appData.sisters[sisterId]?.interests) return;
+  if (!isAdminUnlocked || !appData.sisters[sisterId]?.interests) return;
   appData.sisters[sisterId].interests.splice(idx, 1);
   savePortfolioData();
   renderHeroCards();
 }
 
 function addInterestTag(sisterId) {
+  if (!isAdminUnlocked) return;
   const newTag = prompt('Enter new interest or skill tag:');
   if (!newTag || !newTag.trim()) return;
   appData.sisters[sisterId].interests.push(newTag.trim());
@@ -2545,12 +2739,13 @@ function addInterestTag(sisterId) {
 }
 
 function updateSubject(sisterId, idx, field, value) {
-  if (!appData.sisters[sisterId]?.subjects[idx]) return;
+  if (!isAdminUnlocked || !appData.sisters[sisterId]?.subjects[idx]) return;
   appData.sisters[sisterId].subjects[idx][field] = value.trim();
   savePortfolioData();
 }
 
 function addSubject(sisterId) {
+  if (!isAdminUnlocked) return;
   const name = prompt('Subject Name (e.g., Physics, Mandarin Chinese):');
   if (!name || !name.trim()) return;
   const grade = prompt('Grade / Score (e.g., A* (95%)):', 'A* (95%)') || 'A*';
@@ -2566,6 +2761,7 @@ function addSubject(sisterId) {
 }
 
 function deleteSubject(sisterId, idx) {
+  if (!isAdminUnlocked) return;
   if (!confirm('Remove this subject?')) return;
   appData.sisters[sisterId].subjects.splice(idx, 1);
   savePortfolioData();
@@ -2573,12 +2769,13 @@ function deleteSubject(sisterId, idx) {
 }
 
 function updateLanguage(sisterId, idx, field, value) {
-  if (!appData.sisters[sisterId]?.languages[idx]) return;
+  if (!isAdminUnlocked || !appData.sisters[sisterId]?.languages[idx]) return;
   appData.sisters[sisterId].languages[idx][field] = value.trim();
   savePortfolioData();
 }
 
 function handleAvatarUpload(sisterId, event) {
+  if (!isAdminUnlocked) return;
   const file = event.target.files?.[0];
   if (!file) return;
   compressImageFile(file, async (compressedDataUrl) => {
@@ -2590,6 +2787,7 @@ function handleAvatarUpload(sisterId, event) {
 
 /* Export / Import Portfolio Data Backup */
 function exportPortfolioBackup() {
+  if (!isAdminUnlocked) return;
   const dataStr = JSON.stringify({
     updatedAt: Date.now(),
     sectionVisibility: appData.sectionVisibility,
@@ -2610,6 +2808,7 @@ function exportPortfolioBackup() {
 }
 
 function importPortfolioBackup(event) {
+  if (!isAdminUnlocked) return;
   const file = event.target.files?.[0];
   if (!file) return;
   const reader = new FileReader();
@@ -2632,6 +2831,7 @@ function importPortfolioBackup(event) {
 }
 
 async function resetDefaultData() {
+  if (!isAdminUnlocked) return;
   if (confirm('Reset local changes on this browser back to the latest published version on GitHub?')) {
     await clearIDB();
     localStorage.removeItem('noodee_nadia_portfolio_v2');
@@ -2642,8 +2842,8 @@ async function resetDefaultData() {
   }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-  initializePortfolioData();
+document.addEventListener('DOMContentLoaded', async () => {
+  await initializePortfolioData();
 
   document.querySelectorAll('.modal-backdrop').forEach(backdrop => {
     backdrop.addEventListener('click', (e) => {
@@ -2652,4 +2852,10 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   });
+
+  // Optional shortcut: visiting ?admin=1 opens the Parent Login verification modal (never auto-unlocks)
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('admin') === '1') {
+    openParentLoginModal();
+  }
 });

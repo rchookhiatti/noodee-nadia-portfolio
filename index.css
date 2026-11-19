@@ -1786,3 +1786,70 @@ body.edit-mode .edit-banner {
     font-size: 0.78rem;
   }
 }
+
+/* ==========================================================================
+   Read-Only Visitor Mode (Default) vs Parent Admin Mode
+   ========================================================================== */
+body:not(.admin-mode) .admin-only {
+  display: none !important;
+}
+
+body.admin-mode .visitor-only {
+  display: none !important;
+}
+
+.admin-mode-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0.65rem;
+  border-radius: var(--radius-pill);
+  background: hsla(145, 58%, 38%, 0.12);
+  color: hsl(145, 58%, 30%);
+  border: 1px solid hsla(145, 58%, 38%, 0.3);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.btn-parent-login {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  background: transparent;
+  border: 1px solid transparent;
+  padding: 0.35rem 0.65rem;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: var(--transition-smooth);
+}
+
+.btn-parent-login:hover {
+  color: var(--text-primary);
+  background: var(--surface-subtle);
+  border-color: var(--border-subtle);
+}
+
+.btn-lock-admin {
+  background: hsl(0, 65%, 97%);
+  color: hsl(0, 62%, 40%);
+  border: 1px solid hsl(0, 50%, 84%);
+}
+
+.btn-lock-admin:hover {
+  background: hsl(0, 65%, 93%);
+  border-color: hsl(0, 55%, 70%);
+}
+
+@media print {
+  .admin-only,
+  .btn-parent-login,
+  .edit-banner,
+  .header-actions {
+    display: none !important;
+  }
+}
+

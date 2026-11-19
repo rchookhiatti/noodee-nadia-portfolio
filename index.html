@@ -50,14 +50,20 @@
 
       <!-- Quick Utility Actions -->
       <div class="header-actions">
-        <button type="button" class="btn btn-outline" id="btn-toggle-edit" onclick="toggleEditMode()">
+        <button type="button" class="btn btn-outline visitor-only" id="btn-header-print" onclick="window.print()" title="Print or save portfolio as PDF">
+          🖨️ Print / PDF
+        </button>
+        <button type="button" class="btn btn-outline admin-only" id="btn-toggle-edit" onclick="toggleEditMode()">
           ✎ Customize Text &amp; Photos
         </button>
-        <button type="button" class="btn btn-outline" id="btn-github-sync" onclick="openGitHubSyncModal()" title="Publish photos, PDFs, and text directly to GitHub so every computer sees your updates">
+        <button type="button" class="btn btn-outline admin-only" id="btn-github-sync" onclick="openGitHubSyncModal()" title="Publish photos, PDFs, and text directly to GitHub so every computer sees your updates">
           ☁️ Save to GitHub
         </button>
-        <button type="button" class="btn btn-primary" id="btn-add-milestone" onclick="openAddModal('awards')">
+        <button type="button" class="btn btn-primary admin-only" id="btn-add-milestone" onclick="openAddModal('awards')">
           + Add Achievement
+        </button>
+        <button type="button" class="btn btn-lock-admin admin-only" id="btn-exit-admin" onclick="exitAdminMode(false)" title="Lock admin tools and return to clean Read-Only Visitor Mode">
+          🔒 Lock Admin
         </button>
       </div>
     </div>
@@ -112,7 +118,7 @@
             <p class="section-subtitle" id="sec-sub-radar" onblur="updateSectionHeader('radar', 'subtitle', this.innerText)">
               Visualizing balanced development across STEM, Global Languages, Performing Arts, Leadership, and Sports &amp; Outdoor Survival.
             </p>
-            <button type="button" class="btn btn-outline" id="btn-vis-radar" style="display:none; font-size:0.78rem;" onclick="toggleSectionVisibility('radar')">👁️ Hide Section</button>
+            <button type="button" class="btn btn-outline admin-only" id="btn-vis-radar" style="display:none; font-size:0.78rem;" onclick="toggleSectionVisibility('radar')">👁️ Hide Section</button>
           </div>
         </div>
 
@@ -132,7 +138,7 @@
             <p class="section-subtitle" id="sec-sub-academics" onblur="updateSectionHeader('academics', 'subtitle', this.innerText)">
               Rigorous academic grounding across Mathematics, Pure Sciences, Humanities, and trilingual proficiency in English, Mandarin Chinese, and Thai.
             </p>
-            <button type="button" class="btn btn-outline" id="btn-vis-academics" style="display:none; font-size:0.78rem;" onclick="toggleSectionVisibility('academics')">👁️ Hide Section</button>
+            <button type="button" class="btn btn-outline admin-only" id="btn-vis-academics" style="display:none; font-size:0.78rem;" onclick="toggleSectionVisibility('academics')">👁️ Hide Section</button>
           </div>
         </div>
 
@@ -153,13 +159,13 @@
           <div>
             <div class="section-eyebrow" id="sec-eyebrow-awards" onblur="updateSectionHeader('awards', 'eyebrow', this.innerText)">02 • Awards, Competitions &amp; Certificates</div>
             <h2 class="section-title" id="sec-title-awards" onblur="updateSectionHeader('awards', 'title', this.innerText)">Academic Olympiads &amp; Distinctions</h2>
-            <span class="drag-hint-pill" style="margin-top: 0.45rem;">⠿ Tip: Drag any card between Sections 02, 03 &amp; 04 — or click "✎ Edit" on any card</span>
+            <span class="drag-hint-pill admin-only" style="margin-top: 0.45rem;">⠿ Tip: Drag any card between Sections 02, 03 &amp; 04 — or click "✎ Edit" on any card</span>
           </div>
 
           <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 0.75rem;">
-            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-              <button type="button" class="btn btn-outline" id="btn-vis-awards" style="display:none; font-size:0.78rem;" onclick="toggleSectionVisibility('awards')">👁️ Hide Section</button>
-              <button type="button" class="btn btn-primary" style="font-size: 0.8rem; padding: 0.45rem 0.95rem;" onclick="openAddModal('awards')">+ Add Award / Certificate</button>
+            <div class="admin-only" style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+              <button type="button" class="btn btn-outline admin-only" id="btn-vis-awards" style="display:none; font-size:0.78rem;" onclick="toggleSectionVisibility('awards')">👁️ Hide Section</button>
+              <button type="button" class="btn btn-primary admin-only" style="font-size: 0.8rem; padding: 0.45rem 0.95rem;" onclick="openAddModal('awards')">+ Add Award / Certificate</button>
             </div>
             <div class="filter-controls" id="award-filters" role="group" aria-label="Filter awards by category"></div>
           </div>
@@ -182,15 +188,15 @@
           <div>
             <div class="section-eyebrow" id="sec-eyebrow-cca" onblur="updateSectionHeader('cca', 'eyebrow', this.innerText)">03 • Co-Curricular Activities (CCA), Sports &amp; Music</div>
             <h2 class="section-title" id="sec-title-cca" onblur="updateSectionHeader('cca', 'title', this.innerText)">Holistic Growth Beyond the Classroom</h2>
-            <span class="drag-hint-pill" style="margin-top: 0.45rem;">⠿ Drop any card from Section 02 or 04 here to move it into CCA</span>
+            <span class="drag-hint-pill admin-only" style="margin-top: 0.45rem;">⠿ Drop any card from Section 02 or 04 here to move it into CCA</span>
           </div>
           <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 0.65rem;">
             <p class="section-subtitle" id="sec-sub-cca" onblur="updateSectionHeader('cca', 'subtitle', this.innerText)">
               Active involvement in student governance, orchestral performance, varsity athletics, and environmental clubs at Anglo Singapore International School.
             </p>
-            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-              <button type="button" class="btn btn-outline" id="btn-vis-cca" style="display:none; font-size:0.78rem;" onclick="toggleSectionVisibility('cca')">👁️ Hide Section</button>
-              <button type="button" class="btn btn-primary" style="font-size: 0.8rem; padding: 0.45rem 0.95rem;" onclick="openAddModal('ccas')">+ Add CCA Activity</button>
+            <div class="admin-only" style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+              <button type="button" class="btn btn-outline admin-only" id="btn-vis-cca" style="display:none; font-size:0.78rem;" onclick="toggleSectionVisibility('cca')">👁️ Hide Section</button>
+              <button type="button" class="btn btn-primary admin-only" style="font-size: 0.8rem; padding: 0.45rem 0.95rem;" onclick="openAddModal('ccas')">+ Add CCA Activity</button>
             </div>
           </div>
         </div>
@@ -212,13 +218,13 @@
           <div>
             <div class="section-eyebrow" id="sec-eyebrow-projects" onblur="updateSectionHeader('projects', 'eyebrow', this.innerText)">04 • Research Projects, Creative Portfolio &amp; Service</div>
             <h2 class="section-title" id="sec-title-projects" onblur="updateSectionHeader('projects', 'title', this.innerText)">Innovation, Artistry &amp; Community Impact</h2>
-            <span class="drag-hint-pill" style="margin-top: 0.45rem;">⠿ Drop any card from Section 02 or 03 here to move it into Projects</span>
+            <span class="drag-hint-pill admin-only" style="margin-top: 0.45rem;">⠿ Drop any card from Section 02 or 03 here to move it into Projects</span>
           </div>
 
           <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 0.75rem;">
-            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-              <button type="button" class="btn btn-outline" id="btn-vis-projects" style="display:none; font-size:0.78rem;" onclick="toggleSectionVisibility('projects')">👁️ Hide Section</button>
-              <button type="button" class="btn btn-primary" style="font-size: 0.8rem; padding: 0.45rem 0.95rem;" onclick="openAddModal('projects')">+ Add Project / Service</button>
+            <div class="admin-only" style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+              <button type="button" class="btn btn-outline admin-only" id="btn-vis-projects" style="display:none; font-size:0.78rem;" onclick="toggleSectionVisibility('projects')">👁️ Hide Section</button>
+              <button type="button" class="btn btn-primary admin-only" style="font-size: 0.8rem; padding: 0.45rem 0.95rem;" onclick="openAddModal('projects')">+ Add Project / Service</button>
             </div>
             <div class="filter-controls" id="project-filters" role="group" aria-label="Filter projects by category"></div>
           </div>
@@ -240,9 +246,9 @@
             <p class="section-subtitle" id="sec-sub-media" onblur="updateSectionHeader('media', 'subtitle', this.innerText)">
               Watch solo music performances, debate speeches, and behind-the-scenes moments from science labs and leadership camps.
             </p>
-            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-              <button type="button" class="btn btn-outline" id="btn-vis-media" style="display:none; font-size:0.78rem;" onclick="toggleSectionVisibility('media')">👁️ Hide Section</button>
-              <button type="button" class="btn btn-primary" style="font-size: 0.8rem; padding: 0.45rem 0.95rem;" onclick="openAddMediaModal()">🎬 + Add Video / Photo Memory</button>
+            <div class="admin-only" style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+              <button type="button" class="btn btn-outline admin-only" id="btn-vis-media" style="display:none; font-size:0.78rem;" onclick="toggleSectionVisibility('media')">👁️ Hide Section</button>
+              <button type="button" class="btn btn-primary admin-only" style="font-size: 0.8rem; padding: 0.45rem 0.95rem;" onclick="openAddMediaModal()">🎬 + Add Video / Photo Memory</button>
             </div>
           </div>
         </div>
@@ -263,7 +269,7 @@
             <p class="section-subtitle" id="sec-sub-timeline" onblur="updateSectionHeader('timeline', 'subtitle', this.innerText)">
               Tracking every milestone across academic years from Lower Secondary to Upper Secondary.
             </p>
-            <button type="button" class="btn btn-outline" id="btn-vis-timeline" style="display:none; font-size:0.78rem;" onclick="toggleSectionVisibility('timeline')">👁️ Hide Section</button>
+            <button type="button" class="btn btn-outline admin-only" id="btn-vis-timeline" style="display:none; font-size:0.78rem;" onclick="toggleSectionVisibility('timeline')">👁️ Hide Section</button>
           </div>
         </div>
 
@@ -546,10 +552,62 @@
     </div>
   </div>
 
+  <!-- Parent Admin Login Modal (Protects Read-Only Public Portfolio) -->
+  <div class="modal-backdrop" id="parent-login-modal" role="dialog" aria-modal="true" aria-labelledby="parent-login-title">
+    <div class="modal-panel" style="max-width: 520px;">
+      <div class="modal-header">
+        <div>
+          <span class="section-eyebrow">Parent Administration • Secure Access</span>
+          <h3 id="parent-login-title" style="font-family: var(--font-serif); font-size: 1.45rem;">🔒 Parent Admin Login</h3>
+        </div>
+        <button type="button" class="modal-close" onclick="closeParentLoginModal()" aria-label="Close">✕</button>
+      </div>
+
+      <div style="background: var(--surface-subtle); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); padding: 0.9rem 1.05rem; margin-bottom: 1.15rem; font-size: 0.84rem; color: var(--text-secondary); line-height: 1.55;">
+        🛡️ <strong>Public Visitor View is Read-Only:</strong> Admissions officers, teachers, and visitors cannot edit, add, or delete anything.<br />
+        Enter your <strong>GitHub Personal Access Token</strong> (with push access to <code>rchookhiatti/noodee-nadia-portfolio</code>) to unlock editing tools &amp; cloud saving.
+      </div>
+
+      <form id="parent-login-form" onsubmit="handleParentLoginSubmit(event)">
+        <div class="form-group">
+          <label class="form-label" for="field-parent-token">GitHub Personal Access Token</label>
+          <input
+            type="password"
+            class="form-input"
+            id="field-parent-token"
+            placeholder="ghp_xxxxxxxxxxxx or github_pat_xxxxxxxxxxxx"
+            autocomplete="current-password"
+            required
+          />
+          <div id="parent-saved-token-hint" style="font-size: 0.78rem; color: hsl(145, 58%, 32%); font-weight: 600; margin-top: 0.35rem; display: none;">
+            ✓ Saved GitHub Token detected on this device — simply click "🔓 Unlock Admin Mode" below!
+          </div>
+        </div>
+
+        <div class="form-group" style="display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; flex-wrap: wrap;">
+          <label style="display: flex; align-items: center; gap: 0.45rem; font-size: 0.82rem; color: var(--text-secondary); cursor: pointer;">
+            <input type="checkbox" id="field-parent-remember" checked />
+            Remember token on this computer (uncheck on shared/public PCs)
+          </label>
+          <button type="button" id="btn-forget-saved-token" onclick="forgetSavedGitHubToken()" style="display: none; font-size: 0.76rem; color: hsl(0, 62%, 44%); text-decoration: underline; font-weight: 600;">
+            Forget saved token
+          </button>
+        </div>
+
+        <div id="parent-login-status" style="margin-bottom: 1rem;"></div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 0.75rem;">
+          <button type="button" class="btn btn-outline" onclick="closeParentLoginModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="btn-confirm-parent-login">🔓 Unlock Admin Mode</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <!-- Footer (Includes Feature 6: QR Code Digital Portfolio Dossier Card) -->
   <footer class="site-footer">
     <div class="container">
-      <div class="footer-inner" style="margin-bottom: 1.75rem;">
+      <div class="footer-inner" style="margin-bottom: 1.5rem;">
         <div class="qr-dossier-card">
           <div class="qr-code-box">
             <img id="portfolio-qr-img" src="https://api.qrserver.com/v1/create-qr-code/?size=160x160&margin=4&data=https%3A%2F%2Frchookhiatti.github.io%2Fnoodee-nadia-portfolio%2F" alt="QR Code to Online Portfolio" />
@@ -565,14 +623,14 @@
           </div>
         </div>
 
-        <div style="display: flex; gap: 0.65rem; flex-wrap: wrap;">
-          <button type="button" class="btn btn-outline" id="btn-footer-github-sync" onclick="openGitHubSyncModal()">
+        <div style="display: flex; gap: 0.65rem; flex-wrap: wrap; align-items: center;">
+          <button type="button" class="btn btn-outline admin-only" id="btn-footer-github-sync" onclick="openGitHubSyncModal()">
             ☁️ Save to GitHub
           </button>
-          <button type="button" class="btn btn-outline" id="btn-export-backup" onclick="exportPortfolioBackup()" title="Download all portfolio data and certificates as a backup file">
+          <button type="button" class="btn btn-outline admin-only" id="btn-export-backup" onclick="exportPortfolioBackup()" title="Download all portfolio data and certificates as a backup file">
             💾 Export Backup (.json)
           </button>
-          <label class="btn btn-outline" style="cursor: pointer;" title="Restore portfolio data from a backup file">
+          <label class="btn btn-outline admin-only" style="cursor: pointer;" title="Restore portfolio data from a backup file">
             📂 Import Backup
             <input type="file" accept=".json,application/json" style="display: none;" onchange="importPortfolioBackup(event)" />
           </label>
@@ -580,6 +638,23 @@
             🖨️ Print / Save PDF Dossier
           </button>
           <a href="#top-nav" class="btn btn-outline" id="btn-back-to-top">↑ Back to Top</a>
+        </div>
+      </div>
+
+      <!-- Subtle bottom status & discreet Parent Login trigger -->
+      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem; padding-top: 1rem; border-top: 1px solid var(--border-subtle); font-size: 0.76rem; color: var(--text-muted);">
+        <span>© Noodee &amp; Nadia • Official Academic &amp; Co-Curricular Portfolio</span>
+        <div style="display: flex; align-items: center; gap: 0.6rem;">
+          <span class="admin-mode-badge admin-only">🔓 Parent Admin Mode Active</span>
+          <button type="button" class="btn-parent-login visitor-only" id="btn-parent-login" onclick="openParentLoginModal()" title="Parent/Owner sign-in to edit portfolio">
+            🔒 Parent Login
+          </button>
+          <button type="button" class="btn-parent-login admin-only" id="btn-footer-exit-admin" onclick="exitAdminMode(false)" title="Return to Read-Only Visitor Mode">
+            🔒 Exit Admin Mode
+          </button>
+          <button type="button" class="btn-parent-login admin-only" id="btn-footer-signout-forget" onclick="exitAdminMode(true)" style="color: hsl(0, 58%, 45%);" title="Lock admin mode and clear saved GitHub token from this browser">
+            🚪 Sign Out &amp; Forget Device
+          </button>
         </div>
       </div>
     </div>
