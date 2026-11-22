@@ -159,7 +159,7 @@
           <div>
             <div class="section-eyebrow" id="sec-eyebrow-awards" onblur="updateSectionHeader('awards', 'eyebrow', this.innerText)">02 • Awards, Competitions &amp; Certificates</div>
             <h2 class="section-title" id="sec-title-awards" onblur="updateSectionHeader('awards', 'title', this.innerText)">Academic Olympiads &amp; Distinctions</h2>
-            <span class="drag-hint-pill admin-only" style="margin-top: 0.45rem;">⠿ Tip: Drag any card between Sections 02, 03 &amp; 04 — or click "✎ Edit" on any card</span>
+            <span class="drag-hint-pill admin-only" style="margin-top: 0.45rem;">⠿ Tip: Drag any card between Sections 02, 03, 04 &amp; 05 — or use "⇄ Move to Section..." on any card</span>
           </div>
 
           <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 0.75rem;">
@@ -188,7 +188,7 @@
           <div>
             <div class="section-eyebrow" id="sec-eyebrow-cca" onblur="updateSectionHeader('cca', 'eyebrow', this.innerText)">03 • Co-Curricular Activities (CCA), Sports &amp; Music</div>
             <h2 class="section-title" id="sec-title-cca" onblur="updateSectionHeader('cca', 'title', this.innerText)">Holistic Growth Beyond the Classroom</h2>
-            <span class="drag-hint-pill admin-only" style="margin-top: 0.45rem;">⠿ Drop any card from Section 02 or 04 here to move it into CCA</span>
+            <span class="drag-hint-pill admin-only" style="margin-top: 0.45rem;">⠿ Drop any card from Section 02, 04, or 05 here to move it into CCA</span>
           </div>
           <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 0.65rem;">
             <p class="section-subtitle" id="sec-sub-cca" onblur="updateSectionHeader('cca', 'subtitle', this.innerText)">
@@ -218,7 +218,7 @@
           <div>
             <div class="section-eyebrow" id="sec-eyebrow-projects" onblur="updateSectionHeader('projects', 'eyebrow', this.innerText)">04 • Research Projects, Creative Portfolio &amp; Service</div>
             <h2 class="section-title" id="sec-title-projects" onblur="updateSectionHeader('projects', 'title', this.innerText)">Innovation, Artistry &amp; Community Impact</h2>
-            <span class="drag-hint-pill admin-only" style="margin-top: 0.45rem;">⠿ Drop any card from Section 02 or 03 here to move it into Projects</span>
+            <span class="drag-hint-pill admin-only" style="margin-top: 0.45rem;">⠿ Drop any card from Section 02, 03, or 05 here to move it into Projects</span>
           </div>
 
           <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 0.75rem;">
@@ -235,12 +235,19 @@
     </section>
 
     <!-- Feature 3 & 4: Section 5 — Video Performances & Activity Photo Memories -->
-    <section class="section" id="media">
+    <section
+      class="section dropzone-section"
+      id="media"
+      ondragover="handleSectionDragOver(event, 'mediaGallery')"
+      ondragleave="handleSectionDragLeave(event)"
+      ondrop="handleSectionDrop(event, 'mediaGallery')"
+    >
       <div class="container">
         <div class="section-header">
           <div>
             <div class="section-eyebrow" id="sec-eyebrow-media" onblur="updateSectionHeader('media', 'eyebrow', this.innerText)">05 • Video Performances &amp; Camp Memories</div>
             <h2 class="section-title" id="sec-title-media" onblur="updateSectionHeader('media', 'title', this.innerText)">Music Recitals, Debates &amp; Action Snapshots</h2>
+            <span class="drag-hint-pill admin-only" style="margin-top: 0.45rem;">⠿ Drop any card from Section 02, 03, or 04 here to move it into Video &amp; Camp Memories</span>
           </div>
           <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 0.65rem;">
             <p class="section-subtitle" id="sec-sub-media" onblur="updateSectionHeader('media', 'subtitle', this.innerText)">
@@ -460,11 +467,12 @@
             </select>
           </div>
           <div class="form-group">
-            <label class="form-label" for="field-section">Portfolio Section (02, 03, or 04)</label>
+            <label class="form-label" for="field-section">Portfolio Section (02, 03, 04, or 05)</label>
             <select class="form-select" id="field-section" name="sectionType" onchange="handleSectionTypeChange(this.value)" required>
               <option value="awards">02 • Awards &amp; Certificates</option>
               <option value="ccas">03 • CCA, Sports &amp; Music</option>
               <option value="projects">04 • Projects &amp; Community Service</option>
+              <option value="mediaGallery">05 • Video Performances &amp; Camp Memories</option>
             </select>
           </div>
         </div>

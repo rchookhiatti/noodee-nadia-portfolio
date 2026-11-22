@@ -873,6 +873,57 @@ function updateSyncButtonBadge() {
 function normalizeItemForTargetSection(item, fromCollection, toCollection) {
   const copy = JSON.parse(JSON.stringify(item));
 
+  // Gather all photos from either Section 02-04 format or Section 05 format
+  const collectedPhotos = [];
+  const addPhotoUnique = (p) => {
+    if (p && typeof p === 'string' && !collectedPhotos.includes(p)) {
+      collectedPhotos.push(p);
+    }
+  };
+
+  if (copy.attachmentData && copy.attachmentType === 'image') {
+    addPhotoUnique(copy.attachmentData);
+  }
+  if (copy.photoData) {
+    addPhotoUnique(copy.photoData);
+  }
+  if (Array.isArray(copy.photos)) {
+    copy.photos.forEach(addPhotoUnique);
+  }
+  if (Array.isArray(copy.activityPhotos)) {
+    copy.activityPhotos.forEach(addPhotoUnique);
+  }
+
+  // Gather PDF attachment from either Section 02-04 or Section 05
+  let pdfData = copy.pdfData || (copy.attachmentType === 'pdf' ? copy.attachmentData : null) || null;
+  let pdfName = copy.pdfName || (copy.attachmentType === 'pdf' ? copy.attachmentName : null) || null;
+
+  if (toCollection === 'mediaGallery') {
+    copy.category = copy.category || copy.role || 'Performance & Activity';
+    copy.description = copy.description || copy.detail || copy.result || copy.schedule || '';
+    copy.videoUrl = copy.videoUrl || '';
+    copy.photos = collectedPhotos;
+    copy.photoData = collectedPhotos[0] || null;
+    copy.pdfData = pdfData;
+    copy.pdfName = pdfName;
+    return copy;
+  }
+
+  // Converting INTO Section 02 (awards), 03 (ccas), or 04 (projects)
+  if (fromCollection === 'mediaGallery') {
+    if (pdfData) {
+      copy.attachmentData = pdfData;
+      copy.attachmentType = 'pdf';
+      copy.attachmentName = pdfName || 'Document.pdf';
+      copy.activityPhotos = collectedPhotos;
+    } else if (collectedPhotos.length > 0) {
+      copy.attachmentData = collectedPhotos[0];
+      copy.attachmentType = 'image';
+      copy.attachmentName = 'Certificate-or-Photo.jpg';
+      copy.activityPhotos = collectedPhotos.slice(1);
+    }
+  }
+
   if (toCollection === 'ccas') {
     copy.icon = copy.icon || '🌟';
     copy.role = copy.role || copy.category || 'Member';
@@ -1781,6 +1832,7 @@ function renderCardToolbar(item, currentCollection) {
         ${currentCollection !== 'awards' ? '<option value="awards">→ 02 • Awards & Certificates</option>' : ''}
         ${currentCollection !== 'ccas' ? '<option value="ccas">→ 03 • CCA, Sports & Music</option>' : ''}
         ${currentCollection !== 'projects' ? '<option value="projects">→ 04 • Projects & Service</option>' : ''}
+        ${currentCollection !== 'mediaGallery' ? '<option value="mediaGallery">→ 05 • Video & Camp Memories</option>' : ''}
       </select>
       <div class="card-btn-group">
         <button type="button" class="card-tool-btn" onclick="openEditItemModal('${item.id}', '${currentCollection}')" title="Edit this item">
@@ -1866,7 +1918,7 @@ function renderCCAs() {
     container.innerHTML = `
       <div style="grid-column: 1/-1; text-align: center; padding: 2.5rem; background: var(--surface-card); border-radius: var(--radius-md); border: 1px dashed var(--border-strong); color: var(--text-secondary);">
         ${isAdminUnlocked
-          ? 'No CCA activities for this filter — drag &amp; drop any card from Section 02 or 04 here, or click "+ Add CCA Activity".'
+          ? 'No CCA activities for this filter — drag &amp; drop any card from Section 02, 04, or 05 here, or click "+ Add CCA Activity".'
           : 'No co-curricular activities recorded for the selected year or filter.'}
       </div>
     `;
@@ -2002,7 +2054,7 @@ function renderMediaGallery() {
     container.innerHTML = `
       <div style="grid-column: 1/-1; text-align: center; padding: 2.5rem; background: var(--surface-card); border-radius: var(--radius-md); border: 1px dashed var(--border-strong); color: var(--text-secondary);">
         ${isAdminUnlocked
-          ? 'No video performances or photo memories for this filter yet. Click "+ Add Video / Photo Memory" to showcase recitals, sports, or camp snapshots!'
+          ? 'No video performances or photo memories for this filter yet — drag &amp; drop any card from Section 02, 03, or 04 here, or click "+ Add Video / Photo Memory"!'
           : 'No video performances or activity photos recorded for the selected year.'}
       </div>
     `;
@@ -2043,13 +2095,19 @@ function renderMediaGallery() {
     }
 
     return `
-      <article class="media-card" id="media-card-${item.id}" onclick="openMediaDetailModal('${item.id}')">
+      <article
+        class="media-card ${isAdminUnlocked ? 'draggable-card' : ''}"
+        id="media-card-${item.id}"
+        draggable="${isAdminUnlocked ? 'true' : 'false'}"
+        ${isAdminUnlocked ? `ondragstart="handleCardDragStart(event, '${item.id}', 'mediaGallery')" ondragend="handleCardDragEnd(event)"` : ''}
+        onclick="openMediaDetailModal('${item.id}')"
+      >
         <div>
           ${mediaBoxHtml}
           <div class="media-body">
             <div class="card-top-meta">
               <span class="owner-badge owner-${item.sister}">${item.sisterName}</span>
-              <span class="year-badge">📅 ${item.year || '2026'}</span>
+              <span class="year-badge" ${isAdminUnlocked ? 'title="Drag card to another section"' : ''}>${isAdminUnlocked ? '⠿ ' : ''}📅 ${item.year || '2026'}</span>
             </div>
             <div class="card-category">${item.category || 'Showcase'}</div>
             <h3 class="card-title" style="font-size:1.12rem;">${item.title}</h3>
@@ -2076,7 +2134,12 @@ function renderMediaGallery() {
         ${isAdminUnlocked ? `
           <div style="padding: 0 1.4rem 1.1rem;" onclick="event.stopPropagation()">
             <div class="card-toolbar">
-              <span style="font-size:0.74rem; color:var(--text-muted); font-weight:600;">📸 Media &amp; Performance</span>
+              <select class="card-move-select" onchange="movePortfolioItem('${item.id}', 'mediaGallery', this.value)" title="Move this item to another section">
+                <option value="" selected disabled>⇄ Move to Section...</option>
+                <option value="awards">→ 02 • Awards &amp; Certificates</option>
+                <option value="ccas">→ 03 • CCA, Sports &amp; Music</option>
+                <option value="projects">→ 04 • Projects &amp; Service</option>
+              </select>
               <div class="card-btn-group">
                 <button type="button" class="card-tool-btn" onclick="openEditMediaModal('${item.id}')" title="Edit photos, PDF, video, or text">✎ Edit</button>
                 <button type="button" class="card-tool-btn btn-del" onclick="deleteMediaItem('${item.id}')" title="Delete this memory">🗑️</button>
@@ -3084,7 +3147,38 @@ async function handleAddAchievement(event) {
   }
 
   let newEntry;
-  if (sectionType === 'ccas') {
+  if (sectionType === 'mediaGallery') {
+    const photos = [];
+    if (pendingAttachment.data && pendingAttachment.type === 'image') {
+      photos.push(pendingAttachment.data);
+    }
+    if (Array.isArray(pendingActivityPhotos)) {
+      pendingActivityPhotos.forEach(p => {
+        if (p && !photos.includes(p)) photos.push(p);
+      });
+    }
+    const pdfData = (pendingAttachment.type === 'pdf' && pendingAttachment.data) ? pendingAttachment.data : null;
+    const pdfName = (pendingAttachment.type === 'pdf' && pendingAttachment.name) ? pendingAttachment.name : null;
+
+    newEntry = {
+      id: itemId,
+      sister: sister,
+      sisterName: sisterMap[sister],
+      year: form.year.value.trim() || '2026',
+      category: form.category.value.trim() || 'Performance & Activity',
+      title: form.title.value.trim(),
+      description: form.description.value.trim(),
+      result: form.result.value.trim(),
+      issuer: form.issuer.value.trim(),
+      skills: form.skills.value.trim(),
+      videoUrl: form.videoUrl ? form.videoUrl.value.trim() : '',
+      externalLink: form.externalLink ? form.externalLink.value.trim() : '',
+      photoData: photos[0] || null,
+      photos: photos,
+      pdfData: pdfData,
+      pdfName: pdfName
+    };
+  } else if (sectionType === 'ccas') {
     const iconVal = form.issuer.value.trim();
     newEntry = {
       id: itemId,
