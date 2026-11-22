@@ -1,16 +1,24 @@
 {
-  "updatedAt": 1794984106504,
+  "updatedAt": 1795348812515,
   "sectionVisibility": {
     "academics": true,
+    "radar": true,
     "awards": true,
     "cca": true,
-    "projects": true
+    "projects": true,
+    "media": true,
+    "timeline": true
   },
   "sectionHeaders": {
     "academics": {
       "eyebrow": "01 • Academic Excellence & Subject Mastery",
       "title": "Singapore-Cambridge Curriculum & Trilingual Fluency",
       "subtitle": "Rigorous academic grounding across Mathematics, Pure Sciences, Humanities, and trilingual proficiency in English, Mandarin Chinese, and Thai."
+    },
+    "radar": {
+      "eyebrow": "Holistic Competency Profile",
+      "title": "5-Dimension Well-Rounded Scholar Radar",
+      "subtitle": "Visualizing balanced development across STEM, Global Languages, Performing Arts, Leadership, and Sports & Outdoor Survival."
     },
     "awards": {
       "eyebrow": "02 • Awards, Competitions & Certificates",
@@ -24,6 +32,16 @@
     "projects": {
       "eyebrow": "04 • Research Projects, Creative Portfolio & Service",
       "title": "Innovation, Artistry & Community Impact"
+    },
+    "media": {
+      "eyebrow": "05 • Video Performances & Camp Memories",
+      "title": "Music Recitals, Debates & Action Snapshots",
+      "subtitle": "Watch solo music performances, debate speeches, and behind-the-scenes moments from science labs and leadership camps."
+    },
+    "timeline": {
+      "eyebrow": "06 • Chronological Milestone Journey",
+      "title": "Continuous Growth & Progression Timeline",
+      "subtitle": "Tracking every milestone across academic years from Lower Secondary to Upper Secondary."
     }
   },
   "sisters": {
@@ -34,7 +52,31 @@
       "curriculum": "Singapore-Cambridge IGCSE Track",
       "tagline": "STEM Scholar, Analytical Thinker & Student Leader",
       "bio": "A dedicated Secondary 3 student at Anglo Singapore International School with a deep passion for Additional Mathematics, Biomedical Sciences, and trilingual communication. Noodee thrives on collaborative research, debate, and mentoring younger peers.",
+      "aspirationGoal": "Future Pathway: Biomedical & Veterinary Sciences / STEM Innovation",
+      "aspirationQuote": "“I believe scientific curiosity and compassionate leadership can bridge classroom discovery with real-world care for people, animals, and our environment.”",
       "avatar": "assets/uploads/avatar-noodee.jpg?v=1794969986555",
+      "radarScores": [
+        {
+          "label": "STEM & Science",
+          "score": 96
+        },
+        {
+          "label": "Languages & Debate",
+          "score": 92
+        },
+        {
+          "label": "Music (Piano G7)",
+          "score": 94
+        },
+        {
+          "label": "Leadership & NLP",
+          "score": 95
+        },
+        {
+          "label": "Sports & Survival",
+          "score": 90
+        }
+      ],
       "stats": [
         {
           "value": "4.0 / A*",
@@ -104,7 +146,31 @@
       "curriculum": "Lower Secondary Singapore Honours Track",
       "tagline": "Young Violinist, Creative Problem Solver & Eco Innovator",
       "bio": "An enthusiastic and curious Secondary 1 student at Anglo Singapore International School who blends strong foundations in Singapore Mathematics with classical violin performance, digital illustration, and environmental stewardship.",
+      "aspirationGoal": "Future Pathway: Architectural Design, Creative Arts & Sustainability",
+      "aspirationQuote": "“Whether solving a math puzzle or playing the violin, I love finding harmony between logic, creativity, and caring for our planet.”",
       "avatar": "assets/uploads/avatar-nadia.jpg?v=1794969990725",
+      "radarScores": [
+        {
+          "label": "STEM & Math",
+          "score": 94
+        },
+        {
+          "label": "Trilingual Fluency",
+          "score": 90
+        },
+        {
+          "label": "Music & Visual Arts",
+          "score": 97
+        },
+        {
+          "label": "Eco Leadership",
+          "score": 89
+        },
+        {
+          "label": "Swimming & Sports",
+          "score": 91
+        }
+      ],
       "stats": [
         {
           "value": "Distinction",
@@ -352,17 +418,6 @@
       "schedule": "Piano Grade 7"
     },
     {
-      "id": "cca-1",
-      "sister": "noodee",
-      "sisterName": "Noodee (Sec 3)",
-      "year": "2026",
-      "icon": "🏛️",
-      "role": "Vice President & Senior Mentor",
-      "title": "Student Council & Peer Tutoring Society",
-      "detail": "Organizes school-wide cultural days, leads orientation for incoming Secondary 1 students, and coordinates weekly Math & Science peer study clinics.",
-      "schedule": "2024 – 2026 • 4 hrs/week"
-    },
-    {
       "id": "cca-2",
       "sister": "nadia",
       "sisterName": "Nadia (Sec 1)",
@@ -372,17 +427,6 @@
       "title": "Anglo Singapore Chamber String Ensemble",
       "detail": "Performs at annual Speech Day concerts, festive showcases, and charity music recitals across Bangkok campuses.",
       "schedule": "2025 – 2026 • 3.5 hrs/week"
-    },
-    {
-      "id": "cca-3",
-      "sister": "noodee",
-      "sisterName": "Noodee (Sec 3)",
-      "year": "2025",
-      "icon": "🏸",
-      "role": "U-15 Girls Doubles Squad",
-      "title": "Varsity Badminton Team",
-      "detail": "Competes in inter-international school friendly tournaments, fostering discipline, agility, and court strategy.",
-      "schedule": "2024 – 2026 • 3 hrs/week"
     },
     {
       "id": "cca-4",
@@ -460,6 +504,52 @@
       "attachmentType": null,
       "attachmentName": null,
       "externalLink": ""
+    }
+  ],
+  "mediaGallery": [
+    {
+      "id": "med-1795348791056",
+      "sister": "noodee",
+      "sisterName": "Noodee (Sec 3)",
+      "year": "2024",
+      "category": "Violin Concert",
+      "title": "BSRU Smile",
+      "description": "เป็นการรวมตัวของบรรดาเหล่าศิษย์เก่าที่มีความรู้ทางดนตรีที่จะแบ่งปันให้น้อง ๆ ในรูปแบบวง Chamber Music",
+      "videoUrl": "",
+      "photoData": "assets/uploads/media-med-1795348791056.jpg"
+    },
+    {
+      "id": "med-1",
+      "sister": "noodee",
+      "sisterName": "Noodee (Sec 3)",
+      "year": "2025",
+      "category": "Music Recital",
+      "title": "Yamaha Piano Grade 7 Performance & Repertoire",
+      "description": "Solo piano recital showcasing expressive dynamics and technical mastery for Grade 7 assessment.",
+      "videoUrl": "",
+      "photoData": "assets/uploads/cert-custom-1794970263859.jpg"
+    },
+    {
+      "id": "med-2",
+      "sister": "noodee",
+      "sisterName": "Noodee (Sec 3)",
+      "year": "2025",
+      "category": "Camp & Leadership",
+      "title": "Veterinary Camp & Sea Survival Action Highlights",
+      "description": "Hands-on clinical animal care workshop at Career Hub Veterinary Camp and KIDO 25th Sea Survival training.",
+      "videoUrl": "",
+      "photoData": "assets/uploads/cert-custom-1794971462275.jpg"
+    },
+    {
+      "id": "med-3",
+      "sister": "nadia",
+      "sisterName": "Nadia (Sec 1)",
+      "year": "2026",
+      "category": "Violin & Ensemble",
+      "title": "ABRSM Grade 6 Violin Recital & String Ensemble",
+      "description": "Classical solo violin performance and Anglo Singapore String Ensemble concert highlights.",
+      "videoUrl": "",
+      "photoData": "assets/uploads/avatar-nadia.jpg?v=1794969990725"
     }
   ]
 }
