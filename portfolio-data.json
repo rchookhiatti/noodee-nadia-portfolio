@@ -1,5 +1,5 @@
 {
-  "updatedAt": 1795348812515,
+  "updatedAt": 1795350987398,
   "sectionVisibility": {
     "academics": true,
     "radar": true,
@@ -516,7 +516,17 @@
       "title": "BSRU Smile",
       "description": "เป็นการรวมตัวของบรรดาเหล่าศิษย์เก่าที่มีความรู้ทางดนตรีที่จะแบ่งปันให้น้อง ๆ ในรูปแบบวง Chamber Music",
       "videoUrl": "",
-      "photoData": "assets/uploads/media-med-1795348791056.jpg"
+      "photoData": "assets/uploads/media-med-1795348791056.jpg",
+      "photos": [
+        "assets/uploads/media-med-1795348791056-p0.jpg",
+        "assets/uploads/media-med-1795348791056-p1.jpg",
+        "assets/uploads/media-med-1795348791056-p2.jpg",
+        "assets/uploads/media-med-1795348791056-p3.jpg"
+      ],
+      "pdfData": "assets/uploads/media-doc-med-1795348791056.pdf",
+      "pdfName": "Noodee Concert.pdf",
+      "videoFileData": null,
+      "videoFileName": null
     },
     {
       "id": "med-1",
