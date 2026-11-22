@@ -1,5 +1,5 @@
 {
-  "updatedAt": 1795352603049,
+  "updatedAt": 1795353323789,
   "sectionVisibility": {
     "academics": true,
     "radar": true,
@@ -318,30 +318,24 @@
   ],
   "ccas": [
     {
-      "id": "custom-1795352513650",
+      "id": "med-2",
       "sister": "noodee",
       "sisterName": "Noodee (Sec 3)",
-      "year": "2026",
-      "icon": "🌟",
-      "issuer": "Anglo Singapore International School",
-      "role": "Piano Forte12 Concert",
-      "category": "Piano Forte12 Concert",
-      "title": "Forte12 Concert",
-      "detail": "This piano was held during March, rehearsal Forte grade 12",
-      "description": "This piano was held during March, rehearsal Forte grade 12",
-      "schedule": "20260307",
-      "result": "20260307",
-      "skills": "Piano",
-      "attachmentData": null,
-      "attachmentType": null,
-      "attachmentName": null,
-      "activityPhotos": [
-        "assets/uploads/act-custom-1795352513650-0.jpg",
-        "assets/uploads/act-custom-1795352513650-1.jpg",
-        "assets/uploads/act-custom-1795352513650-2.jpg"
-      ],
+      "year": "2025",
+      "category": "Camp & Leadership",
+      "title": "Veterinary Camp & Sea Survival Action Highlights",
+      "description": "Hands-on clinical animal care workshop at Career Hub Veterinary Camp and KIDO 25th Sea Survival training.",
       "videoUrl": "",
-      "externalLink": "https://drive.google.com/file/d/1nqKuMYG0wK0On_JCnf1DY9ZGs-lDWTds/view?usp=sharing"
+      "photoData": "assets/uploads/cert-custom-1794971462275.jpg",
+      "attachmentData": "assets/uploads/cert-custom-1794971462275.jpg",
+      "attachmentType": "image",
+      "attachmentName": "Certificate-or-Photo.jpg",
+      "activityPhotos": [],
+      "icon": "🌟",
+      "role": "Camp & Leadership",
+      "detail": "Hands-on clinical animal care workshop at Career Hub Veterinary Camp and KIDO 25th Sea Survival training.",
+      "schedule": "2025 • Anglo Singapore CCA",
+      "result": "2025 • Anglo Singapore CCA"
     },
     {
       "id": "custom-1795351335983",
@@ -451,26 +445,6 @@
       "schedule": "Certificate"
     },
     {
-      "id": "custom-1794970263859",
-      "sister": "noodee",
-      "sisterName": "Noodee (Sec 3)",
-      "year": "2025",
-      "category": "Piano",
-      "title": "Certificate",
-      "result": "Piano Grade 7",
-      "issuer": "Yamaha Music Foundation",
-      "description": "has been successful in Piano Grade 7",
-      "skills": "Piano",
-      "attachmentData": "assets/uploads/cert-custom-1794970263859.jpg",
-      "attachmentType": "image",
-      "attachmentName": "2025-Piano Grade7.jpg",
-      "externalLink": "",
-      "icon": "🌟",
-      "role": "Piano",
-      "detail": "has been successful in Piano Grade 7",
-      "schedule": "Piano Grade 7"
-    },
-    {
       "id": "cca-2",
       "sister": "nadia",
       "sisterName": "Nadia (Sec 1)",
@@ -494,6 +468,56 @@
     }
   ],
   "projects": [
+    {
+      "id": "custom-1794970263859",
+      "sister": "noodee",
+      "sisterName": "Noodee (Sec 3)",
+      "year": "2025",
+      "category": "Piano",
+      "title": "Certificate",
+      "result": "Piano Grade 7",
+      "issuer": "Yamaha Music Foundation",
+      "description": "has been successful in Piano Grade 7",
+      "skills": "Piano",
+      "attachmentData": "assets/uploads/cert-custom-1794970263859.jpg",
+      "attachmentType": "image",
+      "attachmentName": "Certificate-or-Photo.jpg",
+      "externalLink": "",
+      "icon": "🌟",
+      "role": "Piano",
+      "detail": "has been successful in Piano Grade 7",
+      "schedule": "Piano Grade 7",
+      "videoUrl": "",
+      "photos": [
+        "assets/uploads/cert-custom-1794970263859.jpg"
+      ],
+      "photoData": "assets/uploads/cert-custom-1794970263859.jpg",
+      "pdfData": null,
+      "pdfName": null,
+      "activityPhotos": []
+    },
+    {
+      "id": "med-1",
+      "sister": "noodee",
+      "sisterName": "Noodee (Sec 3)",
+      "year": "2025",
+      "category": "Music Recital",
+      "title": "Yamaha Piano Grade 7 Performance & Repertoire",
+      "description": "Solo piano recital showcasing expressive dynamics and technical mastery for Grade 7 assessment.",
+      "videoUrl": "",
+      "photoData": "assets/uploads/cert-custom-1794970263859.jpg",
+      "attachmentData": "assets/uploads/cert-custom-1794970263859.jpg",
+      "attachmentType": "image",
+      "attachmentName": "Certificate-or-Photo.jpg",
+      "activityPhotos": [],
+      "icon": "🌟",
+      "role": "Music Recital",
+      "detail": "Solo piano recital showcasing expressive dynamics and technical mastery for Grade 7 assessment.",
+      "schedule": "2025 • Anglo Singapore CCA",
+      "result": "2025 • Anglo Singapore CCA",
+      "issuer": "Anglo Singapore International School",
+      "skills": "Music Recital"
+    },
     {
       "id": "custom-1794969978725",
       "sister": "noodee",
@@ -561,6 +585,26 @@
   ],
   "mediaGallery": [
     {
+      "id": "custom-1795352513650",
+      "sister": "noodee",
+      "sisterName": "Noodee (Sec 3)",
+      "year": "2026",
+      "category": "Piano Forte12 Concert",
+      "title": "Forte12 Concert",
+      "description": "This piano was held during March, rehearsal Forte grade 12",
+      "videoUrl": "https://drive.google.com/file/d/1nqKuMYG0wK0On_JCnf1DY9ZGs-lDWTds/view?usp=drive_link",
+      "photoData": "assets/uploads/act-custom-1795352513650-0.jpg",
+      "photos": [
+        "assets/uploads/act-custom-1795352513650-0.jpg",
+        "assets/uploads/act-custom-1795352513650-1.jpg",
+        "assets/uploads/act-custom-1795352513650-2.jpg"
+      ],
+      "pdfData": null,
+      "pdfName": null,
+      "videoFileData": null,
+      "videoFileName": null
+    },
+    {
       "id": "med-1795348791056",
       "sister": "noodee",
       "sisterName": "Noodee (Sec 3)",
@@ -580,28 +624,6 @@
       "pdfName": "Noodee Concert.pdf",
       "videoFileData": null,
       "videoFileName": null
-    },
-    {
-      "id": "med-1",
-      "sister": "noodee",
-      "sisterName": "Noodee (Sec 3)",
-      "year": "2025",
-      "category": "Music Recital",
-      "title": "Yamaha Piano Grade 7 Performance & Repertoire",
-      "description": "Solo piano recital showcasing expressive dynamics and technical mastery for Grade 7 assessment.",
-      "videoUrl": "",
-      "photoData": "assets/uploads/cert-custom-1794970263859.jpg"
-    },
-    {
-      "id": "med-2",
-      "sister": "noodee",
-      "sisterName": "Noodee (Sec 3)",
-      "year": "2025",
-      "category": "Camp & Leadership",
-      "title": "Veterinary Camp & Sea Survival Action Highlights",
-      "description": "Hands-on clinical animal care workshop at Career Hub Veterinary Camp and KIDO 25th Sea Survival training.",
-      "videoUrl": "",
-      "photoData": "assets/uploads/cert-custom-1794971462275.jpg"
     },
     {
       "id": "med-3",
