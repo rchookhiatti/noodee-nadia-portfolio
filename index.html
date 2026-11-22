@@ -280,12 +280,28 @@
 
   <!-- Certificate / Project Detail Modal -->
   <div class="modal-backdrop" id="detail-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
-    <div class="modal-panel" id="detail-modal-body"></div>
+    <div class="modal-panel" id="detail-modal-body" style="max-width: 780px;"></div>
   </div>
 
-  <!-- Add Video / Activity Photo Memory Modal -->
+  <!-- Full-Screen Image Lightbox Viewer -->
+  <div class="modal-backdrop lightbox-backdrop" id="image-lightbox-modal" role="dialog" aria-modal="true" aria-label="Full screen image viewer">
+    <div class="lightbox-container" onclick="event.stopPropagation()">
+      <button type="button" class="lightbox-close-btn" onclick="closeImageLightbox()" aria-label="Close full-screen image">✕</button>
+      <button type="button" class="lightbox-nav-btn lightbox-prev" id="lightbox-prev-btn" onclick="navigateLightbox(-1)" aria-label="Previous image">‹</button>
+      <div class="lightbox-stage">
+        <img id="lightbox-main-img" src="" alt="Full screen preview" />
+      </div>
+      <button type="button" class="lightbox-nav-btn lightbox-next" id="lightbox-next-btn" onclick="navigateLightbox(1)" aria-label="Next image">›</button>
+      <div class="lightbox-caption-bar">
+        <span id="lightbox-caption-text"></span>
+        <span id="lightbox-counter-text" style="font-family: var(--font-mono); font-size: 0.78rem; opacity: 0.85;"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add / Edit Video / Activity Photo Memory Modal (Section 05) -->
   <div class="modal-backdrop" id="add-media-modal" role="dialog" aria-modal="true" aria-labelledby="add-media-title">
-    <div class="modal-panel">
+    <div class="modal-panel" style="max-width: 720px;">
       <div class="modal-header">
         <div>
           <span class="section-eyebrow">Section 05 • Multimedia Showcase</span>
@@ -313,37 +329,59 @@
         <div class="form-row">
           <div class="form-group">
             <label class="form-label" for="med-category">Category</label>
-            <input type="text" class="form-input" id="med-category" name="category" placeholder="e.g., Piano Recital, Violin, Camp Memory, Debate" required />
+            <input type="text" class="form-input" id="med-category" name="category" placeholder="e.g., Violin Concert, Piano Recital, Camp Memory, Debate" required />
           </div>
           <div class="form-group">
             <label class="form-label" for="med-title">Title</label>
-            <input type="text" class="form-input" id="med-title" name="title" placeholder="e.g., Yamaha Grade 7 Solo Performance" required />
+            <input type="text" class="form-input" id="med-title" name="title" placeholder="e.g., BSRU Smile / Yamaha Grade 7 Solo Performance" required />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">1. Cover Photo &amp; Multiple Event Photos</label>
+            <label class="file-dropzone" for="med-photo-file" style="padding: 0.85rem;">
+              <div style="font-size: 1.25rem;">📸 🖼️</div>
+              <div style="font-weight: 700; font-size: 0.82rem;">Choose Event Photos (Multiple Allowed)</div>
+              <input type="file" id="med-photo-file" accept="image/*" multiple style="display:none;" onchange="handleMediaPhotosSelect(event)" />
+              <div id="media-file-status"></div>
+            </label>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">2. Program / Certificate PDF (.pdf)</label>
+            <label class="file-dropzone" for="med-pdf-file" style="padding: 0.85rem;">
+              <div style="font-size: 1.25rem;">📄 📎</div>
+              <div style="font-weight: 700; font-size: 0.82rem;">Attach PDF Document (Optional)</div>
+              <input type="file" id="med-pdf-file" accept=".pdf,application/pdf" style="display:none;" onchange="handleMediaPdfSelect(event)" />
+              <div id="media-pdf-status"></div>
+            </label>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="med-video-url">3. YouTube / Video Link (Optional)</label>
+            <input type="url" class="form-input" id="med-video-url" name="videoUrl" placeholder="https://www.youtube.com/watch?v=..." />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Or Upload Video File (.mp4/.mov)</label>
+            <label class="file-dropzone" for="med-video-file" style="padding: 0.55rem 0.85rem;">
+              <div style="font-weight: 700; font-size: 0.8rem;">🎬 Choose Video File (Max 25 MB)</div>
+              <input type="file" id="med-video-file" accept="video/mp4,video/webm,video/quicktime" style="display:none;" onchange="handleMediaVideoFileSelect(event)" />
+              <div id="media-video-file-status"></div>
+            </label>
           </div>
         </div>
 
         <div class="form-group">
-          <label class="form-label" for="med-video-url">YouTube or Video Link (Optional)</label>
-          <input type="url" class="form-input" id="med-video-url" name="videoUrl" placeholder="https://www.youtube.com/watch?v=..." />
-        </div>
-
-        <div class="form-group">
-          <label class="form-label">Or Upload Activity / Performance Photo</label>
-          <label class="file-dropzone" for="med-photo-file">
-            <div style="font-size: 1.3rem;">📸 🎬</div>
-            <div style="font-weight: 700; font-size: 0.86rem;">Click to Choose Activity Photo</div>
-            <input type="file" id="med-photo-file" accept="image/*" style="display:none;" onchange="handleMediaPhotoSelect(event)" />
-            <div id="media-file-status"></div>
-          </label>
-        </div>
-
-        <div class="form-group">
-          <label class="form-label" for="med-desc">Caption / Description</label>
-          <textarea class="form-textarea" id="med-desc" name="description" rows="2" placeholder="Short description of this performance or camp moment..."></textarea>
+          <label class="form-label" for="med-desc">Caption / Full Event Details</label>
+          <textarea class="form-textarea" id="med-desc" name="description" rows="3" placeholder="Describe this performance, concert, or camp moment..."></textarea>
         </div>
 
         <div style="display: flex; justify-content: flex-end; gap: 0.75rem;">
           <button type="button" class="btn btn-outline" onclick="closeAddMediaModal()">Cancel</button>
-          <button type="submit" class="btn btn-primary">Save to Showcase</button>
+          <button type="submit" class="btn btn-primary" id="btn-submit-media">Save to Showcase</button>
         </div>
       </form>
     </div>

@@ -1138,12 +1138,13 @@ async function handlePublishToGitHub(event) {
       }
     }
 
-    // Upload any new photos in mediaGallery
+    // Upload any new photos, gallery photos, PDFs, or videos in mediaGallery
     for (const med of (appData.mediaGallery || [])) {
+      const safeId = String(med.id).replace(/[^a-zA-Z0-9_-]/g, '');
+
       if (med.photoData && med.photoData.startsWith('data:image/')) {
-        const safeId = String(med.id).replace(/[^a-zA-Z0-9_-]/g, '');
         const medPath = `assets/uploads/media-${safeId}.jpg`;
-        statusBox.innerHTML = `<div style="padding:0.75rem; background:var(--surface-subtle); border-radius:8px; font-size:0.84rem;">Uploading showcase photo for <strong>${med.title}</strong>...</div>`;
+        statusBox.innerHTML = `<div style="padding:0.75rem; background:var(--surface-subtle); border-radius:8px; font-size:0.84rem;">Uploading cover photo for <strong>${med.title}</strong>...</div>`;
         await uploadFileToGitHubRepo(
           token,
           medPath,
@@ -1151,6 +1152,47 @@ async function handlePublishToGitHub(event) {
           `Upload media showcase photo for ${med.title}`
         );
         med.photoData = medPath;
+      }
+
+      if (Array.isArray(med.photos)) {
+        for (let pIdx = 0; pIdx < med.photos.length; pIdx++) {
+          const pUrl = med.photos[pIdx];
+          if (pUrl && pUrl.startsWith('data:image/')) {
+            const pPath = `assets/uploads/media-${safeId}-p${pIdx}.jpg`;
+            statusBox.innerHTML = `<div style="padding:0.75rem; background:var(--surface-subtle); border-radius:8px; font-size:0.84rem;">Uploading photo #${pIdx + 1} for <strong>${med.title}</strong>...</div>`;
+            await uploadFileToGitHubRepo(
+              token,
+              pPath,
+              dataUrlToBase64Content(pUrl),
+              `Upload photo #${pIdx + 1} for ${med.title}`
+            );
+            med.photos[pIdx] = pPath;
+          }
+        }
+      }
+
+      if (med.pdfData && med.pdfData.startsWith('data:')) {
+        const pdfPath = `assets/uploads/media-doc-${safeId}.pdf`;
+        statusBox.innerHTML = `<div style="padding:0.75rem; background:var(--surface-subtle); border-radius:8px; font-size:0.84rem;">Uploading PDF document for <strong>${med.title}</strong>...</div>`;
+        await uploadFileToGitHubRepo(
+          token,
+          pdfPath,
+          dataUrlToBase64Content(med.pdfData),
+          `Upload PDF document for ${med.title}`
+        );
+        med.pdfData = pdfPath;
+      }
+
+      if (med.videoFileData && med.videoFileData.startsWith('data:')) {
+        const vidPath = `assets/uploads/media-vid-${safeId}.mp4`;
+        statusBox.innerHTML = `<div style="padding:0.75rem; background:var(--surface-subtle); border-radius:8px; font-size:0.84rem;">Uploading video file for <strong>${med.title}</strong>...</div>`;
+        await uploadFileToGitHubRepo(
+          token,
+          vidPath,
+          dataUrlToBase64Content(med.videoFileData),
+          `Upload video file for ${med.title}`
+        );
+        med.videoFileData = vidPath;
       }
     }
 
@@ -1437,9 +1479,9 @@ function renderHeroCards() {
         <div>
           <div class="sister-card-top">
             <div class="avatar-wrapper">
-              <img src="${s.avatar}" alt="${s.name} Portrait" id="avatar-img-${s.id}" />
+              <img src="${s.avatar}" alt="${s.name} Portrait" id="avatar-img-${s.id}" class="zoomable-img" onclick="openSingleImageLightbox(this.src, '${s.name} — ${s.level}')" />
               ${isAdminUnlocked ? `
-                <label class="avatar-upload-btn" for="avatar-input-${s.id}" title="Upload custom photo for ${s.name}">
+                <label class="avatar-upload-btn" for="avatar-input-${s.id}" title="Upload custom photo for ${s.name}" onclick="event.stopPropagation()">
                   <span>📷 Change Photo</span>
                   <input type="file" id="avatar-input-${s.id}" accept="image/*" style="display:none" onchange="handleAvatarUpload('${s.id}', event)" />
                 </label>
@@ -1706,7 +1748,7 @@ function renderCardAttachmentSnippet(item) {
     html += `
       <div class="activity-photos-strip" style="margin-bottom:0.85rem;">
         ${item.activityPhotos.map((pUrl, idx) => `
-          <img src="${pUrl}" alt="Activity memory ${idx + 1}" class="activity-photo-thumb" loading="lazy" />
+          <img src="${pUrl}" alt="Activity memory ${idx + 1}" class="activity-photo-thumb" loading="lazy" onclick="event.stopPropagation(); openSingleImageLightbox(this.src, '${(item.title || '').replace(/'/g, "\\'")} — Action Photo ${idx + 1}')" title="Click to enlarge photo" />
         `).join('')}
       </div>
     `;
@@ -1932,6 +1974,17 @@ function convertToYouTubeEmbed(url) {
   return null;
 }
 
+function getMediaItemPhotos(item) {
+  const list = [];
+  if (item.photoData) list.push(item.photoData);
+  if (Array.isArray(item.photos)) {
+    item.photos.forEach(p => {
+      if (p && !list.includes(p)) list.push(p);
+    });
+  }
+  return list;
+}
+
 function renderMediaGallery() {
   const container = document.getElementById('media-grid');
   if (!container) return;
@@ -1958,17 +2011,39 @@ function renderMediaGallery() {
 
   container.innerHTML = filtered.map(item => {
     const ytEmbed = convertToYouTubeEmbed(item.videoUrl);
+    const allPhotos = getMediaItemPhotos(item);
+    const coverPhoto = allPhotos[0] || null;
+
+    let badgesHtml = '';
+    const badges = [];
+    if (allPhotos.length > 1) {
+      badges.push(`<span class="media-pill-badge">📸 ${allPhotos.length} Photos</span>`);
+    } else if (allPhotos.length === 1) {
+      badges.push(`<span class="media-pill-badge">🔍 Click to View</span>`);
+    }
+    if (item.pdfData) {
+      badges.push(`<span class="media-pill-badge">📄 PDF</span>`);
+    }
+    if (item.videoUrl || item.videoFileData) {
+      badges.push(`<span class="media-pill-badge">🎬 Video</span>`);
+    }
+    if (badges.length > 0) {
+      badgesHtml = `<div class="media-badge-overlay">${badges.join('')}</div>`;
+    }
+
     let mediaBoxHtml = '';
-    if (ytEmbed) {
-      mediaBoxHtml = `<div class="media-embed-box"><iframe src="${ytEmbed}" title="${item.title}" allowfullscreen loading="lazy"></iframe></div>`;
-    } else if (item.photoData) {
-      mediaBoxHtml = `<div class="media-embed-box"><img src="${item.photoData}" alt="${item.title}" loading="lazy" /></div>`;
+    if (ytEmbed && !coverPhoto) {
+      mediaBoxHtml = `<div class="media-embed-box"><iframe src="${ytEmbed}" title="${item.title}" allowfullscreen loading="lazy"></iframe>${badgesHtml}</div>`;
+    } else if (coverPhoto) {
+      mediaBoxHtml = `<div class="media-embed-box"><img src="${coverPhoto}" alt="${item.title}" loading="lazy" />${badgesHtml}</div>`;
+    } else if (item.videoFileData) {
+      mediaBoxHtml = `<div class="media-embed-box"><video src="${item.videoFileData}" muted playsinline preload="metadata"></video>${badgesHtml}</div>`;
     } else {
-      mediaBoxHtml = `<div class="media-embed-box" style="display:flex;align-items:center;justify-content:center;color:#fff;font-size:2rem;">🎬 📸</div>`;
+      mediaBoxHtml = `<div class="media-embed-box" style="display:flex;align-items:center;justify-content:center;color:#fff;font-size:2rem;">🎬 📸${badgesHtml}</div>`;
     }
 
     return `
-      <article class="media-card" id="media-card-${item.id}">
+      <article class="media-card" id="media-card-${item.id}" onclick="openMediaDetailModal('${item.id}')">
         <div>
           ${mediaBoxHtml}
           <div class="media-body">
@@ -1978,15 +2053,32 @@ function renderMediaGallery() {
             </div>
             <div class="card-category">${item.category || 'Showcase'}</div>
             <h3 class="card-title" style="font-size:1.12rem;">${item.title}</h3>
-            <p class="card-desc" style="margin-bottom:0.5rem;">${item.description || ''}</p>
-            ${item.videoUrl && !ytEmbed ? `<a href="${item.videoUrl}" target="_blank" rel="noopener" class="btn btn-outline" style="font-size:0.78rem; margin-top:0.4rem;">🎬 Watch Video Link ↗</a>` : ''}
+            <p class="card-desc" style="margin-bottom:0.65rem;">${item.description || ''}</p>
+
+            ${allPhotos.length > 1 ? `
+              <div class="activity-photos-strip" style="margin-bottom:0.65rem;" onclick="event.stopPropagation()">
+                ${allPhotos.slice(0, 4).map((pUrl, idx) => `
+                  <img src="${pUrl}" alt="${item.title} photo ${idx + 1}" class="activity-photo-thumb" loading="lazy" onclick="openMediaGalleryLightbox('${item.id}', ${idx})" title="Click to enlarge photo" />
+                `).join('')}
+              </div>
+            ` : ''}
+
+            <div class="card-bottom" style="padding-top:0.65rem;">
+              <span style="font-size:0.78rem; color:var(--text-muted); font-weight:600;">
+                ${allPhotos.length ? `🖼️ ${allPhotos.length} Photo${allPhotos.length > 1 ? 's' : ''}` : '🎬 Performance'}
+                ${item.pdfData ? ' • 📄 PDF' : ''}
+                ${(item.videoUrl || item.videoFileData) ? ' • 🎬 Video' : ''}
+              </span>
+              <span class="card-action-link">View Full Gallery →</span>
+            </div>
           </div>
         </div>
         ${isAdminUnlocked ? `
-          <div style="padding: 0 1.4rem 1.1rem;">
+          <div style="padding: 0 1.4rem 1.1rem;" onclick="event.stopPropagation()">
             <div class="card-toolbar">
               <span style="font-size:0.74rem; color:var(--text-muted); font-weight:600;">📸 Media &amp; Performance</span>
               <div class="card-btn-group">
+                <button type="button" class="card-tool-btn" onclick="openEditMediaModal('${item.id}')" title="Edit photos, PDF, video, or text">✎ Edit</button>
                 <button type="button" class="card-tool-btn btn-del" onclick="deleteMediaItem('${item.id}')" title="Delete this memory">🗑️</button>
               </div>
             </div>
@@ -1997,34 +2089,199 @@ function renderMediaGallery() {
   }).join('');
 }
 
+let editingMediaId = null;
+let pendingMediaPhotos = [];
+let pendingMediaPdf = { data: null, name: null };
+let pendingMediaVideoFile = { data: null, name: null };
+
 function openAddMediaModal() {
   if (!isAdminUnlocked) return;
-  pendingAttachment = { data: null, type: null, name: null };
+  editingMediaId = null;
+  pendingMediaPhotos = [];
+  pendingMediaPdf = { data: null, name: null };
+  pendingMediaVideoFile = { data: null, name: null };
+
   const form = document.getElementById('add-media-form');
   if (form) form.reset();
-  const statusEl = document.getElementById('media-file-status');
-  if (statusEl) statusEl.innerHTML = '';
+
+  const titleEl = document.getElementById('add-media-title');
+  if (titleEl) titleEl.innerText = '🎬 Add Video Performance or Activity Photo';
+  const submitBtn = document.getElementById('btn-submit-media');
+  if (submitBtn) submitBtn.innerText = 'Save to Showcase';
+
+  const activeSister = appData.state.activeSister;
+  if (form && (activeSister === 'noodee' || activeSister === 'nadia')) {
+    form.sister.value = activeSister;
+  }
+
+  renderPendingMediaFormStatus();
   document.getElementById('add-media-modal').classList.add('open');
 }
 
+function openEditMediaModal(mediaId) {
+  if (!isAdminUnlocked) {
+    openParentLoginModal();
+    return;
+  }
+  const item = (appData.mediaGallery || []).find(x => x.id === mediaId);
+  if (!item) return;
+
+  editingMediaId = mediaId;
+  pendingMediaPhotos = getMediaItemPhotos(item);
+  pendingMediaPdf = {
+    data: item.pdfData || null,
+    name: item.pdfName || (item.pdfData ? 'Document.pdf' : null)
+  };
+  pendingMediaVideoFile = {
+    data: item.videoFileData || null,
+    name: item.videoFileName || (item.videoFileData ? 'Video.mp4' : null)
+  };
+
+  const form = document.getElementById('add-media-form');
+  if (!form) return;
+
+  const titleEl = document.getElementById('add-media-title');
+  if (titleEl) titleEl.innerText = `✎ Edit Showcase: ${item.title}`;
+  const submitBtn = document.getElementById('btn-submit-media');
+  if (submitBtn) submitBtn.innerText = '✓ Save Changes';
+
+  form.sister.value = item.sister || 'noodee';
+  form.year.value = item.year || '2024';
+  form.category.value = item.category || '';
+  form.title.value = item.title || '';
+  form.videoUrl.value = item.videoUrl || '';
+  form.description.value = item.description || '';
+
+  renderPendingMediaFormStatus();
+  document.getElementById('add-media-modal').classList.add('open');
+}
+
+function renderPendingMediaFormStatus() {
+  const photoStatus = document.getElementById('media-file-status');
+  if (photoStatus) {
+    if (pendingMediaPhotos.length > 0) {
+      photoStatus.innerHTML = `
+        <div style="margin-top:0.55rem;">
+          <span class="file-preview-pill">📸 ${pendingMediaPhotos.length} Photo(s) Attached</span>
+          <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(64px, 1fr)); gap:0.4rem; margin-top:0.5rem;" onclick="event.preventDefault(); event.stopPropagation();">
+            ${pendingMediaPhotos.map((pUrl, idx) => `
+              <div style="position:relative; border-radius:6px; overflow:hidden; border:1px solid var(--border-strong); height:54px;">
+                <img src="${pUrl}" alt="Photo ${idx + 1}" style="width:100%; height:100%; object-fit:cover;" />
+                <button type="button" onclick="removePendingMediaPhoto(${idx})" title="Remove photo" style="position:absolute; top:2px; right:2px; width:18px; height:18px; border-radius:50%; background:hsla(0,70%,40%,0.9); color:#fff; font-size:0.7rem; font-weight:700; display:flex; align-items:center; justify-content:center;">✕</button>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `;
+    } else {
+      photoStatus.innerHTML = '';
+    }
+  }
+
+  const pdfStatus = document.getElementById('media-pdf-status');
+  if (pdfStatus) {
+    if (pendingMediaPdf.data) {
+      pdfStatus.innerHTML = `
+        <div style="margin-top:0.5rem;" onclick="event.preventDefault(); event.stopPropagation();">
+          <span class="file-preview-pill">
+            📄 ${pendingMediaPdf.name || 'Attached.pdf'}
+            <button type="button" onclick="removePendingMediaPdf()" style="margin-left:6px; color:hsl(0,65%,40%); font-weight:700;">✕</button>
+          </span>
+        </div>
+      `;
+    } else {
+      pdfStatus.innerHTML = '';
+    }
+  }
+
+  const vidStatus = document.getElementById('media-video-file-status');
+  if (vidStatus) {
+    if (pendingMediaVideoFile.data) {
+      vidStatus.innerHTML = `
+        <div style="margin-top:0.4rem;" onclick="event.preventDefault(); event.stopPropagation();">
+          <span class="file-preview-pill">
+            🎬 ${pendingMediaVideoFile.name || 'Video.mp4'}
+            <button type="button" onclick="removePendingMediaVideoFile()" style="margin-left:6px; color:hsl(0,65%,40%); font-weight:700;">✕</button>
+          </span>
+        </div>
+      `;
+    } else {
+      vidStatus.innerHTML = '';
+    }
+  }
+}
+
+function removePendingMediaPhoto(idx) {
+  pendingMediaPhotos.splice(idx, 1);
+  renderPendingMediaFormStatus();
+}
+
+function removePendingMediaPdf() {
+  pendingMediaPdf = { data: null, name: null };
+  renderPendingMediaFormStatus();
+}
+
+function removePendingMediaVideoFile() {
+  pendingMediaVideoFile = { data: null, name: null };
+  renderPendingMediaFormStatus();
+}
+
 function closeAddMediaModal() {
+  editingMediaId = null;
   document.getElementById('add-media-modal').classList.remove('open');
 }
 
-function handleMediaPhotoSelect(event) {
-  const file = event.target.files?.[0];
-  const statusEl = document.getElementById('media-file-status');
-  if (!file) return;
-  compressImageFile(file, (compressedUrl) => {
-    pendingAttachment = { data: compressedUrl, type: 'image', name: file.name };
-    if (statusEl) {
-      statusEl.innerHTML = `<span class="file-preview-pill">📸 Photo Ready: ${file.name}</span>`;
+function handleMediaPhotosSelect(event) {
+  const files = Array.from(event.target.files || []);
+  if (!files.length) return;
+  files.forEach(file => {
+    if (file.type.startsWith('image/')) {
+      compressImageFile(file, (compressedUrl) => {
+        pendingMediaPhotos.push(compressedUrl);
+        renderPendingMediaFormStatus();
+      });
     }
   });
+  event.target.value = '';
+}
+
+function handleMediaPdfSelect(event) {
+  const file = event.target.files?.[0];
+  if (!file) return;
+  if (file.size > 25 * 1024 * 1024) {
+    alert('PDF file is larger than 25 MB. Please select a PDF under 25 MB.');
+    event.target.value = '';
+    return;
+  }
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    pendingMediaPdf = { data: e.target.result, name: file.name };
+    renderPendingMediaFormStatus();
+  };
+  reader.readAsDataURL(file);
+  event.target.value = '';
+}
+
+function handleMediaVideoFileSelect(event) {
+  const file = event.target.files?.[0];
+  if (!file) return;
+  if (file.size > 25 * 1024 * 1024) {
+    alert('Video file is larger than 25 MB. For longer videos, please upload to YouTube or Google Drive and paste the link.');
+    event.target.value = '';
+    return;
+  }
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    pendingMediaVideoFile = { data: e.target.result, name: file.name };
+    renderPendingMediaFormStatus();
+  };
+  reader.readAsDataURL(file);
+  event.target.value = '';
 }
 
 async function handleAddMediaSubmit(event) {
   event.preventDefault();
+  if (!isAdminUnlocked) return;
   const form = event.target;
   const sister = form.sister.value;
   const sisterMap = {
@@ -2033,8 +2290,9 @@ async function handleAddMediaSubmit(event) {
     both: 'Noodee & Nadia (Sister Collaboration)'
   };
 
-  const newEntry = {
-    id: 'med-' + Date.now(),
+  const entryId = editingMediaId || ('med-' + Date.now());
+  const updatedEntry = {
+    id: entryId,
     sister: sister,
     sisterName: sisterMap[sister],
     year: form.year.value.trim() || '2026',
@@ -2042,11 +2300,26 @@ async function handleAddMediaSubmit(event) {
     title: form.title.value.trim(),
     description: form.description.value.trim(),
     videoUrl: form.videoUrl.value.trim(),
-    photoData: pendingAttachment.data || null
+    photoData: pendingMediaPhotos[0] || null,
+    photos: [...pendingMediaPhotos],
+    pdfData: pendingMediaPdf.data || null,
+    pdfName: pendingMediaPdf.name || null,
+    videoFileData: pendingMediaVideoFile.data || null,
+    videoFileName: pendingMediaVideoFile.name || null
   };
 
   if (!appData.mediaGallery) appData.mediaGallery = [];
-  appData.mediaGallery.unshift(newEntry);
+  if (editingMediaId) {
+    const idx = appData.mediaGallery.findIndex(x => x.id === editingMediaId);
+    if (idx !== -1) {
+      appData.mediaGallery[idx] = updatedEntry;
+    } else {
+      appData.mediaGallery.unshift(updatedEntry);
+    }
+  } else {
+    appData.mediaGallery.unshift(updatedEntry);
+  }
+
   await savePortfolioData();
   closeAddMediaModal();
   renderMediaGallery();
@@ -2057,7 +2330,196 @@ async function deleteMediaItem(id) {
   if (!confirm('Remove this video/photo memory?')) return;
   appData.mediaGallery = (appData.mediaGallery || []).filter(x => x.id !== id);
   await savePortfolioData();
+  closeDetailModal();
   renderMediaGallery();
+}
+
+function openMediaDetailModal(mediaId) {
+  const item = (appData.mediaGallery || []).find(x => x.id === mediaId);
+  if (!item) return;
+
+  if (appData.state.editMode && isAdminUnlocked) {
+    openEditMediaModal(mediaId);
+    return;
+  }
+
+  const modal = document.getElementById('detail-modal');
+  const content = document.getElementById('detail-modal-body');
+  const allPhotos = getMediaItemPhotos(item);
+  const ytEmbed = convertToYouTubeEmbed(item.videoUrl);
+
+  let videoHtml = '';
+  if (ytEmbed) {
+    videoHtml += `
+      <div style="margin: 1rem 0;">
+        <strong style="display:block; font-size:0.75rem; color:var(--text-muted); text-transform:uppercase; margin-bottom:0.45rem; text-align:left;">🎬 Event / Performance Video</strong>
+        <div class="media-embed-box" style="border-radius:10px;">
+          <iframe src="${ytEmbed}" title="${item.title} Video" allowfullscreen></iframe>
+        </div>
+      </div>
+    `;
+  } else if (item.videoUrl) {
+    videoHtml += `
+      <div style="margin: 1rem 0;">
+        <a href="${item.videoUrl}" target="_blank" rel="noopener noreferrer" class="btn btn-primary" style="font-size:0.84rem;">
+          🎬 Watch Performance / Event Video Link ↗
+        </a>
+      </div>
+    `;
+  }
+
+  if (item.videoFileData) {
+    videoHtml += `
+      <div style="margin: 1rem 0;">
+        <strong style="display:block; font-size:0.75rem; color:var(--text-muted); text-transform:uppercase; margin-bottom:0.45rem; text-align:left;">🎬 Recorded Video (${item.videoFileName || 'Video.mp4'})</strong>
+        <div class="media-embed-box" style="border-radius:10px;">
+          <video src="${item.videoFileData}" controls playsinline style="width:100%; height:100%; object-fit:contain; background:#000;"></video>
+        </div>
+      </div>
+    `;
+  }
+
+  let photosGalleryHtml = '';
+  if (allPhotos.length > 0) {
+    photosGalleryHtml = `
+      <div style="margin: 1rem 0; text-align: left;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem;">
+          <strong style="font-size:0.76rem; color:var(--text-muted); text-transform:uppercase;">📸 Photo Gallery (${allPhotos.length} Photo${allPhotos.length > 1 ? 's' : ''}) — Click any photo to enlarge</strong>
+        </div>
+        <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(185px, 1fr)); gap: 0.75rem;">
+          ${allPhotos.map((pUrl, idx) => `
+            <div style="border-radius:10px; overflow:hidden; border:1px solid var(--border-strong); background:#fff; box-shadow:var(--shadow-sm);">
+              <img
+                src="${pUrl}"
+                alt="${item.title} — Photo ${idx + 1}"
+                class="zoomable-img"
+                style="width:100%; height:160px; object-fit:cover;"
+                onclick="openMediaGalleryLightbox('${item.id}', ${idx})"
+              />
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `;
+  }
+
+  let pdfViewerHtml = '';
+  if (item.pdfData) {
+    pdfViewerHtml = `
+      <div style="margin: 1.25rem 0; text-align: left;">
+        <strong style="display:block; font-size:0.76rem; color:var(--text-muted); text-transform:uppercase; margin-bottom:0.45rem;">📄 Attached Program / Certificate PDF (${item.pdfName || 'Document.pdf'})</strong>
+        <div class="cert-attachment-viewer">
+          <iframe src="${item.pdfData}" title="${item.title} PDF"></iframe>
+        </div>
+        <div style="margin-top: 0.65rem; text-align: center;">
+          <a href="${item.pdfData}" download="${item.pdfName || 'document.pdf'}" class="btn btn-primary" style="font-size:0.82rem;">
+            📄 Download / Open PDF (${item.pdfName || 'document.pdf'})
+          </a>
+        </div>
+      </div>
+    `;
+  }
+
+  content.innerHTML = `
+    <div class="modal-header">
+      <div>
+        <span class="owner-badge owner-${item.sister}" style="margin-bottom: 0.5rem;">${item.sisterName} • ${item.year || '2024'}</span>
+        <h3 style="font-family: var(--font-serif); font-size: 1.55rem;">${item.title}</h3>
+      </div>
+      <button type="button" class="modal-close" onclick="closeDetailModal()" aria-label="Close modal">✕</button>
+    </div>
+
+    <div class="certificate-preview" style="text-align: left; padding: 1.5rem;">
+      <div style="text-align: center; margin-bottom: 1.2rem;">
+        <div class="cert-school">Anglo Singapore International School • Section 05 Multimedia Showcase</div>
+        <div class="cert-heading">${item.title}</div>
+        <div class="cert-recipient">${item.category || 'Music & Performance'} • ${item.sisterName}</div>
+        <p style="font-size: 0.94rem; color: var(--text-secondary); max-width: 580px; margin: 0.5rem auto 0; line-height: 1.65;">
+          ${item.description || ''}
+        </p>
+      </div>
+
+      ${videoHtml}
+      ${photosGalleryHtml}
+      ${pdfViewerHtml}
+    </div>
+
+    ${isAdminUnlocked ? `
+      <div style="display: flex; justify-content: space-between; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
+        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+          <button type="button" class="btn btn-primary" style="font-size: 0.82rem;" onclick="closeDetailModal(); openEditMediaModal('${item.id}')">
+            ✎ Edit Photos, PDF, Video &amp; Details
+          </button>
+          <label class="btn btn-outline" style="font-size: 0.8rem; cursor: pointer;">
+            📸 + Add More Photos
+            <input type="file" accept="image/*" multiple style="display:none" onchange="quickAddPhotosToMediaItem('${item.id}', event)" />
+          </label>
+          <label class="btn btn-outline" style="font-size: 0.8rem; cursor: pointer;">
+            📄 + Attach PDF
+            <input type="file" accept=".pdf,application/pdf" style="display:none" onchange="quickAttachPdfToMediaItem('${item.id}', event)" />
+          </label>
+        </div>
+        <div style="display: flex; gap: 0.5rem;">
+          <button type="button" class="btn btn-outline" style="color: hsl(0, 65%, 45%); border-color: hsl(0, 50%, 82%); font-size: 0.8rem;" onclick="deleteMediaItem('${item.id}')">
+            🗑️ Delete
+          </button>
+          <button type="button" class="btn btn-outline" onclick="closeDetailModal()">Close</button>
+        </div>
+      </div>
+    ` : `
+      <div style="display: flex; justify-content: flex-end;">
+        <button type="button" class="btn btn-outline" onclick="closeDetailModal()">Close</button>
+      </div>
+    `}
+  `;
+
+  modal.classList.add('open');
+}
+
+function quickAddPhotosToMediaItem(mediaId, event) {
+  const files = Array.from(event.target.files || []);
+  if (!files.length) return;
+  const item = (appData.mediaGallery || []).find(x => x.id === mediaId);
+  if (!item) return;
+
+  const currentPhotos = getMediaItemPhotos(item);
+  let processed = 0;
+  files.forEach(file => {
+    if (file.type.startsWith('image/')) {
+      compressImageFile(file, async (compressedUrl) => {
+        currentPhotos.push(compressedUrl);
+        processed++;
+        if (processed === files.length) {
+          item.photos = currentPhotos;
+          item.photoData = currentPhotos[0] || null;
+          await savePortfolioData();
+          renderMediaGallery();
+          openMediaDetailModal(mediaId);
+        }
+      });
+    }
+  });
+}
+
+function quickAttachPdfToMediaItem(mediaId, event) {
+  const file = event.target.files?.[0];
+  if (!file) return;
+  if (file.size > 25 * 1024 * 1024) {
+    alert('PDF file is larger than 25 MB.');
+    return;
+  }
+  const item = (appData.mediaGallery || []).find(x => x.id === mediaId);
+  if (!item) return;
+
+  const reader = new FileReader();
+  reader.onload = async function(e) {
+    item.pdfData = e.target.result;
+    item.pdfName = file.name;
+    await savePortfolioData();
+    renderMediaGallery();
+    openMediaDetailModal(mediaId);
+  };
+  reader.readAsDataURL(file);
 }
 
 /* Feature 1: Interactive Growth & Milestone Timeline (Section 06) */
@@ -2168,9 +2630,12 @@ function openCertificateModal(itemId, collectionKey) {
   if (item.attachmentData && item.attachmentType === 'image') {
     attachmentViewerHtml = `
       <div class="cert-attachment-viewer">
-        <img src="${item.attachmentData}" alt="${item.title} Certificate" />
+        <img src="${item.attachmentData}" alt="${item.title} Certificate" class="zoomable-img" onclick="openItemPhotosLightbox('${item.id}', '${collectionKey}', 0)" title="Click to view full screen" />
       </div>
-      <div style="margin-bottom: 1rem;">
+      <div style="margin-bottom: 1rem; display: flex; justify-content: center; gap: 0.5rem; flex-wrap: wrap;">
+        <button type="button" class="btn btn-outline" style="font-size:0.8rem;" onclick="openItemPhotosLightbox('${item.id}', '${collectionKey}', 0)">
+          🔍 View Full-Screen Image
+        </button>
         <a href="${item.attachmentData}" download="${item.attachmentName || 'certificate.jpg'}" class="btn btn-outline" style="font-size:0.8rem;">
           ⬇️ Download Certificate Image
         </a>
@@ -2191,11 +2656,12 @@ function openCertificateModal(itemId, collectionKey) {
 
   let activityPhotosModalHtml = '';
   if (Array.isArray(item.activityPhotos) && item.activityPhotos.length > 0) {
+    const offset = (item.attachmentData && item.attachmentType === 'image') ? 1 : 0;
     activityPhotosModalHtml = `
       <div style="margin: 1rem 0; text-align: left;">
-        <strong style="display:block; font-size:0.75rem; color:var(--text-muted); text-transform:uppercase; margin-bottom:0.4rem;">📸 Activity &amp; Camp Action Photos</strong>
+        <strong style="display:block; font-size:0.75rem; color:var(--text-muted); text-transform:uppercase; margin-bottom:0.4rem;">📸 Activity &amp; Camp Action Photos — Click any photo to enlarge</strong>
         <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 0.6rem;">
-          ${item.activityPhotos.map(pUrl => `<img src="${pUrl}" alt="Activity photo" style="width:100%; height:120px; object-fit:cover; border-radius:8px; border:1px solid var(--border-subtle);" />`).join('')}
+          ${item.activityPhotos.map((pUrl, pIdx) => `<img src="${pUrl}" alt="Activity photo ${pIdx + 1}" class="zoomable-img" onclick="openItemPhotosLightbox('${item.id}', '${collectionKey}', ${offset + pIdx})" style="width:100%; height:120px; object-fit:cover; border-radius:8px; border:1px solid var(--border-subtle);" />`).join('')}
         </div>
       </div>
     `;
@@ -2842,6 +3308,98 @@ async function resetDefaultData() {
   }
 }
 
+/* ==========================================================================
+   Full-Screen Image Lightbox Viewer (With Next/Prev Gallery Navigation)
+   ========================================================================== */
+
+let lightboxState = {
+  images: [],
+  currentIndex: 0,
+  captionPrefix: ''
+};
+
+function openImageLightbox(imagesArray, startIndex = 0, captionPrefix = '') {
+  if (!Array.isArray(imagesArray) || imagesArray.length === 0) return;
+  lightboxState = {
+    images: imagesArray,
+    currentIndex: Math.max(0, Math.min(startIndex, imagesArray.length - 1)),
+    captionPrefix: captionPrefix || ''
+  };
+  updateLightboxDisplay();
+  const modal = document.getElementById('image-lightbox-modal');
+  if (modal) modal.classList.add('open');
+}
+
+function openSingleImageLightbox(imgUrl, caption = '') {
+  if (!imgUrl) return;
+  openImageLightbox([imgUrl], 0, caption);
+}
+
+function openMediaGalleryLightbox(mediaId, startIndex = 0) {
+  const item = (appData.mediaGallery || []).find(x => x.id === mediaId);
+  if (!item) return;
+  const photos = getMediaItemPhotos(item);
+  if (!photos.length) return;
+  openImageLightbox(photos, startIndex, `${item.title} (${item.sisterName})`);
+}
+
+function openItemPhotosLightbox(itemId, collectionKey, startIndex = 0) {
+  const list = appData[collectionKey] || [];
+  const item = list.find(x => x.id === itemId);
+  if (!item) return;
+
+  const photos = [];
+  if (item.attachmentData && item.attachmentType === 'image') {
+    photos.push(item.attachmentData);
+  }
+  if (Array.isArray(item.activityPhotos)) {
+    item.activityPhotos.forEach(p => {
+      if (p) photos.push(p);
+    });
+  }
+  if (!photos.length) return;
+  openImageLightbox(photos, startIndex, `${item.title} (${item.sisterName})`);
+}
+
+function updateLightboxDisplay() {
+  const imgEl = document.getElementById('lightbox-main-img');
+  const captionEl = document.getElementById('lightbox-caption-text');
+  const counterEl = document.getElementById('lightbox-counter-text');
+  const prevBtn = document.getElementById('lightbox-prev-btn');
+  const nextBtn = document.getElementById('lightbox-next-btn');
+
+  const total = lightboxState.images.length;
+  const idx = lightboxState.currentIndex;
+
+  if (imgEl) {
+    imgEl.src = lightboxState.images[idx] || '';
+  }
+  if (captionEl) {
+    captionEl.innerText = lightboxState.captionPrefix || 'Portfolio Photo';
+  }
+  if (counterEl) {
+    counterEl.innerText = total > 1 ? `${idx + 1} / ${total}` : '';
+  }
+  if (prevBtn) {
+    prevBtn.style.display = total > 1 ? 'flex' : 'none';
+  }
+  if (nextBtn) {
+    nextBtn.style.display = total > 1 ? 'flex' : 'none';
+  }
+}
+
+function navigateLightbox(step) {
+  const total = lightboxState.images.length;
+  if (total <= 1) return;
+  lightboxState.currentIndex = (lightboxState.currentIndex + step + total) % total;
+  updateLightboxDisplay();
+}
+
+function closeImageLightbox() {
+  const modal = document.getElementById('image-lightbox-modal');
+  if (modal) modal.classList.remove('open');
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
   await initializePortfolioData();
 
@@ -2851,6 +3409,24 @@ document.addEventListener('DOMContentLoaded', async () => {
         backdrop.classList.remove('open');
       }
     });
+  });
+
+  document.addEventListener('keydown', (e) => {
+    const lbModal = document.getElementById('image-lightbox-modal');
+    const isLbOpen = lbModal && lbModal.classList.contains('open');
+    if (isLbOpen) {
+      if (e.key === 'Escape') closeImageLightbox();
+      if (e.key === 'ArrowRight') navigateLightbox(1);
+      if (e.key === 'ArrowLeft') navigateLightbox(-1);
+      return;
+    }
+    if (e.key === 'Escape') {
+      closeDetailModal();
+      closeAddModal();
+      closeAddMediaModal();
+      closeGitHubSyncModal();
+      closeParentLoginModal();
+    }
   });
 
   // Optional shortcut: visiting ?admin=1 opens the Parent Login verification modal (never auto-unlocks)
