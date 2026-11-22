@@ -1,5 +1,5 @@
 {
-  "updatedAt": 1795350987398,
+  "updatedAt": 1795352603049,
   "sectionVisibility": {
     "academics": true,
     "radar": true,
@@ -317,6 +317,59 @@
     }
   ],
   "ccas": [
+    {
+      "id": "custom-1795352513650",
+      "sister": "noodee",
+      "sisterName": "Noodee (Sec 3)",
+      "year": "2026",
+      "icon": "🌟",
+      "issuer": "Anglo Singapore International School",
+      "role": "Piano Forte12 Concert",
+      "category": "Piano Forte12 Concert",
+      "title": "Forte12 Concert",
+      "detail": "This piano was held during March, rehearsal Forte grade 12",
+      "description": "This piano was held during March, rehearsal Forte grade 12",
+      "schedule": "20260307",
+      "result": "20260307",
+      "skills": "Piano",
+      "attachmentData": null,
+      "attachmentType": null,
+      "attachmentName": null,
+      "activityPhotos": [
+        "assets/uploads/act-custom-1795352513650-0.jpg",
+        "assets/uploads/act-custom-1795352513650-1.jpg",
+        "assets/uploads/act-custom-1795352513650-2.jpg"
+      ],
+      "videoUrl": "",
+      "externalLink": "https://drive.google.com/file/d/1nqKuMYG0wK0On_JCnf1DY9ZGs-lDWTds/view?usp=sharing"
+    },
+    {
+      "id": "custom-1795351335983",
+      "sister": "noodee",
+      "sisterName": "Noodee (Sec 3)",
+      "year": "2026",
+      "icon": "🌟",
+      "issuer": "Anglo Singapore International School",
+      "role": "WSA Summer Camp",
+      "category": "WSA Summer Camp",
+      "title": "WSA Basketball Summer Camp",
+      "detail": "WSA",
+      "description": "WSA",
+      "schedule": "20260720-24",
+      "result": "20260720-24",
+      "skills": "Basketball",
+      "attachmentData": null,
+      "attachmentType": null,
+      "attachmentName": null,
+      "activityPhotos": [
+        "assets/uploads/act-custom-1795351335983-0.jpg",
+        "assets/uploads/act-custom-1795351335983-1.jpg",
+        "assets/uploads/act-custom-1795351335983-2.jpg",
+        "assets/uploads/act-custom-1795351335983-3.jpg"
+      ],
+      "videoUrl": "",
+      "externalLink": ""
+    },
     {
       "id": "custom-1794970174011",
       "sister": "noodee",
